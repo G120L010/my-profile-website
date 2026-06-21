@@ -1,0 +1,99 @@
+/* ========================================== */
+/* 個人大首頁（經歷分頁）右側專屬 CSS 樣式表 */
+/* ========================================== */
+
+/* ========================================== */
+/* 核心時間軸軌跡容器 */
+/* ========================================== */
+
+/* 時間軸線條容器 */
+.timeline-container {
+  position: relative;     /* 設定相對定位以定位子元素 */
+  padding-left: 20px;     /* 左側保留空間放置線條 */
+  border-left: 2px solid var(--border-color); /* 畫出垂直時間軸線 */
+  margin-top: 2rem;       /* 與上方標題拉開距離 */
+  transition: border-color 0.4s ease; /* 切換模式時線條顏色過渡 */
+}
+
+/* 工作經歷個別項目 */
+.timeline-item {
+  position: relative;     /* 設定相對定位 */
+  margin-bottom: 2.5rem;  /* 項目間距 2.5rem */
+}
+
+/* 最後一個項目移除底部間距 */
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 垂直線上的裝飾圓點 */
+.timeline-dot {
+  position: absolute;     /* 脫離文件流進行精確定位 */
+  left: -27px;            /* 向左偏移對齊時間軸線 */
+  top: 6px;               /* 距離頂部高度 */
+  width: 12px;            /* 寬度 12 像素 */
+  height: 12px;           /* 高度 12 像素 */
+  border-radius: 50%;     /* 設定為正圓形 */
+  background-color: var(--bg-primary); /* 圓點內部顏色與網頁底色融合 */
+  border: 2px solid #ff8400; /* 圓點外框亮橘色 */
+  transition: background-color 0.4s ease; /* 變色過渡 */
+}
+
+/* ========================================== */
+/* 工作經歷卡片與內容 */
+/* ========================================== */
+
+/* 經歷卡片本體樣式 */
+.experience-card {
+  background-color: var(--bg-card); /* 綁定卡片背景變數 */
+  border: 1px solid var(--border-color); /* 綁定框線變數 */
+  border-radius: 16px;    /* 統一成 16px 精緻圓角 */
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease; /* 補上平滑浮起與變色動畫 */
+}
+
+/* 懸浮時浮起與發光效果 */
+.experience-card:hover {
+  transform: translateY(-6px); /* 懸浮時向上浮動 6 像素 */
+  border-color: #ff8400;       /* 邊框變為品牌亮橘色 */
+  box-shadow: 0 12px 30px rgba(255, 132, 0, 0.15); /* 橘色霓虹發光陰影 */
+}
+
+/* 時間區間文字 */
+.exp-period {
+  color: var(--text-muted); /* 綁定靜態文字變數 */
+  font-size: 0.85rem;      /* 設定字體大小 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 公司名稱文字 */
+.exp-company {
+  color: var(--text-main); /* 綁定主要文字變數 */
+  font-size: 1.15rem;      /* 設定字體大小 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 專業職位名稱 */
+.exp-role {
+  color: #ff8400;         /* 固定使用品牌亮橘色 */
+  font-size: 0.95rem;      /* 設定字體大小 */
+}
+
+/* 工作摘要內文 */
+.exp-summary {
+  color: var(--text-sub);  /* 綁定次要文字變數 */
+  font-size: 0.9rem;       /* 設定字體大小 */
+  line-height: 1.6;        /* 設定行高提升可讀性 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 技術標籤徽章 */
+.tag-badge {
+  display: inline-block;   /* 轉為行內區塊顯示 */
+  background-color: var(--bg-btn); /* 綁定按鈕背景變數 */
+  color: var(--text-muted); /* 綁定靜態文字變數 */
+  font-size: 0.78rem;      /* 設定小字體 */
+  padding: 4px 10px;       /* 設定內距 */
+  border-radius: 6px;      /* 設定圓角 */
+  border: 1px solid var(--border-color); /* 綁定框線變數 */
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; /* 全部過渡 */
+}

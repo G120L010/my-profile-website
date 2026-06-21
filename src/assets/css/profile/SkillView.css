@@ -1,0 +1,69 @@
+/* 專業技能頁面右側專屬的純 CSS 樣式表 */
+
+/* ========================================== */
+/* 核心靈魂：科技感霓虹發光技能卡片樣式       */
+/* ========================================== */
+
+/* 單一技術分類卡片包裝殼 */
+.custom-skill-card {
+  background-color: var(--bg-card); /* 【優化】由寫死色碼改為綁定卡片底色變數，白天時卡片會自動轉為高質感純白底 */
+  border: 1px solid var(--border-color); /* 【優化】由寫死色碼改為綁定全站細內框線變數 */
+  border-radius: 16px; /* 設定較大的精緻圓角外觀 */
+  position: relative; /* 作為絕對定位頂部漸變線條的基準錨點 */
+  overflow: hidden; /* 設定超出卡片圓角範圍的子元件自動裁切隱藏 */
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease; /* 補上卡片底色平滑變更動畫 */
+}
+
+/* ========================================== */
+/* 核心功能：滑鼠懸停觸發卡片往上浮動與霓虹發光 */
+/* ========================================== */
+.custom-skill-card:hover {
+  transform: translateY(-6px); /* 當滑鼠移入時，卡片會流暢地向上飄移 6 像素 */
+  border-color: #ff8400; /* 將原本的邊框線，動態高亮轉變為品牌亮橘色 */
+  box-shadow: 0 12px 30px rgba(255, 132, 0, 0.15); /* 產生精緻的彩色發光擴散擴大陰影效果 */
+}
+
+/* ========================================== */
+/* 卡片內部技術項目排版樣式 */
+/* ========================================== */
+
+/* 卡片內分類英文字大標題 */
+.category-name-text {
+  color: var(--text-main); /* 【優化】由純白改為綁定主要文字變數 */
+  font-size: 1.35rem; /* 設定適中的字體大小 */
+  letter-spacing: 0.5px; /* 微幅增加字距提升高級感 */
+  transition: color 0.4s ease; /* 設定文字切換過渡 */
+}
+
+/* 單一個技術項目盒容器 */
+.skill-row-box {
+  display: block; /* 設定為區塊級元素以自動換行 */
+  padding-bottom: 1rem; /* 設定內容底部內縮間距 */
+  margin-bottom: 1rem; /* 設定條目之間的下外距 */
+  border-bottom: 1px dashed var(--border-color); /* 【優化】由寫死色碼改為綁定內置虛線框線變數 */
+}
+
+/* 排除最後一個技術項目底部的虛線與外距，防止版面撐大 */
+.skill-row-box:last-child {
+  border-bottom: none; /* 移除最後一條項目的分隔線 */
+  margin-bottom: 0; /* 消除最後一條項目的外距 */
+  padding-bottom: 0; /* 消除最後一條項目的內縮 */
+}
+
+/* 技術條目名稱文字樣式 */
+.skill-item-name {
+  display: block; /* 設定為獨立一行顯示 */
+  color: var(--text-sub); /* 【優化】由寫死色碼改為綁定次要文字變數 */
+  font-size: 1.05rem; /* 設定標準字體大小 */
+  margin-bottom: 0.25rem; /* 與下方的詳細描述文字保持舒適的微幅間距 */
+  transition: color 0.4s ease; /* 設定切換過渡 */
+}
+
+/* 技術條目白話文詳細描述文字樣式 */
+.skill-item-desc {
+  display: block; /* 設定為獨立區塊自動換行顯示 */
+  color: var(--text-muted); /* 【優化】由寫死色碼改為綁定 muted 高級低亮度灰色變數 */
+  font-size: 0.88rem; /* 字體縮小做出強類的字體階層對比 */
+  line-height: 1.5; /* 設定舒適的行高比例 */
+  transition: color 0.4s ease; /* 設定切換過渡 */
+}
