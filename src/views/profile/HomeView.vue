@@ -7,7 +7,7 @@
       <!-- 標題左側的橘色裝飾小方塊線條 (由 App.css 定義其圓角與背景色) -->
       <div class="page-title-indicator"></div>
       <!-- 經歷頁面的中英文大標題：m-0 移除預設的外距 -->
-      <h2 class="page-main-title m-0">工作經歷 / Experience</h2>
+      <h2 class="page-main-title m-0">工作經歷 / Job Experience</h2>
     </div>
 
     <!-- 垂直時間軸的主要外殼容器 (由 HomeView.css 繪製左側的垂直灰色實線) -->
@@ -39,6 +39,17 @@
           
           <!-- 顯示具體工作內容、專案貢獻或成就的詳細摘要白話文 -->
           <p class="exp-summary mb-3">{{ exp.summary }}</p>
+
+          <!-- 工作經歷附帶的成果新聞稿或活動成果連結 -->
+          <div v-if="exp.links && exp.links.length > 0" class="exp-links-zone mb-3 d-flex flex-column gap-1">
+            <span class="exp-links-title d-block fw-semibold mb-1">相關成果與新聞報導：</span>
+            <div class="d-flex flex-wrap gap-3">
+              <a v-for="link in exp.links" :key="link.url" :href="link.url" target="_blank" class="exp-link-item d-inline-flex align-items-center gap-1">
+                <span>{{ link.title }}</span>
+                <span class="small">↗</span>
+              </a>
+            </div>
+          </div>
           
           <!-- 技術膠囊標籤容器：gap-2 設定小標籤之間的間距 -->
           <div class="d-flex flex-wrap gap-2">

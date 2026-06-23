@@ -8,62 +8,70 @@ import { ref } from 'vue'
  * 供 PortfolioView.vue 引入解構使用
  */
 export function usePortfolioView() {
-  
-  // 【作品集響應式陣列】使用 ref() 管理作品清單，內容若改變，網頁畫面會自動更新
+
+  // 作品集響應式陣列：使用 ref 管理作品清單，內容若改變，網頁畫面會自動更新 (依日期由新到舊降冪排序)
   const projects = ref([
     {
-      id: 1, // 作品唯一識別碼 (防止重複)
-      title: '響應式個人品牌雲端履歷', // 作品中文標題名稱
-      summary: '完全對齊單頁應用程式（SPA）架構開發的高質感前端作品集。具備全環境分流模組抽離、精密貝茲曲線漂浮微動畫，以及獨立路由 Hash 導航功能。', // 專案簡介白話文
-      tags: ['Vue 3', 'Vite', 'Bootstrap 5', 'CSS 3'], // 專案技術標籤陣列
-      image: 'images/Portfolioimg/no-image.jpg', // 本地圖片路徑 (相對於 public 目錄，放於 public/images/Portfolioimg/ 下)
-      demoUrl: '#/', // 點擊「瀏覽網站」時前往的連結位址
-      codeUrl: 'https://github.com/' // 點擊「原始碼」時前往的 GitHub 專案庫網址
+      id: 1,
+      title: '暖光之丘 - 流浪動物平台 (程式碼創作)',
+      summary: '於資展就業養成班培訓期間實作之全端專案。負責購物商城與 AI 智能客服功能開發，串接 LINE Pay 與 Google Gemini API。',
+      tags: ['Java 21', 'Spring Boot', 'Vue 3', 'SQL Server', '程式碼創作'],
+      image: 'images/Portfolioimg/no-image.jpg',
+      buttons: [
+        { text: '瀏覽網站', url: 'https://github.com/' },
+        { text: '原始碼', url: 'https://github.com/' }
+      ]
     },
     {
-      id: 2, // 作品唯一識別碼 (確保每個項目都有不同的數字，以便 Vue 進行高效畫面追蹤與渲染)
-      title: '企業級前後端分離電商服務端', // 第二個作品的名稱標題
-      summary: '專精於高穩健度分層架構（Controller / Service / Repo）開發的寵物商務後台系統。成功打通沙盒金流交易，並實作核心交易邏輯防呆與高併發超賣控制。', // 第二個作品的簡短說明
-      tags: ['Java 21', 'Spring Boot', 'JPA', 'SQL Server'], // 第二個作品所使用的技術標籤
-      image: 'images/Portfolioimg/no-image.jpg', // 第二個作品的封面圖片路徑 (放置於 public/images/Portfolioimg/)
-      demoUrl: '#/', // 第二個作品在線上展示的 URL 網址 (目前為預設)
-      codeUrl: 'https://github.com/' // 第二個作品的 GitHub 開源程式碼庫網址
+      id: 2,
+      title: 'SUNSTAR 產品短影音廣告 (影片剪輯創作)',
+      summary: '於日本實習期間由團隊共同主導製作。推廣間歇性斷食健康能量棒，完成廣告文案高質感短影音廣告後製與影片剪輯，協助產品宣傳行銷。',
+      tags: ['Adobe Premiere', '影片剪輯', '影音行銷', '海外實習', '影片剪輯創作'],
+      image: 'images/Portfolioimg/SUNSTAR.jpg',
+      buttons: [
+        { text: '商品網站', url: 'https://jp.sunstar.com/health-food/andfasting/product_001.html' },
+        { text: '影片作品', url: 'images/Aboutimg/TV.mp4' }
+      ]
     },
     {
-      id: 3, // 作品唯一識別碼 (確保每個項目都有不同的數字)
-      title: '即時雲端數據視覺化主控台', // 第三個作品的名稱標題
-      summary: '基於 WebSocket 與動態圖表技術開發的雲端資源監控儀表板。提供伺服器 CPU/記憶體負載的即時可視化折線圖，並支援自訂警報門檻發送通知。', // 第三個作品的簡短說明
-      tags: ['Vue 3', 'ECharts', 'WebSockets', 'Axios'], // 第三個作品所使用的技術標籤
-      image: 'images/Portfolioimg/no-image.jpg', // 第三個作品的封面圖片路徑
-      demoUrl: '#/', // 第三個作品的線上展示網址
-      codeUrl: 'https://github.com/' // 第三個作品的開源程式碼庫網址
+      id: 3,
+      title: 'LINE 原創貼圖設計與創作 (LINE貼圖創作)',
+      summary: '獨立規劃、設計並上架 LINE 原創貼圖。電腦繪圖插圖線稿與著色設計、去背輸出，並通過 LINE 官方審核成功上架銷售，展現手繪插畫與數位圖像設計之實務能力。',
+      tags: ['LINE 貼圖', '角色設計', '插畫設計', '視覺創作', 'LINE貼圖創作'],
+      image: 'images/Portfolioimg/LINE.jpg',
+      buttons: [
+        { text: '貼圖商店', url: 'https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant' }
+      ]
     },
     {
-      id: 4, // 作品唯一識別碼 (確保每個項目都有不同的數字)
-      title: '自動化運維部署 CI/CD 排程器', // 第四個作品的名稱標題
-      summary: '串接 GitHub Actions 與 Docker 容器技術的持續整合發佈系統。讓團隊程式碼在提交後自動觸發單元測試、建置 Image，並發佈至 Linux 測試機。', // 第四個作品的簡短說明
-      tags: ['Spring Boot', 'Docker', 'GitHub Actions', 'Linux'], // 第四個作品所使用的技術標籤
-      image: 'images/Portfolioimg/no-image.jpg', // 第四個作品的封面圖片路徑
-      demoUrl: '#/', // 第四個作品的線上展示網址
-      codeUrl: 'https://github.com/' // 第四個作品的開源程式碼庫網址
+      id: 4,
+      title: '個人作詞＋歌曲＋剪輯字幕＋後製自製影片 (影片剪輯創作)',
+      summary: '獨立完成原創歌詞創作、歌曲錄製、影片剪輯與動態字幕後製。結合多媒體影音軟體與音樂創作技術，實現從音訊剪輯、字幕對位到視覺後製的全流程自製影音專案。',
+      tags: ['作詞創作', '音樂剪輯', 'Premiere Pro', '動態字幕', '影音後製', '影片剪輯創作'],
+      image: 'images/Portfolioimg/YouTube1.jpg',
+      buttons: [
+        { text: '點我觀看收聽創作歌曲', url: 'https://youtu.be/zw2HlqRhML0' }
+      ]
     },
     {
-      id: 5, // 作品唯一識別碼 (預留作品欄位一，方便日後擴充)
-      title: '微服務分散式架構閘道器 (預留欄位)', // 第五個作品的名稱標題
-      summary: '專門針對高併發流量設計的安全防護閘道器。提供統一限流、動態路由轉發、灰度發佈與防惡意掃描等核心安全防禦機制。', // 第五個作品的簡短說明
-      tags: ['Spring Boot', 'Spring Cloud', 'Redis', 'Gateway'], // 第五個作品預定使用的技術標籤
-      image: 'images/Portfolioimg/no-image.jpg', // 第五個作品的封面圖片路徑
-      demoUrl: '#/', // 第五個作品的線上展示網址
-      codeUrl: 'https://github.com/' // 第五個作品的開源程式碼庫網址
+      id: 5,
+      title: '短影音創作 (短影音創作)',
+      summary: '獨立作詞歌曲企劃並製作的高難度趣味短影音創作。精準掌握短影音黃金前三秒吸引法則，靈活運用快節奏轉場特效、動態字體與背景音樂，展現自媒體影音企劃與短片剪輯實務能力。',
+      tags: ['短影音企劃', '轉場特效', '快節奏剪輯', '自媒體創作', '短影音創作'],
+      image: 'images/Portfolioimg/YouTube2.jpg',
+      buttons: [
+        { text: '點我觀看短影音創作', url: 'https://youtube.com/shorts/6jYhcZNiiMY?feature=share' }
+      ]
     },
     {
-      id: 6, // 作品唯一識別碼 (預留作品欄位二，方便日後擴充)
-      title: 'AI 智慧語意客服系統 (預留欄位)', // 第六個作品的名稱標題
-      summary: '整合大型語言模型（LLM）的智慧客服平台。支援知識庫檢索增現生成（RAG）、語意相似度檢索，並具備即時客服轉接人工通道功能。', // 第六個作品的簡短說明
-      tags: ['Vue 3', 'Java 21', 'Spring AI', 'Vector DB'], // 第六個作品預定使用的技術標籤
-      image: 'images/Portfolioimg/no-image.jpg', // 第六個作品的封面圖片路徑
-      demoUrl: '#/', // 第六個作品的線上展示網址
-      codeUrl: 'https://github.com/' // 第六個作品的開源程式碼庫網址
+      id: 6,
+      title: '個人文創商品線上商鋪 (文創商品創作)',
+      summary: '主導建立個人文創商品線上商鋪。親自操刀店鋪視覺風格設定，並以精緻平面設計技術推出專屬服飾與配件系列商品，展示平面美術設計、品牌包裝與電子商務營運之實務整合成果。',
+      tags: ['品牌設計', '平面美術', '商品包裝', 'spri.ng電商平台', '文創商品創作'],
+      image: 'images/Portfolioimg/Clothing.jpg',
+      buttons: [
+        { text: '點我進入觀看文創商品', url: 'https://httpshancreator-springcom-2.creator-spring.com/' }
+      ]
     }
   ])
 

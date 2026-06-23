@@ -8,7 +8,7 @@
 .project-grid-card {
   position: relative; /* 設定為相對定位，好讓內部的半透明遮罩層能以它為基準絕對定位 */
   width: 100%; /* 寬度填滿網格分配的範圍 */
-  height: 240px; /* 限制卡片的固定總高度為 240 像素，確保網格絕對對齊 */
+  height: 280px; /* 限制卡片的固定總高度為 280 像素，確保容納全部內容且網格對齊 */
   background-color: var(--bg-card); /* 【優化】由寫死色碼改為綁定卡片底色變數，白天時卡片底層自動轉為高質感純白 */
   border: 1px solid var(--border-color); /* 【優化】由寫死色碼改為綁定全站極細內框線條變數 */
   border-radius: 16px; /* 設定與技能卡片一致的精緻大圓角 */
@@ -48,7 +48,17 @@
   background-color: var(--portfolio-overlay-bg); 
   
   backdrop-filter: blur(4px); /* 高階功能：讓遮罩底下的圖片產生淡淡的磨砂玻璃模糊質感 */
+  overflow-y: auto; /* 【防溢出】允許內容溢出時垂直方向滾動，以防按鈕在小螢幕或摘要長時消失 */
   transition: top 0.35s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.4s ease; /* 增加背景變色過渡 */
+}
+
+/* 自訂作品卡片內遮罩專屬細微滾動條樣式，維持精緻質感 */
+.project-hover-overlay::-webkit-scrollbar {
+  width: 4px;
+}
+.project-hover-overlay::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
 }
 
 /* 核心功能：當滑鼠正式懸停移入專案卡片時，遮罩層的頂部高度動態歸零，使其完全向上滑出覆蓋 */

@@ -1,171 +1,70 @@
 // 專業技能頁面的抽離式組合式業務邏輯控制檔案
+// 使用 Vue 3 的 Composition API 架構，將技能資料徹底模組化抽離，方便管理與維護
 
-// 從 Vue 核心框架軟體包中引入建立響應式數據所需要的 ref 函式
 import { ref } from 'vue'
 
-/* 建立並導出專業技能頁面專用的核心邏輯控制函式 */
+/**
+ * 建立並導出專業技能頁面專用的核心邏輯控制函式
+ * 供 SkillView.vue 引入解構使用
+ */
 export function useSkillView() {
   
-  // 建立一組結構化的技術分類響應式陣列資料，完全對齊 2魚 網站的資料排版階層
+  // 建立技術分類數據陣列，包含前端、後端與部署工具
   const skillCategories = ref([
     {
-      // 分類唯一識別碼 (確保每個項目都有不同的數字，以便 Vue 進行高效畫面追蹤與渲染)
       id: 1,
-      // 在卡片頂部顯示的英文大分類名稱
       title: 'Front-End',
-      // 用於在 CSS 樣式表中對應前端藍色渐變發光線條的類名
-      accentClass: 'accent-frontend',
-      // 該分類底下的具體技術項目條目陣列
+      accentClass: 'accent-frontend', // 前端藍色彩線
       items: [
         {
-          name: 'Vue 3 / Vite',
-          desc: '掌握組合式架構（Composition API）、前端路由導航與響應式網頁切版技術。'
+          name: 'Vue 3 / JavaScript',
+          desc: '熟練組合式架構（Composition API）開發、全域狀態管理與前端非同步網路請求。'
         },
         {
           name: 'Bootstrap 5',
-          desc: '熟練運用現代化網格系統（Grid System）進行多裝置移動端自適應版面佈局。'
+          desc: '善用 Bootstrap 響應式網格系統（Grid System）進行多裝置移動端自適應切版佈局。'
         },
         {
-          name: 'JavaScript / CSS 3',
-          desc: '具備純前端非同步請求處理能力，並熟練編寫客製化網頁懸浮微動畫特效。'
+          name: 'HTML5 / CSS3',
+          desc: '掌握網頁架構語意化、CSS 樣式設計、Flex 彈性佈局以及自訂網頁懸浮微動畫特效。'
         }
       ]
     },
     {
-      // 分類唯一識別碼 (確保每個項目都有不同的數字)
       id: 2,
-      // 在卡片頂部顯示的英文大分類名稱
       title: 'Back-End',
-      // 用於在 CSS 樣式表中對應後端橘色渐變發光線條的類名
-      accentClass: 'accent-backend',
-      // 該分類底下的具體技術項目條目陣列
+      accentClass: 'accent-backend', // 後端橘色彩線
       items: [
         {
           name: 'Java / Spring Boot',
-          desc: '精通後端分層架構設計，專責編寫介面控制層與高度穩健的企業級業務邏輯。'
+          desc: '精通後端分層架構設計，專責編寫 API 介面控制層與穩健的商業邏輯層。'
         },
         {
           name: 'Spring Data JPA',
-          desc: '熟練進行資料庫實體關係映射、自動化事務控制管理以及核心業務防呆機制。'
+          desc: '進行資料庫實體關係映射、自訂查詢、自動化事務控制與核心防呆機制管理。'
         },
         {
           name: 'SQL Server',
-          desc: '具備資料表實體關係圖（ERD）規劃設計、高效資料存取與結構化管理能力。'
+          desc: '具備資料表實體關係圖（ERD）規劃設計、高效資料存取與資料庫結構管理能力。'
         }
       ]
     },
     {
-      // 分類唯一識別碼 (確保每個項目都有不同的數字)
       id: 3,
-      // 在卡片頂部顯示的英文大分類名稱
       title: 'Tools & Security',
-      // 用於在 CSS 樣式表中對應工具與安全青綠色漸變線條的類名
-      accentClass: 'accent-tools',
-      // 該分類底下的具體技術項目條目陣列
+      accentClass: 'accent-tools', // 工具安全青綠彩線
       items: [
         {
-          name: 'Git / GitHub',
-          desc: '熟練使用程式碼版本控制管理工具，嚴格遵循團隊多分支協作與整合開發流程。'
+          name: 'LINE Pay & Gemini API',
+          desc: '實作串接第三方商務金流交易防呆處理，以及 Google Gemini 人工智慧對話模型串接。'
+        },
+        {
+          name: 'Docker / Jenkins',
+          desc: '具備 Docker 容器化全端部署能力，並能整合 Jenkins 自動化編譯打包流水線。'
         },
         {
           name: 'Spring Security',
-          desc: '具備後端安全性路由防線配置、加密金鑰解析驗證以及敏感端點權限控管技術。'
-        },
-        {
-          name: 'API Integration',
-          desc: '熟練處理第三方商務金流接口（如 LINE Pay）與智能客服模型（如 Gemini）之跨系統串接。'
-        }
-      ]
-    },
-    {
-      // 分類唯一識別碼 (預留欄位，方便初學者擴充新的技術分類)
-      id: 4,
-      // 在卡片頂部顯示的英文大分類名稱 (預留)
-      title: 'Tools & Security (預留欄位)',
-      // 用於在 CSS 樣式表中對應青綠色漸變線條的類名
-      accentClass: 'accent-tools',
-      // 該分類底下的具體技術項目條目陣列 (預留)
-      items: [
-        {
-          name: 'Git / GitHub',
-          desc: '熟練使用程式碼版本控制管理工具，嚴格遵循團隊多分支協作與整合開發流程。'
-        },
-        {
-          name: 'Spring Security',
-          desc: '具備後端安全性路由防線配置、加密金鑰解析驗證以及敏感端點權限控管技術。'
-        },
-        {
-          name: 'API Integration',
-          desc: '熟練處理第三方商務金流接口（如 LINE Pay）與智能客服模型（如 Gemini）之跨系統串接。'
-        }
-      ]
-    },
-    {
-      // 分類唯一識別碼 (預留欄位，方便初學者擴充新的技術分類)
-      id: 5,
-      // 在卡片頂部顯示的英文大分類名稱 (預留)
-      title: 'Tools & Security (預留欄位)',
-      // 用於在 CSS 樣式表中對應青綠色漸變線條的類名
-      accentClass: 'accent-tools',
-      // 該分類底下的具體技術項目條目陣列 (預留)
-      items: [
-        {
-          name: 'Git / GitHub',
-          desc: '熟練使用程式碼版本控制管理工具，嚴格遵循團隊多分支協作與整合開發流程。'
-        },
-        {
-          name: 'Spring Security',
-          desc: '具備後端安全性路由防線配置、加密金鑰解析驗證以及敏感端點權限控管技術。'
-        },
-        {
-          name: 'API Integration',
-          desc: '熟練處理第三方商務金流接口（如 LINE Pay）與智能客服模型（如 Gemini）之跨系統串接。'
-        }
-      ]
-    },
-    {
-      // 分類唯一識別碼 (預留欄位，方便初學者擴充新的技術分類)
-      id: 6,
-      // 在卡片頂部顯示的英文大分類名稱 (預留)
-      title: 'Tools & Security (預留欄位)',
-      // 用於在 CSS 樣式表中對應青綠色漸變線條的類名
-      accentClass: 'accent-tools',
-      // 該分類底下的具體技術項目條目陣列 (預留)
-      items: [
-        {
-          name: 'Git / GitHub',
-          desc: '熟練使用程式碼版本控制管理工具，嚴格遵循團隊多分支協作與整合開發流程。'
-        },
-        {
-          name: 'Spring Security',
-          desc: '具備後端安全性路由防線配置、加密金鑰解析驗證以及敏感端點權限控管技術。'
-        },
-        {
-          name: 'API Integration',
-          desc: '熟練處理第三方商務金流接口（如 LINE Pay）與智能客服模型（如 Gemini）之跨系統串接。'
-        }
-      ]
-    },
-    {
-      // 分類唯一識別碼 (預留欄位，方便初學者擴充新的技術分類)
-      id: 7,
-      // 在卡片頂部顯示的英文大分類名稱 (預留)
-      title: 'Tools & Security (預留欄位)',
-      // 用於在 CSS 樣式表中對應青綠色漸變線條的類名
-      accentClass: 'accent-tools',
-      // 該分類底下的具體技術項目條目陣列 (預留)
-      items: [
-        {
-          name: 'Git / GitHub',
-          desc: '熟練使用程式碼版本控制管理工具，嚴格遵循團隊多分支協作與整合開發流程。'
-        },
-        {
-          name: 'Spring Security',
-          desc: '具備後端安全性路由防線配置、加密金鑰解析驗證以及敏感端點權限控管技術。'
-        },
-        {
-          name: 'API Integration',
-          desc: '熟練處理第三方商務金流接口（如 LINE Pay）與智能客服模型（如 Gemini）之跨系統串接。'
+          desc: '熟悉 JWT 安全權限令牌過濾機制、Filter Chain 驗證放行與安全性端點防護。'
         }
       ]
     }

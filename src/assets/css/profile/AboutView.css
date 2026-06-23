@@ -1,0 +1,283 @@
+/* 關於我與特色經歷分頁右側專屬的純 CSS 樣式表 */
+
+/* ========================================== */
+/* 1. 基礎佈局與章節包裝樣式                  */
+/* ========================================== */
+.about-page-content {
+  padding-bottom: 2rem;
+}
+
+.about-section-title {
+  color: var(--text-main);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+/* ========================================== */
+/* 2. 關於我詳細自傳 - 折疊面板自訂樣式       */
+/* ========================================== */
+.custom-bio-accordion {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: border-color 0.4s ease;
+}
+
+.custom-bio-accordion .accordion-item {
+  background-color: var(--bg-card);
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.custom-bio-accordion .accordion-item:last-child {
+  border-bottom: none;
+}
+
+.custom-bio-accordion .accordion-button {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: none;
+  border: none;
+  padding: 1.25rem;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.custom-bio-accordion .accordion-button:not(.collapsed) {
+  background-color: var(--active-color);
+  color: #ff8400;
+}
+
+.custom-bio-accordion .accordion-button::after {
+  filter: invert(0.5); /* 使箭頭顏色在深淺色模式下都保持可見度 */
+}
+
+.custom-bio-accordion .accordion-body {
+  background-color: var(--bg-card);
+  color: var(--text-sub);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  padding: 1.25rem;
+  border-top: 1px dashed var(--border-color);
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+/* ========================================== */
+/* 3. 學歷背景與語文能力卡片樣式              */
+/* ========================================== */
+.edu-lang-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease;
+}
+
+.edu-lang-card:hover {
+  transform: translateY(-4px);
+  border-color: #ff8400;
+  box-shadow: 0 10px 25px rgba(255, 132, 0, 0.12);
+}
+
+.edu-timeline {
+  position: relative;
+  padding-left: 20px;
+  border-left: 2px solid var(--border-color);
+  margin-left: 10px;
+  transition: border-color 0.4s ease;
+}
+
+.edu-item {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.edu-item:last-child {
+  margin-bottom: 0;
+}
+
+.edu-dot {
+  position: absolute;
+  left: -27px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ff8400;
+  border: 2px solid var(--bg-card);
+  transition: border-color 0.4s ease;
+}
+
+.edu-school-name {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  transition: color 0.4s ease;
+}
+
+.edu-degree-text {
+  color: #ff8400;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.15rem 0;
+}
+
+.edu-period-text {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin: 0 0 0.5rem 0;
+  transition: color 0.4s ease;
+}
+
+.edu-desc-text {
+  color: var(--text-sub);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+  transition: color 0.4s ease;
+}
+
+/* 語文能力進度條樣式 */
+.lang-row {
+  margin-bottom: 1.25rem;
+}
+
+.lang-row:last-child {
+  margin-bottom: 0;
+}
+
+.lang-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.lang-name {
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.4s ease;
+}
+
+.lang-level {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  transition: color 0.4s ease;
+}
+
+.lang-progress-bar-bg {
+  height: 8px;
+  background-color: var(--bg-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.lang-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff8400, #ffaa44);
+  border-radius: 4px;
+  transition: width 1s ease-in-out;
+}
+
+/* ========================================== */
+/* 4. 特色經歷卡片佈局與細微動畫              */
+/* ========================================== */
+.feat-grid-card {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease;
+}
+
+.feat-grid-card:hover {
+  transform: translateY(-6px);
+  border-color: #ff8400;
+  box-shadow: 0 12px 30px rgba(255, 132, 0, 0.15);
+}
+
+.feat-card-image-box {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-btn);
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color 0.4s ease, background-color 0.4s ease;
+}
+
+.feat-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.feat-grid-card:hover .feat-card-img {
+  transform: scale(1.05); /* 懸停時大圖輕微放大 */
+}
+
+.feat-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.feat-card-title {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
+  transition: color 0.4s ease;
+}
+
+.feat-card-period {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.8rem;
+  transition: color 0.4s ease;
+}
+
+.feat-card-desc {
+  color: var(--text-sub);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+  transition: color 0.4s ease;
+}
+
+.feat-card-action {
+  margin-top: auto;
+}
+
+.feat-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ff8400;
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.feat-link-btn:hover {
+  color: #ffaa44;
+}

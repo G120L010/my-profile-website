@@ -10,6 +10,13 @@ const router = createRouter({
   // 開始宣告每個網址對應到的 Vue 畫面元件
   routes: [
     {
+      // 當網址列為 about 時，代表關於我與特色經歷頁面
+      path: '/about',
+      name: 'profile-about',
+      // 指定載入關於我的視圖元件
+      component: () => import('@/views/profile/AboutView.vue')
+    },
+    {
       // 當網址列為最根本的斜線時，代表個人大首頁
       path: '/',
       name: 'profile-home',
@@ -29,6 +36,13 @@ const router = createRouter({
       name: 'profile-skill',
       // 指定載入專業技能的視圖元件
       component: () => import('@/views/profile/SkillView.vue')
+    },
+    {
+      // 當網址列為 certification 時，代表認證證照頁面
+      path: '/certification',
+      name: 'profile-certification',
+      // 指定載入認證證照的視圖元件
+      component: () => import('@/views/profile/CertificationView.vue')
     }
   ]
 })

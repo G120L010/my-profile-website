@@ -8,44 +8,68 @@ import { ref } from 'vue'
  * 供 HomeView.vue 引入解構使用
  */
 export function useHomeView() {
-  
-  // 【經歷響應式陣列】利用 ref() 包裹經歷清單，使其具備 Vue 雙向綁定的資料追蹤能力
+
+  // 經歷響應式陣列：利用 ref 包裹經歷清單，使其具備 Vue 雙向綁定的資料追蹤能力 (依結束日期由新到舊降冪排序)
   const experiences = ref([
     {
-      id: 1, // 經歷唯一識別碼 (確保不可重複)
-      company: '前端互動網頁設計工作室', // 公司或接案單位名稱
-      role: '前端工程師 / Front-End Developer', // 擔任的技術職稱
-      period: '2024.03 - 2025.06', // 在職起迄年月區間
-      tags: ['Vue 3', 'Vite', 'Bootstrap 5', 'JavaScript'], // 所使用到的核心技術標籤，會自動在卡片底部生成膠囊徽章
-      summary: '專責多端響應式企業官網與後台管理系統開發，優化網頁載入效能與跨瀏覽器相容性，並編寫客製化網頁懸浮微動畫。', // 具體的工作職責與貢獻說明
-      accentClass: 'accent-frontend' // 套用在 App.css 最底部的卡片頂部漸變線條 CSS 類別名稱 (此為藍色漸變)
+      id: 1,
+      company: '崑山科技大學 創新教學中心',
+      role: '專任行政助理',
+      period: '2019.09 - 2025.09',
+      tags: ['行政事務', '研討會籌辦', '資料處理', '人員接待'],
+      summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學研討會、專案講座與助理培訓等大型活動。',
+      accentClass: 'accent-design', // 套用設計紫粉色漸變彩線
+      links: [
+        { title: '活動成果：中央社新聞報導', url: 'https://www.cna.com.tw/postwrite/chi/306901' },
+        { title: '活動成果：校園焦點新聞', url: 'https://www.ksu.edu.tw/focusNews/detail/10139' }
+      ]
     },
     {
-      id: 2, // 經歷唯一識別碼 (確保每個項目都有不同的數字，以便 Vue 進行高效畫面追蹤與渲染)
-      company: '巨量核心資訊系統公司', // 第二筆工作經歷的公司或單位名稱
-      role: 'Java 後端工程師 / Back-End Developer', // 第二筆工作經歷擔任的技術職稱
-      period: '2025.07 - 2026.06', // 服務的起迄年月區間
-      tags: ['Java 21', 'Spring Boot', 'Spring Data JPA', 'SQL Server'], // 該經歷所使用到的核心後端技術標籤
-      summary: '主導企業核心業務子系統模組重構，精準實作高併發交易安全防呆，並進行 SQL 查詢優化以顯著縮短系統 API 響應時間。', // 該經歷的具體工作績效與成就簡介
-      accentClass: 'accent-backend' // 套用在 App.css 中的橘色漸變彩線 CSS 類別名稱，讓頂部細線呈現橘色發光
+      id: 2,
+      company: '教育部學海築夢計畫 - 日本大阪株式會社 TAT',
+      role: '海外實習生',
+      period: '2025.07 - 2025.09',
+      tags: ['海外實習', '日本敬業文化', '行銷實務', '影音廣告'],
+      summary: '通過教育部學海築夢計畫選送赴日本大阪實習。深入綜合商品批發與代理企業，體驗日本嚴謹敬業文化。期間實習團隊主導製作 SUNSTAR 能量棒行銷短影音廣告，提升跨文化交流與專案實務能力。',
+      accentClass: 'accent-tools', // 套用工具青綠色漸變彩線
+      links: [
+        { title: '實習企業：株式會社 TAT 官網', url: 'https://www.nailtat.com/companyprofile/' },
+        { title: '商品網站：SUNSTAR 能量棒網頁', url: 'https://jp.sunstar.com/health-food/andfasting/product_001.html' },
+        { title: '團隊成果：SUNSTAR 能量棒行銷短影音廣告', url: 'images/Aboutimg/TV.mp4' }
+      ]
     },
     {
-      id: 3, // 經歷唯一識別碼 (確保每個項目都有不同的數字)
-      company: '科技新創開源協作團隊', // 第三筆經歷的協作團隊名稱
-      role: '全端開發工程師 / Full-Stack Developer', // 第三筆經歷所擔任的技術職稱
-      period: '2026.07 - 至今', // 服務的起迄年月區間 (至今代表目前仍在職中)
-      tags: ['Vue 3', 'Spring Boot', 'Spring Security', 'Git / GitHub'], // 使用到的全端開發技術標籤
-      summary: '負責多套前後端分離電商平台與 SaaS 服務架構規劃。部署並管理團隊自動化版本控制協作流程，串接金流與第三方 API。', // 該經歷的具體開發職責與貢獻說明
-      accentClass: 'accent-experience' // 套用在 App.css 中的橘紅漸變彩線 CSS 類別名稱
+      id: 3,
+      company: '崑山科技大學',
+      role: '教學助理',
+      period: '2020.09 - 2025.08',
+      tags: ['課程助教', '教學評量', '教學活動', '專題演講'],
+      summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協助協同教學、專題演講與期末考卷批改。',
+      accentClass: 'accent-experience', // 套用經歷橘紅漸變彩線
+      links: []
     },
     {
-      id: 4, // 經歷唯一識別碼 (預留欄位，方便初學者自行新增第五、第六筆經歷)
-      company: '獨立開源專案與接案合作 (預留欄位)', // 預留卡片所顯示的公司名稱
-      role: '全端開發工程師 / Full-Stack Developer', // 預留卡片所顯示的職稱
-      period: '未來規劃中', // 預留卡片的執行期間
-      tags: ['Java 21', 'Spring Boot', 'Vue 3', 'Database'], // 預定使用的技術標籤
-      summary: '這是為您預留的經歷卡片區塊，日後您可以直接在此處補上新的工作經歷或接案專案內容。', // 預留卡片的說明文字
-      accentClass: 'accent-design' // 套用在 App.css 中的炫彩紫粉色漸變彩線 CSS 類別名稱
+      id: 4,
+      company: '大學USR永續發展辦公室',
+      role: '專任研究助理',
+      period: '2023.08 - 2025.07',
+      tags: ['計畫執行', '活動規劃', '社會責任', '循環經濟'],
+      summary: '協助執行循環經濟與永續計畫，參與專題專案並規劃成果呈現，於全國大專院校競賽中榮獲第3名。',
+      accentClass: 'accent-frontend', // 套用前端藍色漸變彩線
+      links: [
+        { title: '獲獎新聞：中央社報導', url: 'https://www.cna.com.tw/postwrite/chi/420204' },
+        { title: '「烏金」減碳告別除濕機！導入「官田菱殼碳」：東森新聞報導', url: 'https://esg.ettoday.net/news/2958041' }
+      ]
+    },
+    {
+      id: 5,
+      company: '學生輔導中心',
+      role: '專任研究助理',
+      period: '2022.08 - 2025.07',
+      tags: ['電腦維護', '資料統計', '素材設計', '檔案管理'],
+      summary: '負責教職員電腦軟硬體疑難排解、Google Drive 雲端資料電子化與統計彙整，並設計活動視覺宣導海報及圖卡。',
+      accentClass: 'accent-backend', // 套用後端橘色漸變彩線
+      links: []
     }
   ])
 
