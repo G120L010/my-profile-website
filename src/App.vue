@@ -48,13 +48,13 @@
 
             <!-- 個人簡介內文描述 -->
             <p class="user-bio-text text-start mb-3">
-              我是吳翰彰。崑山科技大學企業管理研究所碩士畢業，具備跨域 Java 後端開發與專案管理實務。樂於結合資訊科技與企業管理、創意發想，為團隊創造多元商務價值。
+              我是吳翰彰，崑山科技大學企業管理研究所碩士畢業，具備跨域 Java 後端開發與專案管理實務。樂於結合資訊科技與企業管理、創意發想，為團隊創造多元商務價值。
             </p>
 
             <!-- 按鈕組：查看履歷與聯繫我 -->
             <div class="d-flex gap-3 justify-content-center mb-3">
               <!-- 查看履歷：另開新分頁連至雲端硬碟 -->
-              <a href="https://drive.google.com/file/d/你的雲端硬碟檔案識別碼/view?usp=sharing" target="_blank" class="btn fw-medium px-4 py-2 d-flex align-items-center gap-2 rounded-3 btn-profile-solid">
+              <a href="https://drive.google.com/drive/folders/1g4pQU8MrT9m4nbCG0Y30mnXP0iJceiE7?usp=sharing" target="_blank" class="btn fw-medium px-4 py-2 d-flex align-items-center gap-2 rounded-3 btn-profile-solid">
                 <span>查看履歷</span>
                 <span class="small">↗</span>
               </a>
