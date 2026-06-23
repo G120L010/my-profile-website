@@ -21,7 +21,7 @@
           <img :src="project.image" :alt="project.title" class="project-cover-img" />
           
           <!-- 滑鼠移入時才會從下方滑入的半透明遮罩層：d-flex 佈局、flex-column 垂直堆疊、justify-content-between 上下對齊 -->
-          <div class="project-hover-overlay p-4 d-flex flex-column justify-content-between">
+          <div class="project-hover-overlay p-3 d-flex flex-column justify-content-between">
             
             <!-- 遮罩內部上半部：包含作品標題、說明與技術膠囊 -->
             <div class="overlay-top-info">
@@ -41,10 +41,10 @@
 
             <!-- 遮罩內部下半部：操作按鈕列 (d-flex 並排) -->
             <div class="overlay-action-buttons d-flex gap-3">
-              <!-- 瀏覽網站按鈕：:href 動態對應專案的 demoUrl，target="_blank" 代表另開新頁面 -->
-              <a :href="project.demoUrl" target="_blank" class="btn btn-overlay-action w-100 fw-medium">瀏覽網站</a>
-              <!-- 原始碼按鈕：:href 動態對應專案存放的 GitHub repo 網址 -->
-              <a :href="project.codeUrl" target="_blank" class="btn btn-overlay-action w-100 fw-medium">原始碼</a>
+              <!-- 遍歷專案按鈕列表，動態渲染各別作品的按鈕文字與連結 -->
+              <a v-for="btn in project.buttons" :key="btn.text" :href="btn.url" target="_blank" class="btn btn-overlay-action w-100 fw-medium">
+                {{ btn.text }}
+              </a>
             </div>
 
           </div>

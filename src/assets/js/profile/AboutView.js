@@ -54,7 +54,7 @@ export function useAboutView() {
     {
       id: 'bio-3',
       title: '社會責任：環境生態社社長與公益服務',
-      content: '校內亦長期投入社團公益，曾連續三年擔任環境生態教育服務社社長，策劃 ESG 活動並跨社團組織志工團隊，參與教育部青年發展署青年志工團隊競賽。我將服務心得轉化為新詩創作，投稿嵐雲文學獎新詩組並獲得佳績。這些表現讓我榮獲鴻海獎學鯨、全國大專優秀青年，並入選總統教育獎推薦名單。'
+      content: '校內亦長期投入社團公益，曾連續三年擔任環境生態教育服務社社長，策劃 ESG 活動並跨社團組織志工團隊，參與教育部青年發展署青年志工團隊競賽。透過校園生活與服務的點滴，將心境與觀察轉化為新詩創作，並投稿嵐雲文學獎新詩組並屢獲佳績。這些表現讓我榮獲鴻海獎學鯨、全國大專優秀青年，並入選總統教育獎推薦名單。'
     },
     {
       id: 'bio-4',
@@ -71,7 +71,7 @@ export function useAboutView() {
       period: '2026.03 - 2026.07',
       accentClass: 'accent-frontend',
       desc: '接受 555 小時資策會密集資訊培訓，學習 Java、Spring Boot、Vue 3 與資料庫技術。於專案「暖光之丘」擔任資料庫 ERD 設計主導，並成功實作 LINE Pay 金流與 Google Gemini API 智慧客服。',
-      image: 'images/Homeimg/no-image.jpg',
+      image: 'images/Aboutimg/EEIT.jpg',
       url: ''
     },
     {
@@ -80,17 +80,17 @@ export function useAboutView() {
       period: '2025.08 - 2025.09',
       accentClass: 'accent-design',
       desc: '獲得教育部學海築夢計畫補助，前往日本大阪市株式會社 TAT 實習。深入日本綜合商品批發與代理企業，體驗日本敬業文化與嚴謹秩序，提升跨文化交流與環境適應力。',
-      image: 'images/Homeimg/no-image.jpg',
-      url: 'https://www.nailtat.com/companyprofile/'
+      image: 'images/Aboutimg/TAT.jpg',
+      url: 'https://www.cna.com.tw/postwrite/chi/351665'
     },
     {
       id: 3,
       title: '日本大阪實習專案 - 產品短影音行銷廣告影片',
       period: '2025.07 - 2025.08',
       accentClass: 'accent-design',
-      desc: '於日本海外實習期間，為 SUNSTAR 研究所 Fasting Bar 健康能量棒製作推廣短影音與行銷素材，融入影音剪輯、多媒體後製與視覺設計能力。',
-      image: 'images/Homeimg/no-image.jpg',
-      url: 'https://jp.sunstar.com/health-food/andfasting/product_001.html'
+      desc: '於日本海外實習期間，為 SUNSTAR 研究所 Fasting Bar 健康能量棒製作推廣短影音與行銷素材，融入短影音剪輯、多媒體後製與廣告創意文案發想。',
+      image: 'images/Aboutimg/SUN.jpg',
+      url: 'images/Aboutimg/TV.mp4'
     },
     {
       id: 4,
@@ -98,7 +98,7 @@ export function useAboutView() {
       period: '2025.06',
       accentClass: 'accent-tools',
       desc: '由 104 人力銀行與工研院協同辦理。通過經濟部 iPAS 淨零碳規劃管理師、環境部淨零綠領人才合格證書、以及 iPAS 人工智慧 AI 應用規劃師能力鑑定，具備數據驅動與永續規劃的雙重實務能力。',
-      image: 'images/Homeimg/no-image.jpg',
+      image: 'images/Aboutimg/104iPAS.jpg',
       url: 'https://talent.ipas.org.tw/talent/event/detail/d3bd3f271efd45ff9507cfa7466824e1'
     },
     {
@@ -107,8 +107,8 @@ export function useAboutView() {
       period: '2024.06',
       accentClass: 'accent-experience',
       desc: '碩士班應屆畢業學業優異，獲頒臺南市議會代表性議長獎與智育優良獎肯定，展現卓越之學習態度與紮實的學術研究素養。',
-      image: 'images/Homeimg/no-image.jpg',
-      url: 'https://www.cdns.com.tw/'
+      image: 'images/Aboutimg/Council.jpg',
+      url: 'https://www.cna.com.tw/postwrite/chi/405198'
     },
     {
       id: 6,
@@ -116,7 +116,7 @@ export function useAboutView() {
       period: '2023.05',
       accentClass: 'accent-backend',
       desc: '肯定逆境堅持向學之精神，以及在社團領導、偏鄉節能志工服務、公益行動與創新發明上的積極表現，獲選為大專優秀青年。',
-      image: 'images/Homeimg/no-image.jpg',
+      image: 'images/Aboutimg/Youth.jpg',
       url: 'https://www.cna.com.tw/postwrite/chi/337943'
     },
     {
@@ -125,8 +125,8 @@ export function useAboutView() {
       period: '2022.05',
       accentClass: 'accent-backend',
       desc: '不畏環境困頓發憤向學，品德優良且長期熱心社團服務與社會公益，入圍中華民國大專組年度總統教育獎推薦名單。',
-      image: 'images/Homeimg/no-image.jpg',
-      url: ''
+      image: 'images/Aboutimg/Pres.jpg',
+      url: 'https://www.nownews.com/news/6165578'
     },
     {
       id: 8,
@@ -134,7 +134,7 @@ export function useAboutView() {
       period: '2021.11',
       accentClass: 'accent-experience',
       desc: '協同崇德青年社、多媒體社組成跨社團志工團隊，執行「愛築積節能守衛隊」專案，獲教育部青年發展署績優服務獎，為非營利機構與國中小汰換老舊燈具共 3166 支。',
-      image: 'images/Homeimg/no-image.jpg',
+      image: 'images/Aboutimg/KSUSYouth.jpg',
       url: 'https://www.ksu.edu.tw/focusNews/detail/11782'
     },
     {
@@ -143,7 +143,7 @@ export function useAboutView() {
       period: '2021.11',
       accentClass: 'accent-tools',
       desc: '榮獲鴻海教育基金會大專清寒向學獎助學金，肯定求學不輟、逆境自律與積極參與公益、關懷社會之良好態度。',
-      image: 'images/Homeimg/no-image.jpg',
+      image: 'images/Aboutimg/2317.jpg',
       url: 'https://news111.com.tw/news/47/1077'
     },
     {
@@ -152,16 +152,16 @@ export function useAboutView() {
       period: '2021.11',
       accentClass: 'accent-tools',
       desc: '參與第 12 屆 IIIC 國際創新發明競賽，憑藉實務應用作品與科技創新構想，在多國參賽隊伍中榮獲金牌獎狀肯定。',
-      image: 'images/Homeimg/no-image.jpg',
-      url: ''
+      image: 'images/Aboutimg/Golds.jpg',
+      url: 'https://www.cna.com.tw/postwrite/chi/304627'
     }
   ])
 
   // 駕駛執照數據陣列
   const licenses = ref([
-    { name: '普通小型車駕照 - 手排', date: '2026.05' },
-    { name: '大型重型機車駕照', date: '2026.05' },
-    { name: '普通重型機車駕照', date: '2026.05' }
+    { name: '普通小型車駕照 - 手排', date: '無車' },
+    { name: '大型重型機車駕照', date: '無車' },
+    { name: '普通重型機車駕照', date: '有車' }
   ])
 
   // 記錄當前展開的自傳段落識別碼，預設展開第一項

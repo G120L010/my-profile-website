@@ -97,3 +97,37 @@
   border: 1px solid var(--border-color); /* 綁定框線變數 */
   transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; /* 全部過渡 */
 }
+
+/* ========================================== */
+/* 工作經歷成果連結樣式 */
+/* ========================================== */
+
+/* 成果連結區塊外層 */
+.exp-links-zone {
+  border-top: 1px dashed var(--border-color); /* 上方細虛分割線 */
+  padding-top: 0.75rem;                       /* 與 summary 拉開間距 */
+  margin-top: 0.5rem;
+}
+
+/* 成果連結標題 */
+.exp-links-title {
+  color: var(--text-main);  /* 綁定主要文字變數 */
+  font-size: 0.85rem;       /* 小字體設定 */
+  transition: color 0.4s ease;
+}
+
+/* 個別成果新聞連結按鈕 */
+.exp-link-item {
+  color: #ff8400;           /* 品牌亮橘色 */
+  font-size: 0.82rem;       /* 連結字體 */
+  text-decoration: none;    /* 移除底線 */
+  font-weight: 500;         /* 中等字重 */
+  transition: color 0.2s ease, transform 0.2s ease; /* transition 過渡 */
+}
+
+/* 成果連結懸浮狀態 */
+.exp-link-item:hover {
+  color: #ffaa44;           /* Hover 時顏色稍微變亮 */
+  text-decoration: underline; /* 加上底線提升識別 */
+  transform: translateX(2px); /* 微幅向右位移互動效果 */
+}

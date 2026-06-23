@@ -131,7 +131,7 @@
               <!-- 只有當有設定外部連結網址時才顯示按鈕 -->
               <div v-if="exp.url" class="feat-card-action">
                 <a :href="exp.url" target="_blank" class="feat-link-btn">
-                  <span>查看活動成果</span>
+                  <span>查看詳細內容</span>
                   <span class="small">↗</span>
                 </a>
               </div>

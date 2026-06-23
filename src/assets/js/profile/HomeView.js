@@ -18,34 +18,58 @@ export function useHomeView() {
       period: '2019.09 - 2025.09',
       tags: ['行政事務', '研討會籌辦', '資料處理', '人員接待'],
       summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學研討會、專案講座與助理培訓等大型活動。',
-      accentClass: 'accent-design' // 套用設計紫粉色漸變彩線
+      accentClass: 'accent-design', // 套用設計紫粉色漸變彩線
+      links: [
+        { title: '活動成果：中央社新聞報導', url: 'https://www.cna.com.tw/postwrite/chi/306901' },
+        { title: '活動成果：校園焦點新聞', url: 'https://www.ksu.edu.tw/focusNews/detail/10139' }
+      ]
     },
     {
       id: 2,
+      company: '教育部學海築夢計畫 - 日本大阪株式會社 TAT',
+      role: '海外實習生',
+      period: '2025.07 - 2025.09',
+      tags: ['海外實習', '日本敬業文化', '行銷實務', '影音廣告'],
+      summary: '通過教育部學海築夢計畫選送赴日本大阪實習。深入綜合商品批發與代理企業，體驗日本嚴謹敬業文化。期間實習團隊主導製作 SUNSTAR 能量棒行銷短影音廣告，提升跨文化交流與專案實務能力。',
+      accentClass: 'accent-tools', // 套用工具青綠色漸變彩線
+      links: [
+        { title: '實習企業：株式會社 TAT 官網', url: 'https://www.nailtat.com/companyprofile/' },
+        { title: '商品網站：SUNSTAR 能量棒網頁', url: 'https://jp.sunstar.com/health-food/andfasting/product_001.html' },
+        { title: '團隊成果：SUNSTAR 能量棒行銷短影音廣告', url: 'images/Aboutimg/TV.mp4' }
+      ]
+    },
+    {
+      id: 3,
       company: '崑山科技大學',
       role: '教學助理',
       period: '2020.09 - 2025.08',
       tags: ['課程助教', '教學評量', '教學活動', '專題演講'],
       summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協助協同教學、專題演講與期末考卷批改。',
-      accentClass: 'accent-experience' // 套用經歷橘紅漸變彩線
-    },
-    {
-      id: 3, // 經歷唯一識別碼
-      company: '崑山科技大學 USR永續發展辦公室', // 服務單位名稱
-      role: '專任研究助理', // 擔任職稱，優化原工讀生稱呼
-      period: '2023.08 - 2025.07', // 服務起迄期間
-      tags: ['計畫執行', '活動規劃', '社會責任', '循環經濟'], // 技術標籤
-      summary: '協助執行循環經濟與永續計畫，參與專題專案並規劃成果呈現，於全國大專院校競賽中榮獲第3名。', // 工作描述，簡潔不跑版
-      accentClass: 'accent-frontend' // 套用前端藍色漸變彩線
+      accentClass: 'accent-experience', // 套用經歷橘紅漸變彩線
+      links: []
     },
     {
       id: 4,
-      company: '崑山科技大學 學生輔導中心',
+      company: '大學USR永續發展辦公室',
+      role: '專任研究助理',
+      period: '2023.08 - 2025.07',
+      tags: ['計畫執行', '活動規劃', '社會責任', '循環經濟'],
+      summary: '協助執行循環經濟與永續計畫，參與專題專案並規劃成果呈現，於全國大專院校競賽中榮獲第3名。',
+      accentClass: 'accent-frontend', // 套用前端藍色漸變彩線
+      links: [
+        { title: '獲獎新聞：中央社報導', url: 'https://www.cna.com.tw/postwrite/chi/420204' },
+        { title: '「烏金」減碳告別除濕機！導入「官田菱殼碳」：東森新聞報導', url: 'https://esg.ettoday.net/news/2958041' }
+      ]
+    },
+    {
+      id: 5,
+      company: '學生輔導中心',
       role: '專任研究助理',
       period: '2022.08 - 2025.07',
       tags: ['電腦維護', '資料統計', '素材設計', '檔案管理'],
       summary: '負責教職員電腦軟硬體疑難排解、Google Drive 雲端資料電子化與統計彙整，並設計活動視覺宣導海報及圖卡。',
-      accentClass: 'accent-backend' // 套用後端橘色漸變彩線
+      accentClass: 'accent-backend', // 套用後端橘色漸變彩線
+      links: []
     }
   ])
 

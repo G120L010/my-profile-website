@@ -31,8 +31,8 @@
             
             <!-- 大頭照圓形容器：mx-auto 居中、mb-3 縮小底部間距 -->
             <div class="avatar-circle-box mx-auto mb-3">
-              <!-- 大頭照圖片：指向 public/images/Homeimg/no-image.jpg，使用動態綁定以防 Vite 打包錯誤且支援 GitHub Pages 相對路徑 -->
-              <img :src="'images/Homeimg/no-image.jpg'" alt="大頭照" class="avatar-img-style" />
+              <!-- 大頭照圖片：指向 public/images/Homeimg/me.jpg，使用動態綁定以防 Vite 打包錯誤且支援 GitHub Pages 相對路徑 -->
+              <img :src="'images/Homeimg/me.jpg'" alt="大頭照" class="avatar-img-style" />
             </div>
 
             <!-- 使用者中文與英文名字 -->
@@ -48,7 +48,7 @@
 
             <!-- 個人簡介內文描述 -->
             <p class="user-bio-text text-start mb-3">
-              我是吳翰彰。崑山科技大學企業管理碩士與資訊工程學士，具備跨域 Java 後端開發與專案管理實務。樂於結合資訊科技與企業管理，為團隊創造多元商務價值。
+              我是吳翰彰。崑山科技大學企業管理研究所碩士畢業，具備跨域 Java 後端開發與專案管理實務。樂於結合資訊科技與企業管理、創意發想，為團隊創造多元商務價值。
             </p>
 
             <!-- 按鈕組：查看履歷與聯繫我 -->
@@ -78,8 +78,8 @@
               <!-- active-class="item-is-active" 代表當前網址為此分頁時自動高亮的樣式類別 -->
               <!-- py-2 px-3 縮減上下內距，以在有限的高度中容納更多選單 -->
               <RouterLink to="/" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">經歷</span>
-                <span class="nav-text-sub">Experience</span>
+                <span class="nav-text-main">工作經歷</span>
+                <span class="nav-text-sub">Job Experience</span>
               </RouterLink>
               
               <!-- 路由切換 - 作品集分頁 -->

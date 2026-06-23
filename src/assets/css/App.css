@@ -3,71 +3,74 @@
 /* ========================================== */
 /* 1. 核心變數設計 (深淺色切換防呆衣服)        */
 /* ========================================== */
-:root, [data-theme="dark"] {
-  --bg-primary: #0d1117; 
-  --bg-card: #161b22; 
-  --bg-btn: #0d1117; 
-  --border-color: #30363d; 
-  --text-main: #ffffff; 
-  --text-sub: #c9d1d9; 
-  --text-muted: #8b949e; 
-  --active-color: #21262d; 
-  --snowflake-color: rgba(255, 255, 255, 0.45); 
-  --neon-glow-color: #00f0ff; 
-  --neon-btn-bg: #161b22; 
-  --neon-btn-text: #00f0ff; 
-  --portfolio-overlay-bg: rgba(13, 17, 23, 0.92); 
+:root,
+[data-theme="dark"] {
+  --bg-primary: #0d1117;
+  --bg-card: #161b22;
+  --bg-btn: #0d1117;
+  --border-color: #30363d;
+  --text-main: #ffffff;
+  --text-sub: #c9d1d9;
+  --text-muted: #8b949e;
+  --active-color: #21262d;
+  --snowflake-color: rgba(255, 255, 255, 0.45);
+  --neon-glow-color: #00f0ff;
+  --neon-btn-bg: #161b22;
+  --neon-btn-text: #00f0ff;
+  --portfolio-overlay-bg: rgba(13, 17, 23, 0.92);
   --portfolio-overlay-title: #ffffff;
   --portfolio-overlay-summary: #c9d1d9;
-  --nav-active-text: #ffffff; 
+  --nav-active-text: #ffffff;
 
   /* 黑夜模式下的履歷與聯繫按鈕衣服 */
-  --profile-btn-solid-bg: #ff8400;     
-  --profile-btn-solid-text: #ffffff;   
-  --profile-btn-outline-border: #ff8400; 
-  --profile-btn-outline-text: #ff8400;   
+  --profile-btn-solid-bg: #ff8400;
+  --profile-btn-solid-text: #ffffff;
+  --profile-btn-outline-border: #ff8400;
+  --profile-btn-outline-text: #ff8400;
 }
 
 [data-theme="light"] {
-  --bg-primary: #f4f6f9; 
-  --bg-card: #ffffff; 
-  --bg-btn: #f4f6f9; 
-  --border-color: #d8dee4; 
-  --text-main: #24292f; 
-  --text-sub: #57606a; 
-  --text-muted: #6e7781; 
-  --snowflake-color: rgba(93, 135, 194, 0.4); /* 完美保留你珍貴的淡藍色雪花變數 */
-  --neon-glow-color: #0088cc; 
-  --neon-btn-bg: #ffffff; 
-  --neon-btn-text: #0088cc; 
-  --portfolio-overlay-bg: rgba(255, 255, 255, 0.95); 
+  --bg-primary: #f4f6f9;
+  --bg-card: #ffffff;
+  --bg-btn: #f4f6f9;
+  --border-color: #d8dee4;
+  --text-main: #24292f;
+  --text-sub: #57606a;
+  --text-muted: #6e7781;
+  --snowflake-color: rgba(93, 135, 194, 0.4);
+  /* 完美保留你珍貴的淡藍色雪花變數 */
+  --neon-glow-color: #0088cc;
+  --neon-btn-bg: #ffffff;
+  --neon-btn-text: #0088cc;
+  --portfolio-overlay-bg: rgba(255, 255, 255, 0.95);
   --portfolio-overlay-title: #24292f;
   --portfolio-overlay-summary: #57606a;
-  --active-color: #eaeef2; 
-  --nav-active-text: #24292f; 
+  --active-color: #eaeef2;
+  --nav-active-text: #24292f;
 
   /* 白天模式下的履歷與聯繫按鈕衣服 */
-  --profile-btn-solid-bg: #ff8400;   
-  --profile-btn-solid-text: #ffffff; 
-  --profile-btn-outline-border: #ff8400; 
-  --profile-btn-outline-text: #ff8400;   
+  --profile-btn-solid-bg: #ff8400;
+  --profile-btn-solid-text: #ffffff;
+  --profile-btn-outline-border: #ff8400;
+  --profile-btn-outline-text: #ff8400;
 }
 
 /* ========================================== */
 /* 2. 通用佈局與結構合併                       */
 /* ========================================== */
 .main-site-bg {
-  background-color: var(--bg-primary); 
-  position: relative; 
-  transition: background-color 0.4s ease; 
+  background-color: var(--bg-primary);
+  position: relative;
+  transition: background-color 0.4s ease;
 }
 
-.profile-sidebar-card, .content-main-box {
-  background-color: var(--bg-card); 
-  border: 1px solid var(--border-color); 
-  border-radius: 24px; 
-  z-index: 5; 
-  transition: background-color 0.4s ease, border-color 0.4s ease; 
+.profile-sidebar-card,
+.content-main-box {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  z-index: 5;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
 /* 只有在桌機版大螢幕（Bootstrap lg 斷點以上）時，左側名片才需要粘滯固定 */
@@ -83,25 +86,52 @@
 .profile-sidebar-card::-webkit-scrollbar {
   width: 4px;
 }
+
 .profile-sidebar-card::-webkit-scrollbar-thumb {
   background-color: var(--border-color);
   border-radius: 4px;
 }
 
-.content-main-box { min-height: 600px; }
+.content-main-box {
+  min-height: 600px;
+}
 
 .avatar-circle-box {
-  width: 140px; height: 140px; 
-  border-radius: 50%; 
-  border: 2px solid var(--border-color); 
-  overflow: hidden; 
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  overflow: hidden;
   transition: border-color 0.4s ease;
 }
-.avatar-img-style { width: 100%; height: 100%; object-fit: cover; }
 
-.user-name-text { color: var(--text-main); font-size: 1.6rem; transition: color 0.4s ease; }
-.user-title-text { color: var(--text-sub); font-size: 0.95rem; min-height: 1.5rem; transition: color 0.4s ease; }
-.user-bio-text { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; transition: color 0.4s ease; }
+.avatar-img-style {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  /* 設定圖片裁切的重心位置，若頭頂被裁切，可使用 center top 或 center 15% 進行微調 */
+}
+
+.user-name-text {
+  color: var(--text-main);
+  font-size: 1.6rem;
+  transition: color 0.4s ease;
+}
+
+.user-title-text {
+  color: var(--text-sub);
+  font-size: 0.95rem;
+  min-height: 1.5rem;
+  transition: color 0.4s ease;
+}
+
+.user-bio-text {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  transition: color 0.4s ease;
+}
 
 /* ========================================== */
 /* 3. 個人履歷與聯繫按鈕樣式區 (與全站橘色調統一) */
@@ -114,10 +144,13 @@
 }
 
 .btn-profile-solid:hover {
-  transform: translateY(-3px) !important; /* 懸浮時輕微上浮 3 像素 */
-  background-color: #ff9b26 !important; /* 變為較亮橘色 */
+  transform: translateY(-3px) !important;
+  /* 懸浮時輕微上浮 3 像素 */
+  background-color: #ff9b26 !important;
+  /* 變為較亮橘色 */
   border-color: #ff9b26 !important;
-  box-shadow: 0 6px 20px rgba(255, 132, 0, 0.35) !important; /* 橘色霓虹微發光 */
+  box-shadow: 0 6px 20px rgba(255, 132, 0, 0.35) !important;
+  /* 橘色霓虹微發光 */
 }
 
 .btn-profile-outline {
@@ -128,39 +161,65 @@
 }
 
 .btn-profile-outline:hover {
-  transform: translateY(-3px) !important; /* 懸浮時輕微上浮 3 像素 */
+  transform: translateY(-3px) !important;
+  /* 懸浮時輕微上浮 3 像素 */
   background-color: var(--profile-btn-outline-border) !important;
-  color: #ffffff !important; /* 文字變為純白 */
-  box-shadow: 0 6px 20px rgba(255, 132, 0, 0.3) !important; /* 橘色霓虹微發光 */
+  color: #ffffff !important;
+  /* 文字變為純白 */
+  box-shadow: 0 6px 20px rgba(255, 132, 0, 0.3) !important;
+  /* 橘色霓虹微發光 */
 }
 
 /* ========================================== */
 /* 4. 導覽選單按鈕與激活高亮                   */
 /* ========================================== */
 .custom-nav-item {
-  text-decoration: none; 
-  background-color: var(--bg-btn); 
-  border: 1px solid var(--border-color); 
-  border-radius: 12px; 
-  transition: all 0.2s ease; 
+  text-decoration: none;
+  background-color: var(--bg-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
-.nav-text-main { color: var(--text-main); font-size: 0.95rem; font-weight: 500; transition: color 0.4s ease; }
-.nav-text-sub { color: var(--text-muted); font-size: 0.8rem; transition: color 0.4s ease; }
 
-.custom-nav-item:hover { border-color: var(--text-muted); }
+.nav-text-main {
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.4s ease;
+}
+
+.nav-text-sub {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  transition: color 0.4s ease;
+}
+
+.custom-nav-item:hover {
+  border-color: var(--text-muted);
+}
 
 .custom-nav-item.item-is-active {
-  background-color: var(--active-color) !important; 
-  border-color: var(--text-muted) !important; 
+  background-color: var(--active-color) !important;
+  border-color: var(--text-muted) !important;
 }
-.custom-nav-item.item-is-active .nav-text-main { color: var(--nav-active-text) !important; font-weight: 700; }
-.custom-nav-item.item-is-active .nav-text-sub { color: var(--nav-active-text) !important; opacity: 0.7; }
+
+.custom-nav-item.item-is-active .nav-text-main {
+  color: var(--nav-active-text) !important;
+  font-weight: 700;
+}
+
+.custom-nav-item.item-is-active .nav-text-sub {
+  color: var(--nav-active-text) !important;
+  opacity: 0.7;
+}
 
 .sidebar-type-cursor {
-  display: inline-block; width: 2px; height: 1rem;
+  display: inline-block;
+  width: 2px;
+  height: 1rem;
   background-color: var(--text-main);
   margin-left: 4px;
-  animation: sidebarBlink 0.8s infinite; 
+  animation: sidebarBlink 0.8s infinite;
   transition: background-color 0.4s ease;
 }
 
@@ -168,24 +227,33 @@
 /* 5. 右下角懸浮霓虹切換主題按鈕               */
 /* ========================================== */
 .custom-theme-toggle-btn {
-  position: fixed; /* 固定在視窗右下角 */
-  bottom: 2rem; /* 距離底部 2rem */
-  right: 2rem; /* 距離右側 2rem */
-  width: 50px; /* 固定寬度，使其成正圓形 */
-  height: 50px; /* 固定高度 */
-  border-radius: 50% !important; /* 確保是正圓形 */
-  padding: 0 !important; /* 移除內縮 */
+  position: fixed;
+  /* 固定在視窗右下角 */
+  bottom: 2rem;
+  /* 距離底部 2rem */
+  right: 2rem;
+  /* 距離右側 2rem */
+  width: 50px;
+  /* 固定寬度，使其成正圓形 */
+  height: 50px;
+  /* 固定高度 */
+  border-radius: 50% !important;
+  /* 確保是正圓形 */
+  padding: 0 !important;
+  /* 移除內縮 */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  z-index: 9999; /* 確保層級在最上層 */
-  
+  z-index: 9999;
+  /* 確保層級在最上層 */
+
   background-color: var(--neon-btn-bg) !important;
   color: var(--neon-btn-text) !important;
-  font-size: 1.3rem !important; /* 調整 emoji 大小 */
+  font-size: 1.3rem !important;
+  /* 調整 emoji 大小 */
   border: 2px solid var(--neon-glow-color) !important;
   box-shadow: 0 0 8px var(--neon-glow-color), inset 0 0 4px var(--neon-glow-color) !important;
-  animation: neonPulse 1.8s infinite alternate ease-in-out !important; 
+  animation: neonPulse 1.8s infinite alternate ease-in-out !important;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
   cursor: pointer;
 }
@@ -194,103 +262,198 @@
   background-color: var(--neon-glow-color) !important;
   color: #ffffff !important;
   box-shadow: 0 0 16px var(--neon-glow-color), 0 0 30px var(--neon-glow-color) !important;
-  transform: scale(1.1) rotate(15deg); /* 懸浮時微幅放大並輕微旋轉，增加細緻互動感 */
+  transform: scale(1.1) rotate(15deg);
+  /* 懸浮時微幅放大並輕微旋轉，增加細緻互動感 */
 }
 
 /* ========================================== */
 /* 6. 核心動畫軌道與雪花特效層                 */
 /* ========================================== */
-@keyframes sidebarBlink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+@keyframes sidebarBlink {
+
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
 
 @keyframes neonPulse {
-  0% { box-shadow: 0 0 3px var(--neon-glow-color), 0 0 8px rgba(0, 136, 204, 0.2), inset 0 0 1px var(--neon-glow-color); opacity: 0.95; }
-  100% { box-shadow: 0 0 8px var(--neon-glow-color), 0 0 18px rgba(0, 136, 204, 0.4), inset 0 0 4px var(--neon-glow-color); opacity: 1; }
+  0% {
+    box-shadow: 0 0 3px var(--neon-glow-color), 0 0 8px rgba(0, 136, 204, 0.2), inset 0 0 1px var(--neon-glow-color);
+    opacity: 0.95;
+  }
+
+  100% {
+    box-shadow: 0 0 8px var(--neon-glow-color), 0 0 18px rgba(0, 136, 204, 0.4), inset 0 0 4px var(--neon-glow-color);
+    opacity: 1;
+  }
 }
 
 .snowflake-background-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  pointer-events: none; 
-  overflow: hidden; z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
 }
 
 .snowflake-item {
-  position: absolute; top: -30px;
-  color: var(--snowflake-color); 
+  position: absolute;
+  top: -30px;
+  color: var(--snowflake-color);
   user-select: none;
   animation: fallAnimation linear infinite;
   transition: color 0.4s ease;
 }
-.snowflake-item::after { content: "❄"; display: block; }
 
-.snowflake-item:nth-child(1) { font-size: 16px; left: 10%; animation-duration: 10s; }
-.snowflake-item:nth-child(2) { font-size: 32px; left: 35%; animation-duration: 14s; animation-delay: 2s; filter: blur(2px); }
-.snowflake-item:nth-child(3) { font-size: 13px; left: 55%; animation-duration: 9s; animation-delay: 1s; }
-.snowflake-item:nth-child(4) { font-size: 24px; left: 75%; animation-duration: 16s; animation-delay: 4s; filter: blur(1px); }
-.snowflake-item:nth-child(5) { font-size: 18px; left: 92%; animation-duration: 11s; animation-delay: 3s; }
+.snowflake-item::after {
+  content: "❄";
+  display: block;
+}
+
+.snowflake-item:nth-child(1) {
+  font-size: 16px;
+  left: 10%;
+  animation-duration: 10s;
+}
+
+.snowflake-item:nth-child(2) {
+  font-size: 32px;
+  left: 35%;
+  animation-duration: 14s;
+  animation-delay: 2s;
+  filter: blur(2px);
+}
+
+.snowflake-item:nth-child(3) {
+  font-size: 13px;
+  left: 55%;
+  animation-duration: 9s;
+  animation-delay: 1s;
+}
+
+.snowflake-item:nth-child(4) {
+  font-size: 24px;
+  left: 75%;
+  animation-duration: 16s;
+  animation-delay: 4s;
+  filter: blur(1px);
+}
+
+.snowflake-item:nth-child(5) {
+  font-size: 18px;
+  left: 92%;
+  animation-duration: 11s;
+  animation-delay: 3s;
+}
 
 @keyframes fallAnimation {
-  0% { top: -30px; transform: translateX(0) rotate(0deg); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { top: 100%; transform: translateX(45px) rotate(360deg); opacity: 0; }
+  0% {
+    top: -30px;
+    transform: translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 100%;
+    transform: translateX(45px) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* ========================================== */
 /* 7. 全站共用卡片頂部漸變裝飾條               */
 /* ========================================== */
 .card-accent-line {
-  position: absolute; /* 設定為絕對定位 */
-  top: 0; /* 緊貼卡片最上緣 */
-  left: 0; /* 緊貼卡片最左緣 */
-  width: 100%; /* 寬度完全填滿卡片橫寬 */
-  height: 4px; /* 設定高度為 4 像素 */
-  z-index: 10; /* 確保彩條蓋在最上層 */
+  position: absolute;
+  /* 設定為絕對定位 */
+  top: 0;
+  /* 緊貼卡片最上緣 */
+  left: 0;
+  /* 緊貼卡片最左緣 */
+  width: 100%;
+  /* 寬度完全填滿卡片橫寬 */
+  height: 4px;
+  /* 設定高度為 4 像素 */
+  z-index: 10;
+  /* 確保彩條蓋在最上層 */
 }
 
 /* 針對前端分類卡片套用的科技藍色漸變線 */
 .accent-frontend {
-  background: linear-gradient(90deg, #00d2ff, #0066ff); /* 使用藍色系水平雙色漸變 */
+  background: linear-gradient(90deg, #00d2ff, #0066ff);
+  /* 使用藍色系水平雙色漸變 */
 }
 
 /* 針對後端分類卡片套用的熱情橘色漸變線 */
 .accent-backend {
-  background: linear-gradient(90deg, #ff8400, #ffaa44); /* 使用橘色系水平雙色漸變 */
+  background: linear-gradient(90deg, #ff8400, #ffaa44);
+  /* 使用橘色系水平雙色漸變 */
 }
 
 /* 針對工具安全卡片套用的未來感青綠色漸變線 */
 .accent-tools {
-  background: linear-gradient(90deg, #00ff87, #60efff); /* 使用青綠與亮藍水平雙色漸變 */
+  background: linear-gradient(90deg, #00ff87, #60efff);
+  /* 使用青綠與亮藍水平雙色漸變 */
 }
 
 /* 針對經歷卡片套用的熱情橘紅漸變線 */
 .accent-experience {
-  background: linear-gradient(90deg, #ff8400, #ff5e62); /* 使用橘紅水平漸變 */
+  background: linear-gradient(90deg, #ff8400, #ff5e62);
+  /* 使用橘紅水平漸變 */
 }
 
 /* 針對設計、接案或特殊主題卡片套用的炫彩紫粉色漸變線 */
 .accent-design {
-  background: linear-gradient(90deg, #ec008c, #fc6767); /* 使用紫粉色水平雙色漸變 */
+  background: linear-gradient(90deg, #ec008c, #fc6767);
+  /* 使用紫粉色水平雙色漸變 */
 }
 
 /* ========================================== */
 /* 8. 全站分頁大標題共用樣式                   */
 /* ========================================== */
 .page-title-zone {
-  display: flex; /* 使用彈性盒模型佈局 */
-  align-items: center; /* 垂直方向置中對齊 */
-  gap: 12px; /* 元件間保持 12px 間距 */
+  display: flex;
+  /* 使用彈性盒模型佈局 */
+  align-items: center;
+  /* 垂直方向置中對齊 */
+  gap: 12px;
+  /* 元件間保持 12px 間距 */
 }
 
 .page-title-indicator {
-  width: 4px; /* 設定寬度 4px */
-  height: 24px; /* 設定高度 24px */
-  background-color: #ff8400; /* 設定品牌亮橘色 */
-  border-radius: 2px; /* 邊角設定為圓角 */
+  width: 4px;
+  /* 設定寬度 4px */
+  height: 24px;
+  /* 設定高度 24px */
+  background-color: #ff8400;
+  /* 設定品牌亮橘色 */
+  border-radius: 2px;
+  /* 邊角設定為圓角 */
 }
 
 .page-main-title {
-  color: var(--text-main); /* 綁定主題變數，適應深淺模式 */
-  font-size: 1.4rem; /* 設定字體大小 1.4rem */
-  font-weight: 700; /* 設定字體為粗體 */
-  transition: color 0.4s ease; /* 切換模式時顏色平滑過渡 */
+  color: var(--text-main);
+  /* 綁定主題變數，適應深淺模式 */
+  font-size: 1.4rem;
+  /* 設定字體大小 1.4rem */
+  font-weight: 700;
+  /* 設定字體為粗體 */
+  transition: color 0.4s ease;
+  /* 切換模式時顏色平滑過渡 */
 }

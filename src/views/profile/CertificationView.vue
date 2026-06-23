@@ -42,12 +42,12 @@
           <div class="card-action-bar mt-auto d-flex gap-2">
             <!-- 查看憑證按鈕：點擊開啟燈箱彈窗放大觀看圖片 -->
             <button @click="showCertificate(cert.image)" class="btn btn-cert-view w-100 fw-medium d-flex align-items-center justify-content-center gap-1">
-              <span>查看憑證</span>
-              <span class="small">●</span>
+              <span>查看通過憑證</span>
+              <span class="small">★</span>
             </button>
             <!-- 線上驗證按鈕：另開新分頁連至證照驗證系統 -->
             <a :href="cert.verifyUrl" target="_blank" class="btn btn-cert-verify w-100 fw-medium d-flex align-items-center justify-content-center gap-1">
-              <span>線上驗證</span>
+              <span>前往官方網站</span>
               <span class="small">↗</span>
             </a>
           </div>

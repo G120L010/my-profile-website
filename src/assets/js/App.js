@@ -8,18 +8,18 @@ import { ref, onMounted } from 'vue'
  * 供 App.vue 解構引用
  */
 export function useAppView() {
-  
+
   // 打字機設定：定義要在個人名片上像打字機一樣輸出打印的專業職稱字串
   const fullText = 'Java 軟體工程師 / Java Developer'
-  
+
   // 【打字機變數】建立一個初始值為空字串的響應式變數 (ref)，用來即時儲存目前已經印出來的文字
   const displayText = ref('')
-  
+
   // 【打字機索引】宣告一個普通的整數變數，用來記錄打字機目前跑到了第幾個字元的索引位置
   let currentIndex = 0
 
-  // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 true 代表深色黑夜模式
-  const isDarkMode = ref(true)
+  // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 false 代表淺色白天模式
+  const isDarkMode = ref(false)
 
   /**
    * 【打字機核心函式】宣告並定義執行逐字打字效果的遞迴計時函式
@@ -42,12 +42,12 @@ export function useAppView() {
   const toggleTheme = () => {
     // 將原本儲存黑夜狀態的布林值進行反轉，如果是真(true)就變假(false)，如果是假(false)就變真(true)
     isDarkMode.value = !isDarkMode.value
-    
+
     // 進行條件檢查，如果目前為真 (深色模式)
     if (isDarkMode.value) {
       // 透過瀏覽器 DOM 原生語法，去網頁最外層的 <html> 標籤上設定為 data-theme="dark" 屬性
       document.documentElement.setAttribute('data-theme', 'dark')
-    // 如果目前為假 (白天模式)
+      // 如果目前為假 (白天模式)
     } else {
       // 透過瀏覽器 DOM 原生語法，去網頁最外層的 <html> 標籤上設定為 data-theme="light" 屬性
       document.documentElement.setAttribute('data-theme', 'light')
@@ -61,8 +61,8 @@ export function useAppView() {
   onMounted(() => {
     // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
     typeEffect()
-    // 網頁初始化一進來時，預設先在 html 標籤打上深色模式的 data-theme="dark" 屬性，確保畫面預設為黑夜模式
-    document.documentElement.setAttribute('data-theme', 'dark')
+    // 網頁初始化一進來時，預設先在 html 標籤打上淺色模式的 data-theme="light" 屬性，確保畫面預設為白天模式
+    document.documentElement.setAttribute('data-theme', 'light')
   })
 
   // 將網頁模板 (Template) 需要用來顯示與點擊綁定的變數及函式完整包裝導出
