@@ -241,7 +241,7 @@ jobs:
 | 2026.06.23 | **新增影片創作作品與依客製化順序重排** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 使用者需要擴充作品集，並要求特定的作品排序：程式碼 -> SUNSTAR -> 貼圖 -> 影片。 | 在 projects 陣列中新增 3 個與原 id: 2 相同格式的作品，配置相應的影音按鈕連結，並依照「程式碼、SUNSTAR、貼圖、其餘影片」的順序將作品 ID 重新排序為 1 至 6，確保版面與註解規範一致。 |
 | 2026.06.23 | **證照清單微調、圖片補齊與按鈕文字修正** | [CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js)<br>[CertificationView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/CertificationView.vue) | 依據最新指示，刪除 iPAS 專場活動，使專業證照總數精簡至 13 項；同時為主要證照補上實體圖片，並將按鈕文字「線上驗證」修正為「前往官方網站」。 | (1) 從證照清單中移除 iPAS 專場項目，並將後續項目的 ID 重新編排為連續的 1 至 13；(2) 將證照的 image 路徑指向對應的實體圖片；(3) 修正 vue 中的按鈕文字為「前往官方網站」。 |
 | 2026.06.23 | **補充新增作品之專案簡介與技術標籤** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 配合使用者調整的作品集新增項目（id: 4, 5, 6）的網址與圖片，補齊對應的專業專案簡介與技術創作標籤。 | 在 projects 陣列中為新增的作詞歌曲影片、短影音創作以及文創商品線上商鋪作品重寫 summary 與 tags，展現多媒體後製、企劃與品牌平面美術的專業整合實務能力，並確保註解無 Emoji 特效。 |
-| 2026.06.23 | **修改首頁初始化預設主題為白天模式** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js) | 使用者希望一開始載入首頁時，預設顯示白天模式（Light Mode）而非黑夜模式。 | 將 App.js 中 onMounted 掛載時設定的 data-theme 屬性改為 light，並將 isDarkMode 響應式變數的初始值改為 false，確保全站預設為高質感的白天明亮配色。 |
+| 2026.06.23 | **修改首頁初始化預設主題為白天模式** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js) | 使用者希望一開始載入首頁時，預設顯示白天模式（Light Mode）而非黑夜模式。 | 將 App.js 中 onMounted 掛載時設定的 data-theme 屬性改為 light，並將 isDarkMode 響應式變數的初始值改為 false，確保全站預設為高質感的白天明亮配色。 | 
 
 
 
