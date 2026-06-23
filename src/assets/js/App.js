@@ -9,8 +9,8 @@ import { ref, onMounted } from 'vue'
  */
 export function useAppView() {
   
-  // 【打字機設定】定義要在個人名片上像打字機一樣輸出打印的專業職稱字串
-  const fullText = '前端工程師 / Front-End Developer'
+  // 打字機設定：定義要在個人名片上像打字機一樣輸出打印的專業職稱字串
+  const fullText = 'Java 軟體工程師 / Java Developer'
   
   // 【打字機變數】建立一個初始值為空字串的響應式變數 (ref)，用來即時儲存目前已經印出來的文字
   const displayText = ref('')

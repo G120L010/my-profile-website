@@ -73,10 +73,21 @@
 /* 只有在桌機版大螢幕（Bootstrap lg 斷點以上）時，左側名片才需要粘滯固定 */
 @media (min-width: 992px) {
   .profile-sidebar-card {
+    /* 使用粘滯固定，但移除最大高度限制與內部滾動條，確保左側名片卡片完整呈現 */
     position: sticky;
     top: 2rem;
   }
 }
+
+/* 自訂 Chrome/Safari/Edge 側邊欄細微滾動條樣式，維持精緻質感 */
+.profile-sidebar-card::-webkit-scrollbar {
+  width: 4px;
+}
+.profile-sidebar-card::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 4px;
+}
+
 .content-main-box { min-height: 600px; }
 
 .avatar-circle-box {

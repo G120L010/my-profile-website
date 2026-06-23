@@ -1,0 +1,168 @@
+/* ========================================== */
+/* 認證證照分頁右側專屬 CSS 樣式表 */
+/* ========================================== */
+
+/* 證照卡片本體樣式 */
+.cert-grid-card {
+  position: relative;     /* 設定相對定位以進行漸變彩線絕對定位 */
+  background-color: var(--bg-card); /* 綁定卡片背景變數 */
+  border: 1px solid var(--border-color); /* 綁定框線變數 */
+  border-radius: 16px;    /* 統一成 16px 精緻圓角 */
+  overflow: hidden;       /* 裁剪頂部彩線圓角 */
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease; /* 補上平滑浮起與變色動畫 */
+}
+
+/* 懸浮時浮起與發光效果 */
+.cert-grid-card:hover {
+  transform: translateY(-6px); /* 懸浮時向上浮動 6 像素 */
+  border-color: #ff8400;       /* 邊框變為品牌亮橘色 */
+  box-shadow: 0 12px 30px rgba(255, 132, 0, 0.15); /* 橘色霓虹發光陰影 */
+}
+
+/* 證照標題文字 */
+.cert-title {
+  color: var(--text-main); /* 綁定主要文字變數 */
+  font-size: 1.1rem;       /* 設定字體大小 */
+  line-height: 1.4;        /* 設定合適行高 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 發證機構名稱 */
+.cert-issuer {
+  color: #ff8400;         /* 固定使用品牌亮橘色 */
+  font-size: 0.9rem;       /* 設定字體大小 */
+}
+
+/* 取得時間與編號文字 */
+.cert-meta-info {
+  color: var(--text-muted); /* 綁定靜態文字變數 */
+  font-size: 0.82rem;      /* 設定小字體 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 證照摘要簡介說明 */
+.cert-summary {
+  color: var(--text-sub);  /* 綁定次要文字變數 */
+  font-size: 0.88rem;      /* 設定字體大小 */
+  line-height: 1.6;        /* 設定行高提升可讀性 */
+  transition: color 0.4s ease; /* 變色過渡 */
+}
+
+/* 驗證證照按鈕樣式 */
+.btn-cert-verify {
+  display: inline-flex;    /* 水平置中排列圖標與文字 */
+  align-items: center;     /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  font-size: 0.85rem !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  text-decoration: none;
+  transition: all 0.3s ease !important;
+}
+
+/* 驗證按鈕懸浮樣式 */
+.btn-cert-verify:hover {
+  border-color: #ff8400 !important;
+  color: #ff8400 !important;
+  background-color: rgba(255, 132, 0, 0.05) !important;
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.1) !important;
+}
+
+/* 查看憑證按鈕樣式 */
+.btn-cert-view {
+  display: inline-flex;    /* 水平置中排列 */
+  align-items: center;     /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  background-color: var(--profile-btn-solid-bg) !important;
+  border: 1px solid var(--profile-btn-solid-bg) !important;
+  color: var(--profile-btn-solid-text) !important;
+  font-size: 0.85rem !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* 查看憑證按鈕懸浮樣式 */
+.btn-cert-view:hover {
+  background-color: #ff9b26 !important;
+  border-color: #ff9b26 !important;
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+/* 證照圖片燈箱遮罩層 */
+.cert-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85); /* 半透明深黑背景 */
+  z-index: 10000;                       /* 確保浮在網頁最上層 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);           /* 毛玻璃特效 */
+  animation: certFadeIn 0.3s ease;
+}
+
+/* 彈窗內容容器 */
+.cert-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: certScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 證照大圖 */
+.cert-modal-img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* 關閉按鈕 */
+.cert-modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 2rem;
+  width: 45px;
+  height: 45px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10010;
+  transition: all 0.3s ease;
+}
+
+/* 關閉按鈕懸浮樣式 */
+.cert-modal-close-btn:hover {
+  background-color: #ff8400;
+  border-color: #ff8400;
+  transform: rotate(90deg); /* 旋轉效果 */
+}
+
+/* 燈箱動畫 */
+@keyframes certFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes certScaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
