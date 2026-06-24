@@ -20,6 +20,14 @@
       <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
     </button>
 
+    <!-- 懸浮固定於右下角的回到頂部按鈕 -->
+    <!-- 利用 Vue transition 元件定義淡入淡出動畫，並利用 v-show 與 showScrollTopBtn 連動 -->
+    <Transition name="fade">
+      <button v-show="showScrollTopBtn" @click="scrollToTop" class="btn custom-scroll-top-btn" title="回到頂部">
+        <span>▲</span>
+      </button>
+    </Transition>
+
     <!-- Bootstrap 響應式容器網格 -->
     <div class="container">
       <div class="row g-4">
@@ -48,7 +56,7 @@
 
             <!-- 個人簡介內文描述 -->
             <p class="user-bio-text text-start mb-3">
-              畢業於崑山科大企管所碩士，兼具 Java 後端開發與專案管理實務。擅長運用 AI 工具輔助開發與流程優化，並將「企業管理思維」與「資訊科技」深度融合，致力於為團隊創造高效、多元的數位商務價值。
+              畢業於崑山科技大學企業管理研究所，並取得管理學碩士學位，兼具 Java 後端開發與專案管理實務。擅長運用 AI 工具輔助開發與流程優化，並將「企業管理思維」與「資訊科技」深度融合，致力於為團隊創造高效、多元的數位商務價值。
             </p>
 
             <!-- 按鈕組：查看履歷與聯繫我 -->
@@ -125,6 +133,6 @@ import '@/assets/css/App.css'
 // 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換邏輯)
 import { useAppView } from '@/assets/js/App.js'
 
-// 解構取出打字機文字、主題模式變數、切換主題方法，以在 Template 模板中做變數綁定與顯示
-const { displayText, isDarkMode, toggleTheme } = useAppView()
+// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態及置頂方法，以在 Template 模板中做變數綁定與顯示
+const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop } = useAppView()
 </script>

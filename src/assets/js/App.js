@@ -1,7 +1,8 @@
 // 全站共用左側名片的打字機與深淺色主題切換業務邏輯控制檔案
 // 採用組合式 API (Composition API) 撰寫，方便功能模組化抽離
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
 /**
  * 建立並導出全站外殼專用的核心邏輯控制函式
@@ -20,6 +21,47 @@ export function useAppView() {
 
   // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 false 代表淺色白天模式
   const isDarkMode = ref(false)
+
+  // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態，大於 300px 時為真
+  const showScrollTopBtn = ref(false)
+
+  // 【路由監聽】取得當前路由物件以追蹤頁面切換
+  const route = useRoute()
+
+  // 監聽路由路徑變化：當切換不同分頁時，立即將置頂按鈕隱藏並捲回最頂部
+  watch(
+    () => route.path,
+    () => {
+      showScrollTopBtn.value = false
+      window.scrollTo(0, 0)
+    }
+  )
+
+  // 【滾動監聽函式】監聽垂直滾動高度是否超過可滾動範圍的一半（滑到頁面中間）以決定顯示或隱藏按鈕
+  const handleScroll = () => {
+    // 獲取網頁內容總高度與瀏覽器視窗高度
+    const scrollHeight = document.documentElement.scrollHeight
+    const clientHeight = document.documentElement.clientHeight
+    // 計算出最大的可滾動高度差
+    const maxScrollHeight = scrollHeight - clientHeight
+    // 安全防護雙重檢查：
+    // 1. 最大可滾動高度差必須大於 150 像素（代表是足夠長的頁面，才有置頂必要）
+    // 2. 目前垂直滾動位置必須大於 100 像素（防範頁面剛載入或路由切換時的高度瞬時差）
+    // 3. 目前滾動高度已超過最大可滾動高度的一半（滑到頁面中間）
+    if (maxScrollHeight > 150 && window.scrollY > 100) {
+      showScrollTopBtn.value = window.scrollY > (maxScrollHeight / 2)
+    } else {
+      showScrollTopBtn.value = false
+    }
+  }
+
+  // 【平滑置頂函式】點擊置頂按鈕時，執行視窗平滑滾動回頂部
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  }
 
   /**
    * 【打字機核心函式】宣告並定義執行逐字打字效果的遞迴計時函式
@@ -63,12 +105,24 @@ export function useAppView() {
     typeEffect()
     // 網頁初始化一進來時，預設先在 html 標籤打上淺色模式的 data-theme="light" 屬性，確保畫面預設為白天模式
     document.documentElement.setAttribute('data-theme', 'light')
+    // 註冊滾動監聽事件以控制回到頂部按鈕的隱現
+    window.addEventListener('scroll', handleScroll)
+  })
+
+  /**
+   * 註冊組件銷毀前的生命週期鉤子
+   * 移除滾動監聽，防止記憶體洩漏
+   */
+  onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll)
   })
 
   // 將網頁模板 (Template) 需要用來顯示與點擊綁定的變數及函式完整包裝導出
   return {
     displayText,
     isDarkMode,
-    toggleTheme
+    toggleTheme,
+    showScrollTopBtn,
+    scrollToTop
   }
 }
