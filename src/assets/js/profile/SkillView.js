@@ -8,7 +8,7 @@ import { ref } from 'vue'
  * 供 SkillView.vue 引入解構使用
  */
 export function useSkillView() {
-  
+
   // 建立技術分類數據陣列，包含前端、後端與部署工具
   const skillCategories = ref([
     {
@@ -64,7 +64,7 @@ export function useSkillView() {
         },
         {
           name: 'Spring Security',
-          desc: '熟悉 JWT 安全權限令牌過濾機制、Filter Chain 驗證放行與安全性端點防護。'
+          desc: '理解 JWT 安全權限令牌過濾機制、Filter Chain 驗證放行與安全性端點防護。'
         }
       ]
     }

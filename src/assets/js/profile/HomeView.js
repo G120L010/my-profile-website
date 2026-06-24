@@ -16,8 +16,8 @@ export function useHomeView() {
       company: '崑山科技大學 創新教學中心',
       role: '專任行政助理',
       period: '2019.09 - 2025.09',
-      tags: ['行政事務', '研討會籌辦', '資料處理', '人員接待'],
-      summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學研討會、專案講座與助理培訓等大型活動。',
+      tags: ['行政事務', '研討會籌辦', '文書資料處理', '人員接待'],
+      summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學助理研討會、專案講座與培訓課程等大型活動。',
       accentClass: 'accent-design', // 套用設計紫粉色漸變彩線
       links: [
         { title: '活動成果：中央社新聞報導', url: 'https://www.cna.com.tw/postwrite/chi/306901' },
@@ -44,7 +44,7 @@ export function useHomeView() {
       role: '教學助理',
       period: '2020.09 - 2025.08',
       tags: ['課程助教', '教學評量', '教學活動', '專題演講'],
-      summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協助協同教學、專題演講與期末考卷批改。',
+      summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協同課程教授進行教學、專題演講與期末考卷批改。',
       accentClass: 'accent-experience', // 套用經歷橘紅漸變彩線
       links: []
     },
@@ -54,7 +54,7 @@ export function useHomeView() {
       role: '專任研究助理',
       period: '2023.08 - 2025.07',
       tags: ['計畫執行', '活動規劃', '社會責任', '循環經濟'],
-      summary: '協助執行循環經濟與永續計畫，參與專題專案並規劃成果呈現，於全國大專院校競賽中榮獲第3名。',
+      summary: '參與大學USR永續發展辦公室計畫執行，協助推動循環經濟與ESG相關專案，負責資料彙整、活動規劃與成果視覺化呈現，支援跨團隊專題整合。期間參與全國大專院校競賽專案，協助完成企劃與成果展示，該計畫最終由計畫主持人帶領團隊榮獲全國第3名。',
       accentClass: 'accent-frontend', // 套用前端藍色漸變彩線
       links: [
         { title: '獲獎新聞：中央社報導', url: 'https://www.cna.com.tw/postwrite/chi/420204' },
@@ -67,7 +67,7 @@ export function useHomeView() {
       role: '兼任行政助理',
       period: '2022.08 - 2025.07',
       tags: ['電腦維護', '資料統計', '素材設計', '檔案管理'],
-      summary: '負責教職員電腦軟硬體疑難排解、Google Drive 雲端資料電子化與統計彙整，並設計活動視覺宣導海報及圖卡。',
+      summary: '負責辦公室教職員電腦文書軟硬體疑難排解、Google Drive 雲端資料電子化與統計彙整，並協助設計活動平面視覺宣導海報及圖卡。',
       accentClass: 'accent-backend', // 套用後端橘色漸變彩線
       links: []
     }
