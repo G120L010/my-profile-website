@@ -23,7 +23,7 @@ export function useCertificationView() {
       verifyUrl: 'https://www.moenv.gov.tw/',
       image: 'images/Certificationimg/MOENV.jpg',
       accentClass: 'accent-tools',
-      summary: '通過國家級綠色轉型、溫室氣體盤查、企業減碳路徑與永續規劃策略之核心培訓課程。'
+      summary: '通過國家級綠色轉型、溫室氣體盤查、企業減碳路徑與永續規劃策略之核心培訓講師課程。'
     },
     {
       id: 2,
@@ -78,7 +78,7 @@ export function useCertificationView() {
       verifyUrl: 'https://www.csf.org.tw/',
       image: 'images/Certificationimg/TQC.jpg',
       accentClass: 'accent-frontend',
-      summary: '認證具備機器學習基礎、自然語言處理、影像辨識應用與深度學習核心技術之實務操作能力。'
+      summary: '認證具備機器學習基礎、自然語言處理、影像辨識應用與深度學習等核心技術知識。'
     },
     {
       id: 7,
@@ -144,7 +144,7 @@ export function useCertificationView() {
       verifyUrl: 'https://learn.microsoft.com/',
       image: 'images/Certificationimg/MTA.jpg',
       accentClass: 'accent-frontend',
-      summary: '微軟官方技術認證，驗證資訊科技基礎結構、資料庫管理或軟體工程核心領域之國際能力。'
+      summary: '微軟官方技術認證，驗證資訊科技基礎結構、網際網路核心領域之國際能力。'
     },
     {
       id: 13,
