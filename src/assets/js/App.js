@@ -55,12 +55,17 @@ export function useAppView() {
     }
   }
 
-  // 【平滑置頂函式】點擊置頂按鈕時，執行視窗平滑滾動回頂部
+  // 【緩動置頂函式】點擊置頂按鈕時，自訂緩動平滑滾動至頁首，提供比原廠更舒適的減速效果
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+    // 獲取目前滾動條的垂直高度
+    const currentScrollY = window.scrollY || document.documentElement.scrollTop
+    // 只要高度大於 0 就繼續滾動
+    if (currentScrollY > 0) {
+      // 請求瀏覽器下一影格動畫，遞迴執行滾動
+      window.requestAnimationFrame(scrollToTop)
+      // 每次將垂直距離減去其七點五分之一，達到越靠近頂部滾動越慢的優雅緩動減速感
+      window.scrollTo(0, currentScrollY - currentScrollY / 0.6)
+    }
   }
 
   /**

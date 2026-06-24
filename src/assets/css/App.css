@@ -278,9 +278,9 @@
   height: 50px;
   border-radius: 50% !important;
   padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
 
   background-color: var(--neon-btn-bg) !important;
