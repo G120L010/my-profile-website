@@ -18,7 +18,7 @@ export function usePortfolioView() {
       tags: ['Java 21', 'Spring Boot', 'Vue 3', 'SQL Server', '程式碼開發'],
       image: 'images/Portfolioimg/Petshop.jpg',
       buttons: [
-        { text: '瀏覽網站', url: 'https://github.com/' },
+        { text: '瀏覽作品', url: 'images/Aboutimg/TV.mp4' },
         { text: '原始碼', url: 'https://github.com/' }
       ]
     },
