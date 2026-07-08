@@ -82,6 +82,16 @@ export function usePortfolioView() {
       buttons: [
         { text: '點我開始遊玩！', url: 'games/cat-game.html' }
       ]
+    },
+    {
+      id: 8,
+      title: '像素夾娃娃機小遊戲',
+      summary: '透過點擊閃爍的按鈕來移動爪子，試著抓取你喜歡的玩具吧！',
+      tags: ['JavaScript', 'CSS Animation', 'DOM', '互動遊戲'],
+      image: 'images/Portfolioimg/ClawMachineGame.jpg',
+      buttons: [
+        { text: '點我挑戰看看！', url: 'games/claw-machine-game.html' }
+      ]
     }
   ])
 
