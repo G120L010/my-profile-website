@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>像素貓咪互動小遊戲</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #63ec85;
+      overflow: hidden;
+      /* 避免遊戲本身產生捲軸 */
+    }
+
+    .outer_wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .wrapper {
+      position: absolute;
+      height: calc(100vh - 100px);
+      width: 100%;
+      top: 0;
+    }
+
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 150px;
+      background-color: rgb(1, 143, 96);
+    }
+
+    .cat {
+      position: absolute;
+      bottom: 65px;
+      left: 100px;
+      height: 30px;
+      width: 60px;
+      transition: 1.5s;
+      transform-origin: center;
+      background-color: transparent;
+    }
+
+    /* body */
+
+    .body {
+      position: absolute;
+      height: 30px;
+      width: 60px;
+    }
+
+    .face_left .body {
+      animation: turn_body_left forwards 0.5s;
+    }
+
+    @keyframes turn_body_left {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(0.5, 1);
+      }
+    }
+
+    .face_right .body {
+      animation: turn_body_right forwards 0.5s;
+    }
+
+    @keyframes turn_body_right {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(0.5, 1);
+      }
+    }
+
+    /* head */
+    .cat_head {
+      position: absolute;
+      height: 40px;
+      width: 48px;
+      right: -10px;
+      top: -30px;
+      transition: 0.5s;
+      z-index: 50;
+    }
+
+    .first_pose .cat_head,
+    .face_left .cat_head {
+      right: 22px;
+    }
+
+
+    /* tail */
+    .tail {
+      position: absolute;
+      top: -25px;
+      height: 36px;
+      width: 15px;
+      animation: tail_motion forwards 2s;
+      transform-origin: bottom right;
+    }
+
+    @keyframes tail_motion {
+
+      0%,
+      100% {
+        left: -5px;
+        transform: rotate(0deg) scale(1);
+      }
+
+      50% {
+        left: -10px;
+        transform: rotate(-50deg) scale(-1, 1);
+      }
+    }
+
+    .first_pose .tail,
+    .face_left .tail {
+      left: 45px;
+      animation: tail_motion_alt forwards 2s;
+    }
+
+    @keyframes tail_motion_alt {
+
+      0%,
+      100% {
+        left: 45px;
+        transform: rotate(0deg) scale(1);
+      }
+
+      50% {
+        left: 40px;
+        transform: rotate(50deg) scale(-1, 1);
+      }
+    }
+
+    /* legs */
+    .leg {
+      position: absolute;
+      height: 20px;
+      width: 10px;
+      transform-origin: top center;
+    }
+
+    .front_legs,
+    .back_legs {
+      position: absolute;
+      height: 30px;
+      transition: 0.7s;
+    }
+
+    .front_legs {
+      width: 30px;
+      right: 0;
+    }
+
+    .back_legs {
+      width: 25px;
+      left: 0;
+    }
+
+    .face_left .leg svg {
+      transform: scale(-1, 1);
+    }
+
+    .face_right .front_legs {
+      right: 0;
+    }
+
+    .first_pose .front_legs,
+    .face_left .front_legs {
+      right: 30px;
+    }
+
+    .face_right .back_legs {
+      left: 0;
+    }
+
+    .first_pose .back_legs,
+    .face_left .back_legs {
+      left: 35px;
+    }
+
+    .one,
+    .three {
+      bottom: -15px;
+      right: 0;
+    }
+
+    .two,
+    .four {
+      bottom: -15px;
+      left: 0px;
+    }
+
+    .one.walk,
+    .three.walk {
+      animation: infinite 0.3s walk;
+    }
+
+    .two.walk,
+    .four.walk {
+      animation: infinite 0.3s walk_alt;
+    }
+
+    @keyframes walk {
+
+      0%,
+      100% {
+        transform: rotate(-10deg);
+      }
+
+      50% {
+        transform: rotate(10deg);
+      }
+    }
+
+    @keyframes walk_alt {
+
+      0%,
+      100% {
+        transform: rotate(10deg);
+      }
+
+      50% {
+        transform: rotate(-10deg);
+      }
+    }
+
+    /* jump */
+    .cat_wrapper {
+      position: absolute;
+      bottom: 0;
+    }
+
+    .cat_wrapper.jump .one {
+      animation: infinite 0.3s walk;
+    }
+
+    .cat_wrapper.jump .two {
+      animation: infinite 0.3s walk_alt;
+    }
+
+    .cat_wrapper.jump .three,
+    .cat_wrapper.jump .four {
+      animation: none;
+    }
+
+    .cat_wrapper.jump .cat.face_right .back_legs {
+      transform-origin: center;
+      transform: rotate(50deg);
+    }
+
+    .cat_wrapper.jump .cat.face_left .back_legs {
+      transform-origin: center;
+      transform: rotate(-50deg);
+    }
+
+    .cat_wrapper.jump .cat.face_right .front_legs {
+      transform-origin: center;
+      transform: rotate(-60deg);
+    }
+
+    .cat_wrapper.jump .cat.face_left .front_legs {
+      transform-origin: center;
+      transform: rotate(60deg);
+    }
+
+    .cat_wrapper.jump {
+      animation: jump forwards 1s;
+    }
+
+    @keyframes jump {
+
+      0%,
+      100% {
+        bottom: 0px;
+      }
+
+      50% {
+        bottom: 300px;
+      }
+    }
+
+    .jump .face_left {
+      animation: forwards 0.5s body_stand_left;
+      transform-origin: right bottom;
+    }
+
+    .jump .face_right {
+      animation: forwards 0.5s body_stand_right;
+      transform-origin: left bottom;
+    }
+
+    @keyframes body_stand_right {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(-45deg);
+      }
+    }
+
+    @keyframes body_stand_left {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(45deg);
+      }
+    }
+
+    svg {
+      height: 100%;
+      width: 100%;
+    }
+
+    polygon.eyes {
+      fill: rgb(1, 143, 96);
+    }
+
+    polygon,
+    path {
+      fill: white;
+    }
+
+    .sign {
+      position: absolute;
+      color: white;
+      bottom: 10px;
+      right: 10px;
+      font-size: 10px;
+    }
+
+    a {
+      color: white;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="outer_wrapper">
+    <div class="wrapper">
+
+      <div class="cat_wrapper">
+        <div class="cat first_pose">
+          <div class="cat_head">
+            <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 76.4 61.2">
+              <polygon class="eyes"
+                points="63.8,54.1 50.7,54.1 50.7,59.6 27.1,59.6 27.1,54.1 12.4,54.1 12.4,31.8 63.8,31.8 " />
+              <path d="M15.3,45.9h5.1V35.7h-5.1C15.3,35.7,15.3,45.9,15.3,45.9z M45.8,56.1V51H30.6v5.1H45.8z M61.1,35.7H56v10.2h5.1
+                V35.7z M10.2,61.2v-5.1H5.1V51H0V25.5h5.1V15.3h5.1V5.1h5.1V0h5.1v5.1h5.1v5.1h5.1v5.1c0,0,15.2,0,15.2,0v-5.1h5.1V5.1H56V0h5.1v5.1
+                h5.1v10.2h5.1v10.2h5.1l0,25.5h-5.1v5.1h-5.1v5.1H10.2z" />
+            </svg>
+
+          </div>
+          <div class="body">
+            <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 91.7 40.8">
+              <path class="st0" d="M91.7,40.8H0V10.2h5.1V5.1h5.1V0h66.2v5.1h10.2v5.1h5.1L91.7,40.8z" />
+            </svg>
+
+            <div class="tail">
+              <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 25.5 61.1">
+                <polygon class="st0" points="10.2,56 10.2,50.9 5.1,50.9 5.1,40.7 0,40.7 0,20.4 5.1,20.4 5.1,10.2 10.2,10.2 10.2,5.1 15.3,5.1 
+                  15.3,0 25.5,0 25.5,10.2 20.4,10.2 20.4,15.3 15.3,15.3 15.3,20.4 10.2,20.4 10.2,40.7 15.3,40.7 15.3,45.8 20.4,45.8 20.4,50.9 
+                  25.5,50.9 25.5,61.1 15.3,61.1 15.3,56 " />
+              </svg>
+            </div>
+          </div>
+
+          <div class="front_legs">
+            <div class="leg one">
+              <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 14 30.5">
+                <polygon points="15.3,30.5 5.1,30.5 5.1,25.4 0,25.4 0,0 15.3,0 " />
+              </svg>
+            </div>
+            <div class="leg two">
+              <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 14 30.5">
+                <polygon points="15.3,30.5 5.1,30.5 5.1,25.4 0,25.4 0,0 15.3,0 " />
+              </svg>
+            </div>
+          </div>
+
+          <div class="back_legs">
+            <div class="leg three">
+              <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 14 30.5">
+                <polygon points="15.3,30.5 5.1,30.5 5.1,25.4 0,25.4 0,0 15.3,0 " />
+              </svg>
+            </div>
+            <div class="leg four">
+              <svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 14 30.5">
+                <polygon points="15.3,30.5 5.1,30.5 5.1,25.4 0,25.4 0,0 15.3,0 " />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ground"></div>
+
+  </div>
+
+  <div class="sign">
+    by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank"
+      rel="noopener noreferrer">貼圖商店</a>
+    <!-- http://www.ma5a.com/ -->
+  </div>
+
+  <script>
+    // 遊戲主程式的初始化函式，在 DOM 載入完成後執行
+    function init() {
+      // 宣告並獲取遊戲中需要透過 JavaScript 操作的各個 DOM 元素節點
+      const catWrapper = document.querySelector('.cat_wrapper');
+      const wrapper = document.querySelector('.wrapper');
+      const cat = document.querySelector('.cat');
+      const head = document.querySelector('.cat_head');
+      const legs = document.querySelectorAll('.leg');
+
+      // 定義一個物件，用來儲存滑鼠或觸控點在畫面上的 X、Y 座標
+      const pos = {
+        x: null,
+        y: null
+      };
+      // 宣告一個變數，用於後續管理計時器，以判斷滑鼠或觸控是否停止移動
+      let stopTimeout;
+
+      // 定義貓叫聲音效檔案的相對路徑 (指向 public/sounds/CatAnimation.mp3)
+      const meowSoundUrl = '../sounds/CatAnimation.mp3';
+
+      // 播放貓叫聲音效的函式，並包含錯誤處理機制以防音效檔案載入失敗
+      const playMeowSound = () => {
+        const meowSound = new Audio(meowSoundUrl);
+        meowSound.play().catch(error => {
+          console.error("無法播放音效，請檢查音效檔路徑是否正確:", error);
+        });
+      };
+
+      // 啟動貓咪走路動畫的函式
+      const walk = () => {
+        // 移除貓咪的初始靜止姿勢樣式
+        cat.classList.remove('first_pose');
+        // 為所有貓腿加上走路的 CSS 動畫樣式
+        legs.forEach(leg => leg.classList.add('walk'));
+      };
+
+      // 停止貓咪走路動畫的函式
+      const stopWalk = () => {
+        legs.forEach(leg => leg.classList.remove('walk'));
+      };
+
+      // 統一處理滑鼠移動與觸控滑動事件的函式
+      const handleMotion = (e) => {
+        // 判斷事件是否來自觸控 (行動裝置)
+        if (e.touches) {
+          pos.x = e.touches[0].clientX;
+          pos.y = e.touches[0].clientY;
+        } else {
+          // 處理滑鼠移動事件 (桌面端)
+          pos.x = e.clientX;
+          pos.y = e.clientY;
+        }
+        // 觸發走路動畫
+        walk();
+        // 清除上一個計時器，重新計時
+        clearTimeout(stopTimeout);
+        // 設定一個新的計時器，若 200 毫秒內再無移動事件，則判定為停止，並執行 stopWalk 函式
+        stopTimeout = setTimeout(stopWalk, 200);
+      };
+
+      // 控制貓咪向右轉的函式
+      const turnRight = () => {
+        // 根據滑鼠 X 座標調整貓咪的水平位置 (減 90 是為了讓滑鼠對準貓咪身體中間偏右)
+        cat.style.left = `${pos.x - 90}px`;
+        // 切換 CSS 樣式，使貓咪面向右邊
+        cat.classList.remove('face_left');
+        cat.classList.add('face_right');
+      };
+
+      // 控制貓咪向左轉的函式
+      const turnLeft = () => {
+        // 根據滑鼠 X 座標調整貓咪的水平位置 (加 10 是為了讓滑鼠對準貓咪身體中間偏左)
+        cat.style.left = `${pos.x + 10}px`;
+        // 切換 CSS 樣式，使貓咪面向左邊
+        cat.classList.remove('face_right');
+        cat.classList.add('face_left');
+      };
+
+      // 判斷貓咪應該向左還是向右轉的決策函式
+      const decideTurnDirection = () => {
+        // 如果貓咪目前的 X 座標小於滑鼠的 X 座標，代表滑鼠在貓咪右邊，應向右轉
+        if (cat.getBoundingClientRect().x < pos.x) {
+          turnRight();
+        } else {
+          // 反之則向左轉
+          turnLeft();
+        }
+      };
+
+      const headMotion = () => {
+        pos.y > (wrapper.clientHeight - 100) ?
+          head.style.top = '-15px'
+          :
+          head.style.top = '-30px';
+      };
+
+      // 觸發貓咪跳躍動畫的函式
+      const jump = () => {
+        // 如果貓咪正在跳躍中，則直接返回，防止連續觸發
+        if (catWrapper.classList.contains('jump')) return;
+        // 如果滑鼠的 Y 座標移動到畫面上方特定區域，則觸發跳躍
+        if (pos.y < (wrapper.clientHeight - 250)) {
+          catWrapper.classList.add('jump');
+          // 1 秒後自動移除跳躍樣式，讓貓咪可以再次跳躍
+          setTimeout(() => {
+            catWrapper.classList.remove('jump');
+          }, 1000);
+        }
+      };
+
+      // 設定一個高頻率的定時器，每 100 毫秒執行一次
+      setInterval(() => {
+        // 如果尚未獲取到滑鼠座標，則不執行任何操作
+        if (!pos.x || !pos.y) return;
+        // 持續判斷貓咪的轉向
+        decideTurnDirection();
+        // 持續判斷貓咪的頭部擺動
+        headMotion();
+      }, 100);
+
+      // 設定一個較低頻率的定時器，每 1.2 秒執行一次
+      setInterval(() => {
+        if (!pos.x || !pos.y) return;
+        // 每隔一段時間檢查一次是否需要觸發跳躍
+        jump();
+      }, 1200);
+
+      // 為貓咪的身體元素掛載點擊事件監聽，點擊時播放音效
+      // cat.addEventListener('click', playMeowSound);
+      // 為整個遊戲畫面掛載點擊事件監聽，點擊時播放音效
+      document.addEventListener('click', playMeowSound);
+
+      // 為整個文件掛載滑鼠移動事件的監聽器
+      document.addEventListener('mousemove', handleMotion);
+      // 為整個文件掛載觸控滑動事件的監聽器，以相容手機與平板裝置
+      document.addEventListener('touchmove', handleMotion);
+    }
+
+    // 確保在整個 HTML 文件被完整載入和解析後，才開始執行遊戲的主程式 init 函式
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+
+</html>

@@ -72,6 +72,16 @@ export function usePortfolioView() {
       buttons: [
         { text: '點我進入觀看文創商品', url: 'https://httpshancreator-springcom-2.creator-spring.com/' }
       ]
+    },
+    {
+      id: 7,
+      title: '像素貓咪互動小遊戲',
+      summary: '一個互動小遊戲。貓咪會跟隨滑鼠游標移動、轉向與跳躍，並在點擊貓咪時發出可愛的音效。',
+      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '網頁特效'],
+      image: 'images/Portfolioimg/CatGame.jpg',
+      buttons: [
+        { text: '點我開始遊玩！', url: 'games/cat-game.html' }
+      ]
     }
   ])
 
