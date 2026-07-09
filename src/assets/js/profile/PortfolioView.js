@@ -75,22 +75,62 @@ export function usePortfolioView() {
     },
     {
       id: 7,
-      title: '像素貓咪互動小遊戲',
-      summary: '一個互動小遊戲。貓咪會跟隨滑鼠游標移動、轉向與跳躍，並在點擊貓咪時發出可愛的音效。',
-      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '網頁特效'],
-      image: 'images/Portfolioimg/CatGame.jpg',
+      title: '旋轉星球互動小遊戲',
+      summary: '這是一個基於 JavaScript 的旋轉星球互動實驗。您可以在這個迷你世界中四處走動，並與場景中的物件進行互動，體驗在旋轉球體上的移動與視角變化。',
+      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '旋轉星球'],
+      image: 'images/Portfolioimg/PlanetGame.jpg',
       buttons: [
-        { text: '點我開始遊玩！', url: 'games/cat-game.html' }
+        { text: '點我進入星球逛逛吧！', url: 'games/rotating-planet-game.html' }
       ]
     },
     {
       id: 8,
       title: '像素夾娃娃機小遊戲',
       summary: '透過點擊閃爍的按鈕來移動爪子，試著抓取你喜歡的玩具吧！',
-      tags: ['JavaScript', 'CSS Animation', 'DOM', '互動遊戲'],
+      tags: ['JavaScript', 'CSS Animation', 'DOM夾娃娃機', '互動遊戲'],
       image: 'images/Portfolioimg/ClawMachineGame.jpg',
       buttons: [
         { text: '點我挑戰看看！', url: 'games/claw-machine-game.html' }
+      ]
+    },
+    {
+      id: 9,
+      title: '像素企鵝互動小遊戲',
+      summary: '一個可愛的像素企鵝會跟著你的滑鼠點擊到處走動，試著點擊畫面讓企鵝移動到指定位置吧！',
+      tags: ['JavaScript', 'CSS Animation', 'SVG', '互動遊戲'],
+      image: 'images/Portfolioimg/PenguinGame.jpg',
+      buttons: [
+        { text: '點我開始互動！', url: 'games/penguin-game.html' }
+      ]
+    },
+    {
+      id: 10,
+      title: '像素貓咪互動小遊戲',
+      summary: '一個互動小遊戲。貓咪會跟隨滑鼠游標移動、轉向與跳躍，並在點擊貓咪時發出可愛的音效。',
+      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '像素貓咪寵物'],
+      image: 'images/Portfolioimg/CatGame.jpg',
+      buttons: [
+        { text: '點我開始撸貓！', url: 'games/cat-game.html' }
+      ]
+    },
+    {
+      id: 11,
+      title: '熊貓互相碰撞小遊戲',
+      summary: '這是一個有趣的物理碰撞模擬遊戲。多隻像素熊貓會在畫面上隨機走動，當牠們互相碰撞時，會觸發可愛的跌倒動畫，展現了 JavaScript 對於多物件狀態的偵測與管理能力。',
+      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '物理模擬'],
+      image: 'images/Portfolioimg/PandaGame.jpg',
+      buttons: [
+        { text: '點我開始發呆！', url: 'games/panda-game.html' }
+      ]
+    },
+    {
+      id: 12,
+      title: '小小機器人生態模擬',
+      summary: '一個模擬生態系統的互動實驗。每個機器人都有自己的生命週期與行為模式（如狩獵、逃跑、繁殖），它們會根據周遭環境與其他機器人互動，展現了複雜的群體動態。',
+      tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '生命模擬', '演算法'],
+      image: 'images/Portfolioimg/BotGame.jpg',
+      buttons: [
+        { text: '點我開始觀察！', url: 'games/bot-game.html' }
       ]
     }
   ])

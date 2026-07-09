@@ -35,6 +35,30 @@
 
 ---
 
+### 🎮 互動遊戲作品規範 (Interactive Game Works Standards)
+* **職責**：針對 `public/games/` 目錄下的獨立 HTML 小遊戲作品，進行統一的品牌署名與連結。
+* **規範**：
+  * 所有互動遊戲作品的 HTML 檔案中，應在 `<body>` 標籤結束前，加入以下的個人化署名區塊。
+  * 此舉有助於在獨立的作品頁面中，保持作者資訊的一致性，並引導使用者前往相關的創作商店。
+    * **圖片路徑規範**：對於位於 `public/games/` 目錄下的遊戲 HTML/CSS 檔案，若需引用 `public/images/games/` 目錄下的圖片資源，應使用**相對路徑** `../images/games/圖片檔名`。嚴禁使用絕對路徑（如 `/images/...`）或本地檔案系統路徑（如 `C:\Users\...`），以確保部署後的圖片能正常顯示。
+  * **HTML 結構**：
+    ```html
+    <div class="sign">
+      by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank" rel="noopener noreferrer">貼圖商店</a>
+    </div>
+    ```
+  * **CSS 樣式**：
+    ```css
+    .sign {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: rgb(0, 17, 255); /* 可依遊戲主題微調 */
+    }
+    .sign a { color: inherit; }
+    ```
+
 ## 2. 全局設計規範 (Global Design Tokens)
 
 全站樣式與動畫核心定義於 [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css)，開發新元件時應遵循以下設計規範：
@@ -109,6 +133,7 @@
 * [ ] 所有的數據列表（如經歷、作品、技能）是否都以 `ref()` 封裝於對應的獨立 JS 檔案中。
 * [ ] 新增或修改資料項目時，是否提供了唯一的 `id` 作為 `v-for` 的 `:key`。
 * [ ] 程式碼中原有的詳細中文註解與邏輯防呆註解是否完整保留。
+* [ ] 若為互動小遊戲類作品，是否已在右下角加上個人化署名與貼圖商店連結。
 * [ ] 程式碼內所有註解是否皆使用繁體中文撰寫，且**不包含任何表情符號或圖形符號**。
 
 ### 🎨 畫面排版設計檢查清單
@@ -246,11 +271,3 @@ jobs:
 | 2026.06.24 | **新增回到頂部 (TOP) 懸浮按鈕** | [App.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/App.vue)<br>[App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 為了優化行動端與長頁面瀏覽體驗，新增滑動後自動浮現的 TOP 按鈕，點擊可平滑滾動回頁首。 | 在 App.js 實作動態一半滾動高度監聽（並加入 scrollY > 100 且可滾動高度 > 150px 雙重安全防護）與原生 behavior: 'smooth' 平滑置頂方法，同時使用 watch 監聽 route.path 切換分頁時立即將按鈕設為 false 並歸零滾動條（window.scrollTo(0, 0)），解決分頁切換時按鈕殘留滯留的 Bug。於 App.vue 透過 Transition 進行淡入淡出渲染，並在 App.css 內定義霓虹脈衝樣式與 fade 動態過渡效果。 |
 | 2026.06.24 | **解決回到頂部按鈕淡出動畫失效之衝突** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 發現回到頂部按鈕套用了帶有 opacity 動態變化的 neonPulse 動畫，導致 Vue 離開過渡動畫 (transition) 中的 opacity: 0 遭覆蓋，無法平滑淡出。 | 將回到頂部按鈕的 animation 改為專屬的 scrollTopPulse 動畫，該動畫僅對發光邊框 (box-shadow) 進行呼吸脈衝，完全不變更 opacity 屬性，成功消除動畫衝突並實現完美的淡出效果。 |
 | 2026.06.24 | **解決回到頂部按鈕 display 覆寫 v-show 異常** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 發現回到頂部按鈕在 CSS 中設定了 display: flex !important，此權重強於 Vue 寫入的 style="display: none;" 行內樣式，導致 v-show 隱藏失效，一開始或切換頁面時按鈕都不消失。 | 將 custom-scroll-top-btn 中的 display 屬性及對齊屬性的 !important 標籤全數移除，使 Vue 能順利透過 display: none 進行控制，徹底修復按鈕無法隱藏的嚴重 Bug。 |
-
-
-
-
-
-
-
-

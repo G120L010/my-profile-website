@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>小小機器人模擬器</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+
+    :root {
+      --bot_bg: url(../images/games/botgame01.jpg);
+      --bot_width: calc(16px * 26 * 2);
+    }
+
+    p,
+    h1,
+    h2,
+    h3,
+    h4 {
+      display: inline-block;
+      margin-block-start: 0em;
+      margin-block-end: 0em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
+      padding-inline-start: 0px;
+    }
+
+    body {
+      background-color: rgb(24, 93, 101);
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .overlay {
+      color: transparent;
+      z-index: 99999;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .overlay.paused {
+      background-color: rgba(5, 24, 50, 0.733);
+      color: white;
+    }
+
+    .outer_wrapper {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .info {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      top: 0px;
+      left: -100%;
+      z-index: 99999;
+      transition: 0.4s;
+      pointer-events: none;
+    }
+
+    .info_card {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 10px;
+      width: 300px;
+      color: white;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(2, 42, 37, 0.584);
+      pointer-events: none;
+    }
+
+    .info_card p {
+      margin-bottom: 3px;
+    }
+
+    .info_card>div {
+      display: flex;
+    }
+
+    .info_card>.top_part>div {
+      display: flex;
+      flex-direction: column;
+      width: 100px;
+      margin-right: 10px;
+    }
+
+    .info.open {
+      left: 0px;
+    }
+
+    .info_card::before {
+      position: absolute;
+      content: '';
+      top: 5px;
+      right: 5px;
+      background: url(../images/games/botgame02.jpg);
+      background-repeat: no-repeat, repeat;
+      background-size: cover;
+      z-index: 1;
+      image-rendering: pixelated;
+      width: 16px;
+      height: 16px;
+      filter: invert(100%);
+      pointer-events: auto;
+    }
+
+    .info_card:hover::before {
+      filter: invert(0);
+      cursor: pointer;
+    }
+
+    .log_bar {
+      display: flex;
+    }
+
+    .log_bar>div {
+      margin: 0;
+      height: 10px;
+      width: 5px;
+    }
+
+    .log_bar>p {
+      margin-right: 5px;
+    }
+
+    .log_bar>.flee {
+      background-color: rgb(128, 32, 177);
+    }
+
+    .log_bar>.hunt {
+      background-color: rgb(80, 252, 195);
+    }
+
+    .log_bar>.charge {
+      background-color: rgba(127, 255, 212, 0.5);
+    }
+
+    .log_bar>.multiply {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .log_bar>.sleep {
+      background-color: rgb(3, 9, 87);
+    }
+
+    .log_bar>.destroy {
+      background-color: rgb(217, 85, 151);
+    }
+
+    .log_bar>.destroyed {
+      background-color: rgb(251, 89, 105);
+    }
+
+    .wrapper {
+      width: 100%;
+      height: calc(100% - 100px);
+    }
+
+    .bot {
+      background: var(--bot_bg);
+      width: var(--bot_width);
+      height: calc(16px * 2);
+      image-rendering: pixelated;
+      background-repeat: no-repeat !important;
+      background-size: var(--bot_width) calc(16px * 2) !important;
+    }
+
+    .bot:hover {
+      filter: invert(100%);
+      cursor: pointer;
+    }
+
+    .bot_wrapper:hover::after {
+      color: black;
+    }
+
+    .bot_wrapper>div {
+      transition: filter 0.2s;
+    }
+
+    .bot_wrapper::after {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      content: attr(time);
+      z-index: 1;
+      color: white;
+      text-align: center;
+      font-size: 10px;
+      line-height: 24px;
+      width: calc(16px * 2);
+      height: 24px;
+      transition: 0.4s;
+      pointer-events: none;
+    }
+
+    .bot_wrapper.multiply::after,
+    .bot_wrapper.hunter::after {
+      color: aquamarine;
+    }
+
+    .bot_wrapper.flee::after {
+      color: rgb(172, 108, 246);
+    }
+
+    .bot_wrapper.stop::after {
+      color: rgb(80, 80, 80);
+    }
+
+    .bot_wrapper.multiply::after,
+    .bot_wrapper.sleep::after,
+    .bot_wrapper.charging::after {
+      top: 5px;
+    }
+
+    .bot_wrapper.new::after {
+      color: transparent;
+    }
+
+    .bot_wrapper.sleep::after {
+      animation: pulse infinite 1s;
+    }
+
+    @keyframes pulse {
+      0% {
+        color: rgba(127, 255, 212, 0.5)
+      }
+
+      50% {
+        color: aquamarine
+      }
+
+      100% {
+        color: rgba(127, 255, 212, 0.5)
+      }
+    }
+
+    .bot_wrapper {
+      position: absolute;
+      width: calc(16px * 2);
+      height: calc(16px * 2);
+      overflow: hidden;
+      transition: 1s ease;
+    }
+
+    .flip {
+      transform: scale(-1, 1);
+    }
+
+    .fade_away {
+      animation: fade_away 1s forwards;
+    }
+
+    @keyframes fade_away {
+      0% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0
+      }
+    }
+
+    .time {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: aquamarine;
+      font-size: 14px;
+      transition: 1s;
+      animation: slow_fade 1s forwards;
+    }
+
+    .time.added {
+      color: aquamarine;
+    }
+
+    .time.reduced {
+      color: rgb(170, 100, 251);
+    }
+
+    @keyframes slow_fade {
+      0% {
+        opacity: 1
+      }
+
+      90% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0
+      }
+    }
+
+    .indicator {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 10px;
+      opacity: 0.8;
+      z-index: 999;
+    }
+
+    .log {
+      position: absolute;
+      padding: 0px 10px;
+      bottom: 10px;
+      width: 100%;
+      color: white;
+      font-size: 10px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      color: aquamarine;
+      pointer-events: none;
+    }
+
+    .log>div {
+      display: flex;
+      flex-direction: column;
+      height: 0px;
+      transition: 0.5s;
+    }
+
+    .log>div>p {
+      animation: fade_in forwards 1s;
+      line-height: 11px;
+    }
+
+    .light_fade {
+      animation: light_fade forwards 0.5s;
+    }
+
+    @keyframes fade_in {
+      0% {
+        opacity: 0
+      }
+
+      100% {
+        opacity: 1
+      }
+    }
+
+    @keyframes light_fade {
+      0% {
+        color: aquamarine;
+        opacity: 1;
+      }
+
+      100% {
+        color: white;
+        opacity: 0.8;
+      }
+    }
+
+    .fade {
+      color: white;
+      animation: fade forwards 1s;
+    }
+
+    @keyframes fade {
+      0% {
+        opacity: 0.8
+      }
+
+      100% {
+        opacity: 0
+      }
+    }
+
+    .sign {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 20px;
+      color: aquamarine;
+      /* 根據遊戲主題微調 */
+    }
+
+    .sign a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .sign a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="overlay">遊戲暫停 - 點擊或觸碰螢幕以繼續</div>
+  <div class="outer_wrapper">
+    <div class="wrapper"></div>
+    <div class="log"></div>
+    <div class="info">
+      <div class="info_card"></div>
+    </div>
+  </div>
+  <div class="indicator"></div>
+
+  <div class="sign">
+    by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank"
+      rel="noopener noreferrer">貼圖商店</a>
+  </div>
+
+  <script>
+    const overlay = document.querySelector('.overlay')
+    let windowActive = true
+    window.addEventListener('focus', () => {
+      windowActive = true
+      overlay.classList.remove('paused')
+    })
+    window.addEventListener('blur', () => {
+      windowActive = false
+      overlay.classList.add('paused')
+    })
+
+    const body = document.querySelector('.wrapper')
+    const indicator = document.querySelector('.indicator')
+    const log = document.querySelector('.log')
+    const info = document.querySelector('.info')
+    const infoCard = document.querySelector('.info_card')
+    const cellD = 32
+    const n = cellD / 2
+    const defaultTime = 99
+    const animationFrames = {
+      walk: ['n-1', 'n-0', 'r-1', 'n-0'],
+      charge: [3, 4, 5, 'a-charging'],
+      charging: [5],
+      stop: [1],
+      wake: [4, 3, 0, 'a-walk'],
+      break: [6, 7, 8],
+      transform: [3, 4, 5, 'a-multiply'],
+      multiply: ['n-9', 'n-10', 'r-10', 'r-9', 'r-10', 'n-10'],
+      load: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 'a-wake'],
+    }
+    const botData = {
+      interval: null,
+      stop: true,
+      frameSpeed: 90,
+      animation: 'load',
+      frame: 0,
+      frameTimer: null,
+      mode: 'new',
+      time: defaultTime,
+    }
+    let infoToDisplay = {}
+    let bots = []
+    let count = 0
+
+    const randomN = max => Math.ceil(Math.random() * max)
+    const distanceBetween = (a, b) => Math.round(Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2)))
+    const withinBuffer = (a, b) => Math.abs(a - b) < 20
+    const activeBotsNo = () => bots.filter(bot => !bot.stop).length
+    const botNo = () => {
+      const defaultNo = Math.round((body.clientWidth * body.clientHeight) / (180 * 180))
+      return defaultNo < 10 ? 10 : defaultNo
+    }
+    const maxBotNo = () => {
+      const defaultNo = botNo() * 2
+      return defaultNo < 16 ? 16 : defaultNo
+    }
+
+    const setMargin = (target, x, y) => {
+      target.style.transform = `translate(${x}px, ${y}px)`
+      target.style.zIndex = y
+    }
+
+    const startBot = (bot, data) => {
+      animate(bot, data)
+      data.stop = false
+    }
+
+    const displayInfo = data => {
+      info.classList.add('open')
+      if (data) infoToDisplay = data
+    }
+
+    const populateInfo = () => {
+      if (!infoToDisplay.mode) return
+      const { mode, pos: { x, y }, id, time, animation, log, history } = infoToDisplay
+      infoCard.innerHTML = `
+      <div class="top_part">
+        <div>
+          <p>ID: ${id}</p>
+          <p>模式: ${mode}</p>
+          <p>X: ${x} Y:${y}</p>
+        </div>  
+        <div>
+          <p>生命: ${time}</p>
+          <p>動作: ${animation}</p>
+        </div>  
+      </div>
+      <div class="log_bar"><p>日誌:</p>${log.map(l => `<div class="${l}"></div>`).join('')}</div>
+      ${history ? `<p>歷史: ${[...history].reverse().join(' > ')}</p>` : ''}
+    `
+    }
+
+    const animate = (bot, data) => {
+      const { frame: i, animation, frameSpeed, mode } = data
+      const sprite = bot.childNodes[0].childNodes[0]
+      const item = animationFrames[animation][i]
+      const frame = !Number.isInteger(item) && item.split('-')
+      const number = frame[1] || item
+      if (frame[0] === 'a') {
+        changeAnimation(frame[1], data)
+        if (frame[1] === 'charging') data.mode = 'sleep'
+      } else {
+        setMargin(sprite, `-${number * cellD}`, 0)
+        bot.childNodes[0].classList[frame[0] === 'n' ? 'remove' : 'add']('flip')
+        data.frame = i === animationFrames[animation].length - 1 ? 0 : i + 1
+      }
+      bot.className = `bot_wrapper ${mode}`
+      data.frameTimer = setTimeout(() => animate(bot, data), frameSpeed)
+    }
+
+    const createBot = ({ x, y, x2, y2, time, history }) => {
+      const bot = document.createElement('div')
+      bot.classList.add('bot_wrapper')
+      bot.innerHTML = '<div><div class="bot"></div></div>'
+      body.appendChild(bot)
+      bots.push({ ...botData })
+      count++
+      const data = bots[bots.length - 1]
+      data.time = time || randomN(defaultTime)
+      if (data.time < 30) data.time = 30
+      data.bot = bot
+      data.xy = { x, y }
+      data.id = `x-${count}`
+      data.log = []
+      bot.setAttribute('time', data.time)
+      setMargin(bot, x, y)
+      if (time) {
+        data.history = [...history]
+        data.mode = 'new'
+        data.animation = 'load'
+        data.xy = { x: x2, y: y2 }
+        setTimeout(() => {
+          setMargin(bot, data.xy.x, data.xy.y)
+        })
+      }
+      data.pos = {
+        x: (x2 || x) + n,
+        y: (y2 || y) + n
+      }
+      startBot(bot, data)
+      bot.addEventListener('click', () => displayInfo(data))
+    }
+
+    const createBots = no => {
+      new Array(no).fill('').map(() => {
+        return [randomN(body.clientWidth), randomN(body.clientHeight)]
+      }).forEach(pos => {
+        createBot({ x: pos[0], y: pos[1] })
+      })
+    }
+
+    const changeAnimation = (animation, data) => {
+      data.frame = 0
+      data.animation = animation
+    }
+
+    const stopBot = (animation, data) => {
+      changeAnimation(animation, data)
+      data.stop = true
+      data.bot.className = 'bot_wrapper'
+      clearTimeout(data.frameTimer)
+    }
+
+    const randomShift = () => {
+      const variation = [0, 20, 30, 50]
+      return variation[Math.floor(Math.random() * 4)]
+    }
+
+    const checkBoundaryAndUpdatePos = (x, y, data) => {
+      const buffer = 50
+      const checkBoundaryAndUpdate = (p, n, elem) => {
+        data.xy[p] = n > (body[elem] - buffer)
+          ? body[elem] - randomShift()
+          : n < buffer
+            ? randomShift()
+            : n
+      }
+      checkBoundaryAndUpdate('x', x, 'clientWidth')
+      checkBoundaryAndUpdate('y', y, 'clientHeight')
+
+      setMargin(data.bot, data.xy.x, data.xy.y)
+    }
+
+    const distanceToMove = (a, b, distance) => {
+      const randomAccuracy = Math.random < 0.6
+      return withinBuffer(a, b)
+        ? a
+        : a > b
+          ? (a - distance) < b && randomAccuracy ? b : a - distance
+          : (a + distance) > b && randomAccuracy ? b : a + distance
+    }
+
+    const displayTimeChange = (b, closestBot, prefix) => {
+      const time = document.createElement('div')
+      time.className = prefix === '+' ? 'time added' : 'time reduced'
+      body.append(time)
+      setMargin(time, b.xy.x, b.xy.y - 20)
+      if (prefix === '+') {
+        setTimeout(() => {
+          setMargin(time, b.xy.x, b.xy.y - 40)
+        }, 10)
+      }
+      setTimeout(() => {
+        body.removeChild(time)
+      }, 1000)
+      time.innerHTML = `${prefix}${closestBot.time}`
+    }
+
+    const updateBotTime = (b, closestBot) => {
+      b.time = b.time + closestBot.time
+      closestBot.time = 0
+      b.bot.setAttribute('time', b.time)
+      closestBot.bot.setAttribute('time', 0)
+    }
+
+    const distances = bot => {
+      return bots.map((b, index) => {
+        return {
+          index,
+          time: b.time,
+          stop: b.stop,
+          mode: b.mode,
+          distance: distanceBetween(bot.pos, b.pos)
+        }
+      })
+    }
+
+    const charge = (bot, logs) => {
+      bot.frameSpeed = 200
+      bot.log.push('charge')
+      bot.mode = 'charging'
+      changeAnimation('charge', bot)
+      bot.bot.className = 'bot_wrapper charge'
+      logs.push(`${bot.id} 正在充能`)
+    }
+
+    const explodeBot = bot => {
+      changeAnimation('break', bot)
+      bot.frameSpeed = 100
+      setTimeout(() => {
+        bot.mode = 'destroyed'
+        bot.log.push('destroyed')
+        stopBot('stop', bot)
+        bot.bot.classList.add('fade_away')
+      }, bot.frameSpeed * 3)
+    }
+
+    const huntAndDestroy = (bot, closestBot, logs) => {
+      displayTimeChange(bot, closestBot, '+')
+      displayTimeChange(closestBot, closestBot, '-')
+      const seconds = closestBot.time === 0
+        ? ''
+        : closestBot.time === 1
+          ? ` 並獲得了 ${closestBot.time} 秒生命`
+          : ` 並獲得了 ${closestBot.time} 秒生命`
+      logs.push(`${bot.id} 摧毀了 ${closestBot.id}${seconds}`)
+      bot.log.push('destroy')
+      updateBotTime(bot, closestBot)
+      explodeBot(closestBot)
+    }
+
+    const moveAbout = (bot, closestBot, closestBotData) => {
+      let seedDistance = randomN(20) + closestBotData.distance < 50 ? Math.round(randomN(bot.time / 20)) : Math.round(randomN(bot.time / 5))
+      if (seedDistance > closestBotData.distance) seedDistance = closestBotData.distance
+      const distance = bot.mode === 'hunter' ? seedDistance : -(seedDistance + Math.round(randomN(20)))
+
+      if (closestBot) {
+        const xy = {
+          x: distanceToMove(bot.xy.x, closestBot.xy.x, distance),
+          y: distanceToMove(bot.xy.y, closestBot.xy.y, distance),
+        }
+        checkBoundaryAndUpdatePos(xy.x, xy.y, bot)
+        bot.pos = {
+          x: bot.xy.x + n,
+          y: bot.xy.y + n,
+        }
+      }
+    }
+
+    const decideHuntOrFlee = (bot, closestBot) => {
+      bot.mode = ['multiply', 'sleep'].includes(closestBot.mode)
+        ? 'hunter'
+        : bot.time > closestBot.time ? 'hunter' : 'flee'
+      if (bot.animation !== 'load') bot.frameSpeed = 200
+    }
+
+    const multiplyMode = (bot, logs) => {
+      logs.push(`${bot.id} 進入繁殖模式`)
+      changeAnimation(bot.mode === 'sleep' ? 'multiply' : 'transform', bot)
+      bot.mode = 'multiply'
+      bot.frameSpeed = 200
+    }
+
+    const moveBots = logs => {
+      bots.forEach((b, i) => {
+        if (!b.stop && !['multiply', 'destroyed', 'load'].includes(b.mode)) {
+          const closestBotData = [...distances(b, bots).filter(d => d.index !== i && !['load', 'destroyed'].includes(d.mode))].sort((a, b) => a.distance - b.distance)[0]
+          const closestBot = closestBotData && bots[closestBotData.index]
+          if (!closestBot) {
+            logs.push(`${b.id} 處於孤單狀態`)
+            multiplyMode(b, logs)
+            return
+          } else if ((b.time > 180 && activeBotsNo() < maxBotNo() && b.animation !== 'break')) {
+            multiplyMode(b, logs)
+          } else if (!['sleep', 'multiply'].includes(b.mode)) {
+            decideHuntOrFlee(b, closestBot)
+          }
+
+          if (['sleep', 'multiply'].includes(b.mode)) {
+            if (closestBotData.distance < 50 && b.time < 300) {
+              changeAnimation('wake', b)
+              decideHuntOrFlee(b, closestBot)
+            }
+          } else if (
+            (b.mode === 'flee' && closestBotData.distance > 100)
+            || (b.time > 200 && activeBotsNo() > maxBotNo())
+          ) {
+            charge(b, logs)
+          } else if (b.mode === 'hunter' && closestBotData.distance < 24) {
+            huntAndDestroy(b, closestBot, logs)
+          } else {
+            b.log.push(b.mode.slice(0, 4))
+            moveAbout(b, closestBot, closestBotData)
+          }
+        }
+      })
+    }
+
+    const createNewBots = (x, y, time, history) => {
+      const d = 50
+      const pos = [
+        { x: -d, y: -d },
+        { x: d, y: -d },
+        { x: -d, y: d },
+        { x: d, y: d },
+      ]
+      pos.forEach(p => {
+        createBot({
+          x, y, x2: x + p.x, y2: y + p.y,
+          time: time / 4, history: [...history.slice(0, 6)]
+        })
+      })
+    }
+
+    const removeDestroyedBots = () => {
+      bots.forEach(bot => {
+        if (bot.mode === 'destroyed') body.removeChild(bot.bot)
+      })
+      bots = bots.filter(bot => bot.mode !== 'destroyed')
+    }
+
+    const countdownTime = (bot, logs) => {
+      bot.time--
+      if (bot.time <= 0) {
+        bot.stop = true
+        changeAnimation('stop', bot)
+        bot.mode = 'stop'
+        bot.bot.className = 'bot_wrapper stop'
+        logs.push(`${bot.id} 已停止運作`)
+      }
+    }
+
+    const multiply = (bot, logs) => {
+      if (bot.time % 4 === 0 && (activeBotsNo() < 40)) {
+        logs.push(`${bot.id} 進行了繁殖`)
+        createNewBots(
+          bot.xy.x, bot.xy.y,
+          bot.time, bot.history ? [bot.id, ...bot.history] : [bot.id]
+        )
+        stopBot('stop', bot)
+        bot.time = 0
+        bot.mode = 'destroyed'
+      }
+    }
+
+    const updateLog = logs => {
+      if (logs.length) {
+        const newLog = document.createElement('div')
+        newLog.innerHTML = logs.map(l => `<p>${l}</p>`).join('')
+        log.append(newLog)
+        setTimeout(() => {
+          newLog.style.height = `${11 * logs.length}px`
+        }, 100)
+        log.childNodes.forEach((node, i) => {
+          if (i < (log.childNodes.length - 1)) node.classList.add('light_fade')
+        })
+      }
+      if (log.childNodes[4]) {
+        log.childNodes[0].classList.add('fade')
+        setTimeout(() => {
+          log.removeChild(log.childNodes[0])
+        }, 500)
+      }
+    }
+
+    setInterval(() => {
+      if (windowActive) {
+        const logs = []
+        bots.forEach(bot => {
+          if (bot.mode === 'multiply') {
+            bot.time--
+            multiply(bot, logs)
+          } else if (bot.mode === 'sleep' && !bot.stop) {
+            if (bot.time < 300) {
+              bot.time += 10
+            } else {
+              explodeBot(bot)
+              logs.push(`${bot.id} 因過度充能而爆炸`)
+            }
+          } else if (!bot.stop) {
+            countdownTime(bot, logs)
+          }
+          bot.bot.setAttribute('time', bot.time)
+        })
+        moveBots(logs)
+        removeDestroyedBots()
+        updateLog(logs)
+        indicator.innerText = `運作中的機器人: ${activeBotsNo()}`
+        populateInfo()
+      }
+    }, 1000)
+
+    infoCard.addEventListener('click', () => info.classList.remove('open'))
+    createBots(botNo())
+  </script>
+</body>
+
+</html>
