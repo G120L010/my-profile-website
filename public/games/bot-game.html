@@ -603,7 +603,7 @@
       const buffer = 50
       const checkBoundaryAndUpdate = (p, n, elem) => {
         data.xy[p] = n > (body[elem] - buffer)
-          ? body[elem] - randomShift()
+          ? body[elem] - randomShift() - cellD
           : n < buffer
             ? randomShift()
             : n

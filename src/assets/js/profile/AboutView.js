@@ -72,7 +72,7 @@ export function useAboutView() {
       accentClass: 'accent-frontend',
       desc: '接受 555 小時資策會密集資訊培訓，學習 Java、Spring Boot、Vue 3 與資料庫技術。於專案「暖光之丘」擔任資料庫 ERD 設計主導，並成功實作 LINE Pay 金流與 Google Gemini API 智慧客服。',
       image: 'images/Aboutimg/EEIT.jpg',
-      url: ''
+      url: 'images/Aboutimg/EEITYA.jpg'
     },
     {
       id: 2,

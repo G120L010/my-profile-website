@@ -76,7 +76,7 @@ export function usePortfolioView() {
     {
       id: 7,
       title: '旋轉星球互動小遊戲',
-      summary: '這是一個基於 JavaScript 的旋轉星球互動實驗。您可以在這個迷你世界中四處走動，並與場景中的物件進行互動，體驗在旋轉球體上的移動與視角變化。',
+      summary: '您可以在這個迷你世界中四處走動，並與場景中的物件進行互動，體驗在旋轉球體上的移動與視角變化。',
       tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '旋轉星球'],
       image: 'images/Portfolioimg/PlanetGame.jpg',
       buttons: [
@@ -97,7 +97,7 @@ export function usePortfolioView() {
       id: 9,
       title: '像素企鵝互動小遊戲',
       summary: '一個可愛的像素企鵝會跟著你的滑鼠點擊到處走動，試著點擊畫面讓企鵝移動到指定位置吧！',
-      tags: ['JavaScript', 'CSS Animation', 'SVG', '互動遊戲'],
+      tags: ['JavaScript', 'CSS Animation', '滑鼠點擊移動', '互動遊戲'],
       image: 'images/Portfolioimg/PenguinGame.jpg',
       buttons: [
         { text: '點我開始互動！', url: 'games/penguin-game.html' }
@@ -116,7 +116,7 @@ export function usePortfolioView() {
     {
       id: 11,
       title: '熊貓互相碰撞小遊戲',
-      summary: '這是一個有趣的物理碰撞模擬遊戲。多隻像素熊貓會在畫面上隨機走動，當牠們互相碰撞時，會觸發可愛的跌倒動畫，展現了 JavaScript 對於多物件狀態的偵測與管理能力。',
+      summary: '多隻像素熊貓會在畫面上隨機走動，當牠們互相碰撞時，會觸發可愛的跌倒動畫。',
       tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '物理模擬'],
       image: 'images/Portfolioimg/PandaGame.jpg',
       buttons: [

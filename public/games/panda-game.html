@@ -235,7 +235,7 @@
 
       const checkBoundaryAndUpdatePandaPos = (x, y, panda, pandaObj) => {
         const lowerLimit = -40
-        const upperLimit = 60
+        const upperLimit = 100
 
         if (x > lowerLimit && x < (body.clientWidth - upperLimit)) {
           panda.style.marginLeft = `${x}px`
