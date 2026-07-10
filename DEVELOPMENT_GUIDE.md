@@ -135,6 +135,8 @@
 * [ ] 程式碼中原有的詳細中文註解與邏輯防呆註解是否完整保留。
 * [ ] 若為互動小遊戲類作品，是否已在右下角加上個人化署名與貼圖商店連結。
 * [ ] 程式碼內所有註解是否皆使用繁體中文撰寫，且**不包含任何表情符號或圖形符號**。
+* [ ] 進行任何程式碼或畫面除錯（Debugging）或特殊邏輯變更後，是否已同步將該項目記錄至本文件底部的「7. 除錯紀錄區 (Debugging Log)」中。
+
 
 ### 🎨 畫面排版設計檢查清單
 * [ ] 手機版（螢幕寬度 < 576px）與桌機版（螢幕寬度 > 992px）的佈局是否接縫合適，無左右溢出跑版。
@@ -245,7 +247,7 @@ jobs:
 
 ## 7. 除錯紀錄區 (Debugging Log)
 
-為落實規範，以下詳細記錄本專案於開發與佈局防錯過程中的關鍵除錯紀錄：
+為落實開發規範，本專案實施 **「除錯紀錄同步化 (Synchronized Debugging Logs)」** 機制。凡進行任何程式碼錯誤修正、特殊邏輯調整或第三方網址釐清時，開發人員或 AI 助手必須同步在此表中新增對應條目（包含：紀錄日期、異常描述、受影響檔案、原因分析與解決方案）。
 
 ### 🛠️ 歷史除錯紀錄表
 
@@ -271,3 +273,6 @@ jobs:
 | 2026.06.24 | **新增回到頂部 (TOP) 懸浮按鈕** | [App.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/App.vue)<br>[App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 為了優化行動端與長頁面瀏覽體驗，新增滑動後自動浮現的 TOP 按鈕，點擊可平滑滾動回頁首。 | 在 App.js 實作動態一半滾動高度監聽（並加入 scrollY > 100 且可滾動高度 > 150px 雙重安全防護）與原生 behavior: 'smooth' 平滑置頂方法，同時使用 watch 監聽 route.path 切換分頁時立即將按鈕設為 false 並歸零滾動條（window.scrollTo(0, 0)），解決分頁切換時按鈕殘留滯留的 Bug。於 App.vue 透過 Transition 進行淡入淡出渲染，並在 App.css 內定義霓虹脈衝樣式與 fade 動態過渡效果。 |
 | 2026.06.24 | **解決回到頂部按鈕淡出動畫失效之衝突** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 發現回到頂部按鈕套用了帶有 opacity 動態變化的 neonPulse 動畫，導致 Vue 離開過渡動畫 (transition) 中的 opacity: 0 遭覆蓋，無法平滑淡出。 | 將回到頂部按鈕的 animation 改為專屬的 scrollTopPulse 動畫，該動畫僅對發光邊框 (box-shadow) 進行呼吸脈衝，完全不變更 opacity 屬性，成功消除動畫衝突並實現完美的淡出效果。 |
 | 2026.06.24 | **解決回到頂部按鈕 display 覆寫 v-show 異常** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 發現回到頂部按鈕在 CSS 中設定了 display: flex !important，此權重強於 Vue 寫入的 style="display: none;" 行內樣式，導致 v-show 隱藏失效，一開始或切換頁面時按鈕都不消失。 | 將 custom-scroll-top-btn 中的 display 屬性及對齊屬性的 !important 標籤全數移除，使 Vue 能順利透過 display: none 進行控制，徹底修復按鈕無法隱藏的嚴重 Bug。 |
+| 2026.07.10 | **首頁絕對路徑導致資源未載入** | [index.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/index.html) | Favicon 圖標與入口主 JavaScript 在 index.html 中使用了斜線開頭的絕對路徑，違反靜態資源相對路徑化規範，在 GitHub Pages 部署時會指向網域根目錄而導致 404 白畫面或圖標失效。 | 移除首位斜線字元，將路徑修正為 favicon.ico 與 src/main.js 相對路徑，順利符合靜態部署防錯標準。 |
+| 2026.07.10 | **文創商品特有網址重複協定疑點釐清** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 文創商品按鈕連結為 `https://httpshancreator-springcom-2.creator-spring.com/`，其中包含 `https://https`，初看容易被誤判定為重複協定的打字錯誤 (Typo)。 | 經確認該網址為 SPRI.NG 電商平台特有的正確商店域名網址（非打字出錯）。特此於歷史紀錄中標記保留，避免後續維護者或 AI 助手誤改。 |
+
