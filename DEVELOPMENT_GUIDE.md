@@ -58,6 +58,18 @@
     }
     .sign a { color: inherit; }
     ```
+  * **註解編寫與代碼防損規範**：
+    * **HTML 區塊**：註解必須置於 HTML 標籤的上方，使用 `<!-- 這裡是xx -->` 的形式，不可以在標籤同一行的右側/行末撰寫註解。
+    * **CSS 區塊**：註解必須置於 CSS 選擇器或樣式規則的上方，使用 `/* 這裡是xx */` 的形式，不可以在樣式屬性同一行的右側/行末撰寫註解。
+    * **JavaScript 區塊**：
+      * 必須在每個 JavaScript 函式（Function）的上方加上單獨一行的註解說明，例如 `// 這裡是xxx的邏輯`。
+      * 建議儘量在 JavaScript 的程式碼語句右側/行末加上註解說明（例如 `let score = 0; // 記錄玩家的得分`），以達到逐行或逐段解釋的效果。
+    * **嚴格禁止修改代碼邏輯與原有註解**：
+      * **在進行註解增補時，必須嚴格維持原有的程式碼邏輯與語法結構，絕對不要修改、刪除或重構任何程式碼，以避免改壞原有功能。**
+      * **絕對不可刪除、修改或清理程式碼中特意被註解起來的「已註解程式碼」（例如 `// const indicator = ...` 或偵錯用註解），必須原樣保留。**
+      * **絕對不可更動、重排版或微調 SVG 壓縮路徑字串（如 `pandaSvg`、`penguinSvg`、`starSvg` 等數據），任何微小變化都會導致畫面與動畫損壞。**
+    * **通用規範**：所有小遊戲的註解內容必須使用**繁體中文**撰寫，且**嚴禁包含 any 表情符號 (Emoji) 或圖形符號**（如 🚀, 💡, ⚡ 等），確保程式碼的純粹性。
+
 
 ## 2. 全局設計規範 (Global Design Tokens)
 
@@ -425,4 +437,5 @@ jobs:
 | 2026.06.24 | **解決回到頂部按鈕 display 覆寫 v-show 異常** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css) | 發現回到頂部按鈕在 CSS 中設定了 display: flex !important，此權重強於 Vue 寫入的 style="display: none;" 行內樣式，導致 v-show 隱藏失效，一開始或切換頁面時按鈕都不消失。 | 將 custom-scroll-top-btn 中的 display 屬性及對齊屬性的 !important 標籤全數移除，使 Vue 能順利透過 display: none 進行控制，徹底修復按鈕無法隱藏的嚴重 Bug。 |
 | 2026.07.10 | **首頁絕對路徑導致資源未載入** | [index.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/index.html) | Favicon 圖標與入口主 JavaScript 在 index.html 中使用了斜線開頭的絕對路徑，違反靜態資源相對路徑化規範，在 GitHub Pages 部署時會指向網域根目錄而導致 404 白畫面或圖標失效。 | 移除首位斜線字元，將路徑修正為 favicon.ico 與 src/main.js 相對路徑，順利符合靜態部署防錯標準。 |
 | 2026.07.10 | **文創商品特有網址重複協定疑點釐清** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 文創商品按鈕連結為 `https://httpshancreator-springcom-2.creator-spring.com/`，其中包含 `https://https`，初看容易被誤判定為重複協定的打字錯誤 (Typo)。 | 經確認該網址為 SPRI.NG 電商平台特有的正確商店域名網址（非打字出錯）。特此於歷史紀錄中標記保留，避免後續維護者或 AI 助手誤改。 |
+| 2026.07.10 | **5 款互動小遊戲註解補充完成** | `public/games/` 底下所有小遊戲檔案 | 原本的小遊戲檔案缺乏統一的中文化結構與邏輯備忘註解，需依循開發指南之嚴格規範為其補全註解以利長期維護。 | 逐一為五款小遊戲添加詳細的繁體中文註解，嚴格把關註解格式（無 Emoji 符號，HTML 放標籤上方，CSS 放規則上方，JS 放函式上方/行末防呆），並保留所有特意保留的已註解程式碼與 SVG 資料結構。 |
 

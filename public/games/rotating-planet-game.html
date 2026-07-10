@@ -676,30 +676,47 @@
 </head>
 
 <body>
+  <!-- 遊戲主體外層佈局容器 -->
   <div class="wrapper">
+    <!-- 地圖快速傳送頂端指示條 -->
     <div class="location">
+      <!-- 地圖定位節點分佈欄 -->
       <div class="location_mark"></div>
+      <!-- 目前角色在地圖中的橫向進度指針 -->
       <div class="pointer"></div>
     </div>
+    <!-- 提示導師 NPC 人物對話框容器 -->
     <div class="sensei_wrapper">
+      <!-- 導師 NPC 點擊對話人物圖片元素 -->
       <div class="sensei">
 
       </div>
+      <!-- 對話泡泡框與文字展示外層 -->
       <div class="speech_wrapper">
+        <!-- 跑馬燈文字漸變顯示泡泡框 -->
         <div class="speech_bubble"></div>
       </div>
     </div>
 
+    <!-- 旋轉星球畫布主包裝容器 -->
     <div class="circle_wrapper">
+      <!-- 場景動態背景（光暗交替樣式） -->
       <div class="background light"></div>
+      <!-- 球體旋轉運動的星球元素主體 -->
       <div class="circle"></div>
     </div>
 
+    <!-- 調查物體展示彈出視窗遮罩外層 -->
     <div class="display_wrapper">
+      <!-- 展示視窗定位核心容器 -->
       <div class="inner_wrapper">
+        <!-- 圖片詳情展示畫布區 -->
         <div class="img_display display"></div>
+        <!-- 物體介紹詳細內文 -->
         <div class="caption display"></div>
+        <!-- 輔助展示控制元素 -->
         <div class="display"></div>
+        <!-- 關閉詳情彈窗按鍵 -->
         <button class="display close">關閉</button>
       </div>
     </div>
@@ -707,18 +724,23 @@
   </div>
 
 
+  <!-- 行動端虛擬手把搖桿控制外框 -->
   <div class="touch_wrapper">
     <div>
+      <!-- 虛擬手把方向操縱區 -->
       <div class="touch_control">
+        <!-- 虛擬方向搖桿操縱按鈕 -->
         <div class="touch_circle"></div>
       </div>
 
+      <!-- 虛擬 Enter 調查互動按鍵 -->
       <div class="action_button"></div>
     </div>
   </div>
 
 
   <!-- <div class="indicator"></div> -->
+  <!-- 個人署名與貼圖商店連結 -->
   <div class="sign">
     by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank"
       rel="noopener noreferrer">貼圖商店</a>
@@ -1013,9 +1035,12 @@
     const displays = document.querySelectorAll('.display')
     const sensei = document.querySelector('.sensei')
     const speechBubble = document.querySelector('.speech_bubble')
+    // 計算給定半徑之半圓周長的數學公式輔助函式
     const halfCircumference = r => Math.PI * r
+    // 判斷傳入參數是否為數值型態的類型檢查輔助函式
     const isNum = x => typeof x === 'number'
 
+    // 同時批量設定目標 DOM 元素的尺寸與座標定位參數的函式
     const setTargetParams = ({ target, x, y, w, h }) => {
       const { style } = target
       if (isNum(x)) style.left = `${x}px`
@@ -1024,8 +1049,10 @@
       if (isNum(h)) style.height = `${h}px`
     }
 
+    // 將特定場景關卡索引下的所有擺設物件實例化渲染到星球表面的載入控制函式
     const placeElements = index => mapData[index].forEach(element => placeElement(element, index))
 
+    // 依據物件角度、半徑與層級參數，將單個擺設元素定位貼附於星球圓周的繪製函式
     const placeElement = (element, i) => {
       const newElement = document.createElement('div')
       const offset = i % 2 === 0 ? 0 : 180
@@ -1045,11 +1072,13 @@
     }
 
 
+    // 修改角色雪碧圖橫向偏移量以實現影格步進動畫的更新函式
     const setSpritePos = (num, actor, sprite) => {
       actor.spritePos = num
       sprite.style.marginLeft = `${num}px`
     }
 
+    // 依據前進方向更新角色雪碧圖朝向狀態並切換動作影格的轉向動畫控制函式
     const turnSprite = ({ e, actor, animate }) => {
       const dir = e
       const { sprite, frameOffset } = bearData
@@ -1068,11 +1097,13 @@
       setSpritePos(m, actor, sprite)
     }
 
+    // 停止小熊移動狀態並切換為當前方向靜止影格的停止函式
     const stopBear = () => {
       turnSprite({ e: circleData.key, actor: bearData })
       circleData.key = null
     }
 
+    // 在地圖邊界循環往復切換前一關或後一關關卡索引的循環運算函式
     const returnNextOrPrev = current => {
       return current === -1
         ? mapDataKeys.length - 1
@@ -1081,6 +1112,7 @@
           : current
     }
 
+    // 當星球旋轉超出 360 度邊界時，重設旋轉角度值以防數值無限累積的計算函式
     const returnPos = current => {
       return current === mapDataKeys.length * 180
         ? mapDataKeys.length * -180
@@ -1089,6 +1121,7 @@
           : current
     }
 
+    // 限制並約束小熊在星球表面垂直走動深度的邊界約束函式
     const returnVerticalPos = current => {
       return current < -47
         ? -47
@@ -1097,6 +1130,7 @@
           : current
     }
 
+    // 配合視差，在小熊向左右旋轉前進時動態在後台加載相鄰關卡物件的加載機制函式
     const populateCircle = key => {
       const { mapIndex } = circleData
       const indexToAdd = key === 'r' ? returnNextOrPrev(mapIndex + 1) : returnNextOrPrev(mapIndex - 1)
@@ -1106,6 +1140,7 @@
       placeElements(indexToAdd)
     }
 
+    // 根據目前星球旋轉角度，換算出對應整張地圖中精確進度比率與索引的運算函式
     const currentPos = pos => {
       return pos === 0
         ? 0
@@ -1114,18 +1149,22 @@
           : pos / -180
     }
 
+    // 根據星球當前旋轉位置，同步更新地圖進度條指針橫向坐標的指引控制函式
     const movePointer = pos => {
       const { width } = circleWrapper.getBoundingClientRect()
       const pointerPos = (currentPos(pos - 90) / mapDataKeys.length) * width
       pointer.style.transform = `translateX(${(pointerPos > width ? pointerPos - width : pointerPos) - 12}px)`
     }
 
+    // 伴隨關卡切換而同步改變天空背景光暗樣式效果的視覺切換函式
     const changeBackground = pos => {
       background.classList[Math.floor(pos) % 2 === 0 ? 'add' : 'remove']('light')
     }
 
+    // 判斷兩數值之絕對值差是否小於給定緩衝範圍的數學判定輔助函式
     const withinBuffer = ({ a, b, buffer }) => Math.abs(a - b) < buffer
 
+    // 在旋轉前進過程中持續更新星球當前旋轉角度、地圖進度與背景圖層的狀態同步函式
     const updateElements = () => {
       const trigger = [89, 269, 91, 271]
       const { key } = circleData
@@ -1145,11 +1184,13 @@
       // indicator.innerHTML = `angle: ${circleData.angle} pos:${circleData.pos} prev: ${returnNextOrPrev(circleData.mapIndex - 1)} current: ${circleData.mapIndex} next:${returnNextOrPrev(circleData.mapIndex + 1)}`
     }
 
+    // 計算極坐標以令小熊始終挺立在旋轉中的星球表面的定位變換函式
     const positionBear = angle => {
       bearData.bear.style.transformOrigin = `center ${220 - (bearData.vertPos)}px`
       bearData.bear.style.transform = `translate(${220 - 16}px, ${bearData.vertPos}px) rotate(${angle}deg)`
     }
 
+    // 控制星球依據操縱按鍵產生旋轉，並連帶更新小熊立足點角度與地圖狀態的旋轉控制核心函式
     const rotateCircle = () => {
       circleData.angle += config[circleData.key]
       circle.style.transform = `rotate(${circleData.angle}deg)`
@@ -1158,12 +1199,14 @@
       updateElements()
     }
 
+    // 改變小熊垂直走向的 CSS z-index 深度與旋轉原點，以實現縱向景深走動的控制函式
     const moveBearVertically = () => {
       bearData.bear.style.zIndex = bearData.vertPos + 64
       positionBear(-circleData.angle)
     }
 
 
+    // 碰撞偵測核心邏輯：判斷小熊當前位置是否與任何場景可互動元件或入口發生重合
     const elementInContact = () => {
       const angleWithinCurrentMap = Math.round((currentPos(circleData.pos - 90) % 1) * 180)
 
@@ -1185,6 +1228,7 @@
       }).filter(element => element)[0]
     }
 
+    // 依據互動事件是否有配對詳情圖案，動態展開或收闔詳情展示遮罩的函式
     const displayOrHideImage = () => {
       if (circleData.activeEvent?.display?.image) {
         const { w, h, image } = circleData.activeEvent.display.image
@@ -1199,6 +1243,7 @@
       }
     }
 
+    // 初始化物理與影格定時器，持續監聽按鍵以循環旋轉星球與播放小熊走路動畫的核心步進函式
     const moveBearAndCircle = key => {
       clearInterval(circleData.interval)
       circleData.key = key
@@ -1234,6 +1279,7 @@
     }
 
 
+    // 統一處理鍵盤方向鍵與 Enter 鍵按下時，觸發角色走路、停止或啟動調查詳情面板的路由處理函式
     const handleKey = ({ e, letter, enter }) => {
       if ((e?.key === 'Enter' || enter) && circleData.activeEvent?.display && bearData.direction === 'u') {
         senseiData.userProgress.investigate = true
@@ -1253,6 +1299,7 @@
       }
     }
 
+    // 實例化小熊角色 DOM 結構並設置其初始旋轉變形中心點的初始化函式
     const addBear = () => {
       bearData.bear = document.createElement('div')
       const { bear } = bearData
@@ -1264,8 +1311,10 @@
       bear.style.transformOrigin = `center ${220 - 10}px`
     }
 
+    // 兩點之間直線歐幾里得幾何距離計算的數學輔助函式
     const distanceBetween = (a, b) => Math.round(Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2)))
 
+    // 處理虛擬搖桿拖曳位移量並將其轉化為對應前進方向的物理計算函式
     const drag = (target, pos, x, y) => {
       pos.a = pos.c - x
       pos.b = pos.d - y
@@ -1279,9 +1328,12 @@
       }
     }
 
+    // 兼容處理滑鼠與觸控事件獲取當前網頁 client 座標的輔助函式
     const client = (e, type) => e.type[0] === 'm' ? e[`client${type}`] : e.touches[0][`client${type}`]
+    // 獲取四捨五入 client 座標整數數值的輔助函式
     const roundedClient = (e, type) => Math.round(client(e, type))
 
+    // 針對行動端虛擬方向控制器綁定完整抓取、拖曳滑動與釋放事件的控制函式
     const addTouchAction = (target, handleKeyAction) => {
       const pos = { a: 0, b: 0, c: 0, d: 0 }
 
@@ -1317,6 +1369,7 @@
       mouse.down(target, 'add', onGrab)
     }
 
+    // 監聽視窗尺寸改變時縮放遊戲畫面比例並重算小熊與指針定位的自適應自評估函式
     const resize = () => {
       const { innerWidth } = window
       circleWrapper.style.transform = innerWidth < 400 ? `scale(${innerWidth / 400})` : 'scale(1)'
@@ -1324,6 +1377,7 @@
       movePointer(circleData.pos)
     }
 
+    // 傳送機制函式：將小熊與星球重置旋轉角度，清除並加載對應地圖的極速傳送函式
     const warpToLocation = i => {
       setTimeout(() => senseiData.userProgress.location = true, 1000)
       circleData.pos = i * -180 + 1
@@ -1352,6 +1406,7 @@
 
     // sensei +++
 
+    // NPC 說話逐字跑馬燈打字機特效與頭像說話擺動動畫的定時器播放函式
     const displayTextGradual = (t, i) => {
       speechBubble.innerHTML = t.slice(0, i)
       if (i % 5 === 0) sensei.classList.toggle('talking')
@@ -1364,8 +1419,10 @@
       }
     }
 
+    // 根據文字長度，動態延遲運算導師說話停留時間長度的輔助函式
     const senseiTiming = (buffer, key) => senseiData[key || 'instruction'].length * 20 + buffer * 1000
 
+    // 偵測玩家的成就進度（調查、走路等），動態更新導師泡泡框內文說話提示的指引函式
     const displayInstruction = () => {
       if (senseiData.active) {
         setInstruction()
@@ -1376,6 +1433,7 @@
       }
     }
 
+    // 點擊導師頭像時觸發呼出泡泡框並主動說出問候語與任務指引的觸發函式
     const activateSensei = () => {
       speechBubble.parentNode.parentNode.classList.remove('off')
       senseiData.active = true
@@ -1385,6 +1443,7 @@
       }, 400)
     }
 
+    // 清除泡泡框說話定時器並收闔對話提示的關閉函式
     const closeSensei = () => {
       ;['textTimer', 'loopTimer'].forEach(k => clearTimeout(senseiData[k]))
       sensei.classList.remove('talking')
@@ -1393,6 +1452,7 @@
       senseiData.active = false
     }
 
+    // 讀取玩家關卡成就足跡進度，匹配篩選出下一條適配對話文字的過濾函式
     const setInstruction = () => {
       const { userProgress: p } = senseiData
       const instructionKey = Object.keys(p).map(k => !p[k] && k).filter(k => k)[0]

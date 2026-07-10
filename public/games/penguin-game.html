@@ -181,9 +181,11 @@
 </head>
 
 <body>
+  <!-- 遊戲主體外框與滑鼠點擊畫布容器 -->
   <div class="wrapper"></div>
 
   <script>
+    // 遊戲主程式初始化入口函式，當 DOM 載入後執行
     function init() {
 
       const decodeRef = { a: ' h 1', b: ' h 2', e: ' h 3', g: ' h 4', j: ' h 5', A: ' v 1', B: ' v 2', E: ' v 3', G: ' v 4', J: ' v 5', n: 'h -1', u: ' h -2', k: ' h -3', x: ' h -4', i: ' h -5', N: ' v -1', U: ' v -2', K: ' v -3', X: ' v -4', I: ' v -5', w: ' v ', W: ' h ', D: '<path d="M', o: '<path fill="pink" d="M', F: '<path fill="#fff" d="M', '/': '/>', d: '<path d="M', f: '<path fill="#fff" d="M' }
@@ -200,18 +202,22 @@
 
       const starSvg = `d 7 0bBaBaAjAeUaNaEbAaAkBnAnKuNuAnAnBaBaBkNnNuNuAuAnAkUaUaUnNnNnUjNaUaU"/D 27 1aEbAaAkBnAnKuNnNeUaN"/D 44 1aBaAaAuAnAnUnNnNbNaN"/D 60 1aBbAuBnUuNbU"/D 35 4aBaAaAuAnAnUnNnNbNaN"/D 50 4aBbAuBnUuNbU"/D 24 8aEbAaAkBnAnKuNnNeUaN"/D 41 10aBaAaAuAnAnUnNnNbNaN"/D 57 11aBbAuBnUuNbU"/`
 
+      // 獲取主畫面容器
       const body = document.querySelector('.wrapper')
+      // 定義各項動作動畫影格索引數值
       const animationFrames = {
-        walk: [0, 1, 2, 1, 3, 4],
-        stop: [0],
-        celebrate: [5, 6, 7, 6, 3, 4],
-        turnFromup: [0, 1, 2, 3, 4],
+        walk: [0, 1, 2, 1, 3, 4], // 走路動畫影格
+        stop: [0],                // 停止動作影格
+        celebrate: [5, 6, 7, 6, 3, 4], // 慶祝動畫影格
+        turnFromup: [0, 1, 2, 3, 4], // 轉向動作影格
         turnFromdUp: [1, 2, 3, 4],
         turnFromside: [2, 3, 4],
         turnFromdDown: [3, 4],
         turnFromdown: [4],
       }
+      // 單個企鵝影格的尺寸寬高
       const cellSize = 96
+      // 對應方向鍵在雪碧圖中的行數索引值
       const directions = {
         up: 0,
         dUp: 1,
@@ -221,6 +227,7 @@
         turn: 5,
       }
       const spriteNo = Object.keys(penguinSvg).length
+      // 對應方向鍵名稱
       const sprites = {
         up: 'up',
         upright: 'dUp',
@@ -232,13 +239,17 @@
         upleft: 'dUp',
         turn: 'turn'
       }
+      // 方向狀態清單
       const turnDirections = Object.keys(sprites)
+      // 動畫更新速率
       const frameSpeed = 100
+      // 目標點定位參數
       const control = {
         x: null,
         y: null,
         angle: 360,
       }
+      // 角度對應轉向前進方向的映射關係物件
       const directionConversions = {
         360: 'up',
         45: 'upright',
@@ -249,19 +260,25 @@
         270: 'left',
         315: 'upleft',
       }
+      // 每次位移的距離長度
       const distance = 10
+      // 星星目標點 DOM 元素實例
       let star
+      // 星星閃爍動畫定時器
       let starInterval
 
+      // 設定目標元素的 CSS left 與 top 座標物理定位函式
       const setPos = (target, x, y) => {
         target.style.left = `${x}px`
         target.style.top = `${y}px`
       }
 
+      // 設定目標元素的 CSS transform 位移轉換幾何定位函式
       const setMargin = (target, x, y) => {
         target.style.transform = `translate(${x}px, ${y}px)`
       }
 
+      // 將角度映射方向轉為方向映射角度的鍵值對反向轉換函式
       const reverseDirectionConversions = () => {
         const obj = {}
         Object.keys(directionConversions).forEach(k => {
@@ -270,25 +287,30 @@
         return obj
       }
 
+      // 控制企鵝雪碧圖影格播放與走路/慶祝動畫切換的動畫核心函式
       const animatePenguin = penguin => {
         const { frame: i, animation, frameSpeed: speed } = penguinData
         const penguinSprite = penguin.childNodes[1].childNodes[1]
+        // 套用位移背景雪碧圖進行影格繪製
         setMargin(penguinSprite, `-${animationFrames[animation][i] * cellSize}`, `-${cellSize * directions[sprites[penguinData.direction]]}`)
+        // 計算下一影格
         penguinData.frame = i === animationFrames[animation].length - 1 ? 0 : i + 1
         penguinData.frameTimer = setTimeout(() => animatePenguin(penguin), speed)
         if (animation === 'celebrate' && i === 0) {
           penguinData.jump ?
-            createJumpMark(penguin) :
+            createJumpMark(penguin) : // 掉入慶祝跳躍踏印
             penguinData.jump = true
         }
         if (animation !== 'celebrate') penguinData.jump = false
       }
 
+      // 隨機獲取企鵝初始走動朝向的輔助函式
       const randomDirection = () => {
         const availableDirections = turnDirections.filter(t => t !== 'turn')
         return availableDirections[Math.floor(Math.random() * availableDirections.length)]
       }
 
+      // 企鵝實例物理狀態資料範本
       const penguinData = {
         penguin: null,
         animation: 'walk',
@@ -305,47 +327,55 @@
         pos: { x: 0, y: 0 }
       }
 
+      // 弧度轉換成角度
       const radToDeg = rad => Math.round(rad * (180 / Math.PI))
 
+      // 捨入到最近的分貝倍數值
       const nearestN = (n, denom) => {
         return n === 0 ? 0 : (n - 1) + Math.abs(((n - 1) % denom) - denom)
       }
 
+      // 判斷兩個座標值是否在小範圍重疊緩衝區內的輔助函式
       const overlap = (a, b) => {
         const buffer = 20
         return Math.abs(a - b) < buffer
       }
 
+      // 計算滑鼠點擊點與企鵝當前位置之間的傾斜角度並以 45 度為單位捨入的計算函式
       const clickedAngle = () => {
         const angle = radToDeg(Math.atan2(penguinData.pos.y - control.y, penguinData.pos.x - control.x)) - 90
         const adjustedAngle = angle < 0 ? angle + 360 : angle
         return nearestN(adjustedAngle, 45)
       }
 
+      // 控制 SVG 圖形元素影格位置切換（如星星閃爍）的定時器動畫函式
       const animateSvg = ({ target, start, end, interval, speed }) => {
         const startFrame = start || 0
         let i = startFrame
         clearInterval(interval)
         interval = setInterval(() => {
-          target.style.marginLeft = `${-(i * 100)}%`
+          target.style.marginLeft = `${-(i * 100)}%` // 移動雪碧圖影格
           i = i >= end ?
             startFrame :
             i + 1
         }, speed || 100)
       }
 
+      // 切換企鵝當前播放動作動畫名稱並重設影格索引的狀態函式
       const changeAnimation = animation => {
-        penguinData.frame = 0
+        penguinData.frame = 0 // 動畫播放起始重置
         penguinData.animation = animation
       }
 
+      // 停止企鵝步進移动並進入特定靜止或慶祝動作動畫的停止控制函式
       const stopPenguin = animation => {
         changeAnimation(animation)
-        penguinData.stop = true
+        penguinData.stop = true // 標記停止
       }
 
+      // 檢查企鵝是否超出瀏覽器邊框，並限制且更新企鵝實體座標與層級的定位函式
       const checkBoundaryAndUpdatePenguinPos = (x, y, penguin, penguinData) => {
-        const lowerLimit = -40 // buffer from window edge
+        const lowerLimit = -40 // 安全邊緣
         const upperLimit = 40
 
         if (x > lowerLimit && x < (body.clientWidth - upperLimit)) {
@@ -354,40 +384,44 @@
         if (y > lowerLimit && y < (body.clientHeight - upperLimit)) {
           penguinData.marginPos.y = y
         }
-        setMargin(penguin, penguinData.marginPos.x, penguinData.marginPos.y)
+        setMargin(penguin, penguinData.marginPos.x, penguinData.marginPos.y) // 套用平移位移
       }
 
+      // 企鵝在雪地走路時在身後動態留下左右腳印與角度微調的特效函式
       const createMark = (penguin, angle) => {
         const { height, left, top } = penguin.getBoundingClientRect()
         const mark = document.createElement('div')
         penguinData.stepLeft = !penguinData.stepLeft
         mark.className = 'foot_print'
-        mark.style.transform = `rotate(${angle}deg) scale(${penguinData.stepLeft ? -1 : 1}, 1)`
+        mark.style.transform = `rotate(${angle}deg) scale(${penguinData.stepLeft ? -1 : 1}, 1)` // 左右交替腳印鏡像
         penguinData.pos.x = left + 5
         penguinData.pos.y = top + (height - 20)
-        setPos(mark, penguinData.pos.x, penguinData.pos.y)
+        setPos(mark, penguinData.pos.x, penguinData.pos.y) // 套用腳印物理坐標
         body.append(mark)
-        setTimeout(() => body.removeChild(mark), 10000)
+        setTimeout(() => body.removeChild(mark), 10000) // 10秒後雪印自然融化移除
       }
 
+      // 企鵝原地跳躍慶祝時在身後留下雙腳跳躍冰坑特效的視覺函式
       const createJumpMark = penguin => {
         const { left, top } = penguin.childNodes[1].childNodes[3].childNodes[1].getBoundingClientRect()
         const mark = document.createElement('div')
         mark.className = 'jump_print'
 
-        setPos(mark, left + 1, top + 33)
+        setPos(mark, left + 1, top + 33) // 套用坐標
         body.append(mark)
-        setTimeout(() => body.removeChild(mark), 10000)
+        setTimeout(() => body.removeChild(mark), 10000) // 10秒後融化
       }
 
+      // 偵測企鵝是否已觸摸到點擊產生的星星目標點的碰撞偵測函式
       const touchedTheStar = (x, y) => {
         return (x === penguinData.marginPos.x && y === penguinData.marginPos.y) ||
           (overlap(control.x, penguinData.pos.x) && overlap(control.y, penguinData.pos.y))
       }
 
+      // 企鵝點擊尋路的核心路徑計算與步進移動控制函式
       const moveAbout = penguin => {
         const penguinDir = +reverseDirectionConversions()[penguinData.direction]
-        const angle = clickedAngle()
+        const angle = clickedAngle() // 計算夾角
 
         const turnValue = penguinDir === angle ?
           0 :
@@ -398,24 +432,26 @@
         penguinData.turnIndex += turnValue
         if (penguinData.turnIndex < 0) penguinData.turnIndex = 7
         if (penguinData.turnIndex > 7) penguinData.turnIndex = 0
-        penguinData.direction = turnDirections[penguinData.turnIndex]
+        penguinData.direction = turnDirections[penguinData.turnIndex] // 更新企鵝朝向
         const { direction: dir } = penguinData
         penguin.childNodes[1].className = `penguin_inner_wrapper facing_${dir}`
 
-        createMark(penguin.childNodes[1].childNodes[3].childNodes[1], penguinDir)
+        createMark(penguin.childNodes[1].childNodes[3].childNodes[1], penguinDir) // 動態渲染小腳印
 
         let { x, y } = penguinData.marginPos
 
+        // 計算步進像素位移
         if (dir !== 'up' && dir !== 'down') x += (dir.includes('left')) ? -distance : distance
         if (dir !== 'left' && dir !== 'right') y += (dir.includes('up')) ? -distance : distance
 
         if (touchedTheStar(x, y)) {
+          // 星星碰觸到了，移動到最終點，轉爲慶祝祝賀動畫
           checkBoundaryAndUpdatePenguinPos(control.x, control.y, penguin, penguinData)
           stopPenguin('turnFrom' + sprites[dir])
           penguinData.direction = 'turn'
           setTimeout(() => {
             if (penguinData.direction === 'turn') {
-              stopPenguin('celebrate')
+              stopPenguin('celebrate') // 正式進入慶祝
             }
           }, 100 * animationFrames['turnFrom' + sprites[dir]].length)
           if (star) {
@@ -428,7 +464,7 @@
             setTimeout(() => {
               if (touchedTheStar(x, y) && star) {
                 clearInterval(starInterval)
-                body.removeChild(star)
+                body.removeChild(star) // 移除星星
                 star = null
               }
             }, 400)
@@ -437,12 +473,13 @@
 
         checkBoundaryAndUpdatePenguinPos(x, y, penguin, penguinData)
         if (!penguinData.stop) penguinData.moveTimer = setTimeout(() => {
-          moveAbout(penguin)
+          moveAbout(penguin) // 遞迴步進位移
         }, penguinData.moveSpeed)
       }
 
       const svgWrapper = ({ content, w, h, frameWidth, spriteNo }) => `<svg x="0px" y="0px" width="${frameWidth}%" height="${100 / spriteNo}%" viewBox="0 0 ${w} ${h}">${content}</svg>`
 
+      // 解析拼裝 SVG 壓縮路徑以繪製多方向企鵝雪碧圖資源的輔助函式
       const mapPenguinAssets = () => Object.keys(directions).map(dir => {
         return dir === 'turn' ?
           svgWrapper({
@@ -461,6 +498,7 @@
           })
       }).join('')
 
+      // 實例化企鵝主體 DOM 並初始化其座標與預設動畫的建構建立函式
       const createPenguin = (x, y) => {
         const penguin = document.createElement('div')
         penguin.className = 'penguin_wrapper'
@@ -487,12 +525,13 @@
             y: top + (height / 2),
           }
         })
-        animatePenguin(penguin)
-        stopPenguin('stop')
+        animatePenguin(penguin) // 啟動影格重繪
+        stopPenguin('stop')     // 初始為靜止
       }
 
       createPenguin((body.clientWidth / 2) - 48, (body.clientHeight / 2) - 48)
 
+      // 在點擊點實例化引導企鵝前往的閃爍星星元素與動畫初始化的控制函式
       const createStar = () => {
         if (star) {
           body.removeChild(star)
@@ -512,15 +551,16 @@
         body.append(star)
       }
 
+      // 監聽畫布的滑鼠點擊事件，發起尋路走路行為
       body.addEventListener('click', e => {
         control.x = e.pageX
         control.y = e.pageY
-        createStar()
+        createStar() // 點擊生成小星星
 
         if (penguinData.stop) {
-          changeAnimation('walk')
+          changeAnimation('walk') // 切換成走路
           penguinData.stop = false
-          moveAbout(penguinData.penguin, penguinData)
+          moveAbout(penguinData.penguin, penguinData) // 開發引導走路尋路
         }
       })
 
@@ -530,6 +570,7 @@
 
   </script>
 
+  <!-- 個人署名與貼圖商店連結 -->
   <div class="sign">
     by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank"
       rel="noopener noreferrer">貼圖商店</a>

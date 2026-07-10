@@ -588,37 +588,60 @@
 </head>
 
 <body>
+  <!-- 遊戲主要外殼容器 -->
   <div class="wrapper">
+    <!-- 頂部展示已抓取玩具的收集箱 -->
     <div class="collection-box pix"></div>
+    <!-- 娃娃機主體結構 -->
     <div class="claw-machine">
+      <!-- 娃娃機玻璃櫥窗區域 -->
       <div class="box pix">
+        <!-- 娃娃機上半部 (爪子及滑軌活動範圍) -->
         <div class="machine-top pix">
+          <!-- 爪子關節節點 -->
           <div class="arm-joint pix">
+            <!-- 伸縮機械臂 -->
             <div class="arm pix">
+              <!-- 抓取夾爪 -->
               <div class="claws pix"></div>
             </div>
           </div>
+          <!-- 垂直滑軌 -->
           <div class="rail vert pix"></div>
+          <!-- 水平滑軌 -->
           <div class="rail hori pix"></div>
         </div>
+        <!-- 娃娃機下半部 (落物口) -->
         <div class="machine-bottom pix">
+          <!-- 櫥窗內的落物口點位 -->
           <div class="collection-point pix"></div>
         </div>
       </div>
+      <!-- 娃娃機控制面板區域 -->
       <div class="control pix">
+        <!-- 面板左側裝飾蓋板 -->
         <div class="cover left"></div>
+        <!-- 水平移動控制按鈕 (箭頭向右) -->
         <button class="hori-btn pix"></button>
+        <!-- 垂直移動與下爪按鈕 (按鍵向下) -->
         <button class="vert-btn pix"></button>
+        <!-- 面板右側裝飾蓋板 -->
         <div class="cover right">
+          <!-- 操作說明圖片區域 -->
           <div class="instruction pix"></div>
         </div>
+        <!-- 控制器下方裝飾蓋板 -->
         <div class="cover bottom"></div>
+        <!-- 控制器上方裝飾蓋板 -->
         <div class="cover top">
+          <!-- 導引收集玩具的提示箭頭 -->
           <div class="collection-arrow pix"></div>
         </div>
+        <!-- 控制面版上的取物口 -->
         <div class="collection-point pix"></div>
       </div>
     </div>
+    <!-- 遊戲操作提示說明文字 -->
     <div class="game-instruction">
       ＊點擊閃爍的按鈕移動爪子，試著抓取玩具吧！
     </div>
@@ -629,20 +652,24 @@
   </div>
 
   <script>
+    // 儲存常用 DOM 元素與玩具陣列的物件
     const elements = {
-      clawMachine: document.querySelector('.claw-machine'),
-      box: document.querySelector('.box'),
-      collectionBox: document.querySelector('.collection-box'),
-      collectionArrow: document.querySelector('.collection-arrow'),
-      toys: [],
+      clawMachine: document.querySelector('.claw-machine'), // 娃娃機容器
+      box: document.querySelector('.box'),                  // 櫥窗容器
+      collectionBox: document.querySelector('.collection-box'), // 收集箱容器
+      collectionArrow: document.querySelector('.collection-arrow'), // 收集箭頭
+      toys: [], // 儲存所有玩具實例的陣列
     }
 
+    // 遊戲運行時的狀態配置變數
     const settings = {
-      targetToy: null,
-      collectedNumber: 0,
+      targetToy: null,       // 當前被爪子鎖定或抓取的目標玩具
+      collectedNumber: 0,    // 已成功收集到的玩具總數
     }
 
+    // 像素渲染縮放倍率
     const m = 2
+    // 定義各項玩具的像素寬高物理參數
     const toys = {
       bear: {
         w: 20 * m,
@@ -670,33 +697,42 @@
       },
     }
 
+    // 將所有玩具類型各取兩個組成隨機排序清單
     const sortedToys = [...Object.keys(toys), ...Object.keys(toys)].sort(
       () => 0.5 - Math.random(),
     )
 
+    // 櫥窗邊緣與角落的安全緩衝邊距
     const cornerBuffer = 16
 
+    // 爪子移動邊界的限制緩衝參數
     const machineBuffer = {
       x: 36,
       y: 16,
     }
 
+    // 弧度轉換為角度的計算公式
     const radToDeg = rad => Math.round(rad * (180 / Math.PI))
+    // 計算玩具網格排列的 X 座標索引位置
     const calcX = (i, n) => i % n
+    // 計算玩具網格排列的 Y 座標索引位置
     const calcY = (i, n) => Math.floor(i / n)
 
+    // 獲取娃娃機主容器的大小幾何參數
     const {
       width: machineWidth,
       height: machineHeight,
       top: machineTop,
     } = document.querySelector('.claw-machine').getBoundingClientRect()
 
+    // 獲取娃娃機上方區塊的大小參數
     const {
       height: machineTopHeight
     } = document
       .querySelector('.machine-top')
       .getBoundingClientRect()
 
+    // 獲取娃娃機底部及落物口區塊的大小的參數
     const {
       height: machineBottomHeight,
       top: machineBottomTop
@@ -704,20 +740,25 @@
       .querySelector('.machine-bottom')
       .getBoundingClientRect()
 
+    // 計算機械臂伸長的最大長度限制
     const maxArmLength = machineBottomTop - machineTop - machineBuffer.y
 
+    // 角度正規化調整函式，將角度限縮在 0 至 360 度之間
     const adjustAngle = angle => {
       const adjustedAngle = angle % 360
       return adjustedAngle < 0 ? adjustedAngle + 360 : adjustedAngle
     }
 
+    // 產生特定範圍內隨機整數的輔助函式
     const randomN = (min, max) => {
       return Math.round(min - 0.5 + Math.random() * (max - min + 1))
     }
 
     //* classes *//
 
+    // 定義娃娃機控制按鈕實例的 Class 類別
     class Button {
+      // 按鈕的建構子，配置各類點擊與長按事件監聽
       constructor({
         className,
         action,
@@ -726,60 +767,65 @@
         releaseAction
       }) {
         Object.assign(this, {
-          el: document.querySelector(`.${className}`),
-          isLocked,
+          el: document.querySelector(`.${className}`), // 綁定 DOM 按鈕元素
+          isLocked, // 初始化鎖定旗標
         })
-        this.el.addEventListener('click', action);
+        this.el.addEventListener('click', action); // 掛載點擊事件
         ['mousedown', 'touchstart'].forEach(action =>
-          this.el.addEventListener(action, pressAction),
+          this.el.addEventListener(action, pressAction), // 掛載壓下或觸摸事件
         );
         ['mouseup', 'touchend'].forEach(action =>
-          this.el.addEventListener(action, releaseAction),
+          this.el.addEventListener(action, releaseAction), // 掛載釋放或離開事件
         )
 
-        if (!isLocked) this.activate()
+        if (!isLocked) this.activate() // 若未鎖定則直接激活按鈕
       }
+      // 激活按鈕，使其可以互動並套用閃爍動畫
       activate() {
         this.isLocked = false
         this.el.classList.add('active')
       }
+      // 鎖定按鈕，禁止互動並移除閃爍特效
       deactivate() {
         this.isLocked = true
         this.el.classList.remove('active')
       }
     }
 
+    // 娃娃機內所有具備物理座標位移物件的 Base Class 類別
     class WorldObject {
+      // 物件建構子，初始化基本座標、大小以及移動綁定
       constructor(props) {
         Object.assign(this, {
-          x: 0,
-          y: 0,
-          z: 0,
-          angle: 0,
+          x: 0, // X 軸座標
+          y: 0, // Y 軸座標
+          z: 0, // 層級深度 z-index
+          angle: 0, // 傾斜偏轉角度
           transformOrigin: {
             x: 0,
             y: 0
           },
-          interval: null,
-          default: {},
-          moveWith: [],
-          el: props.className && document.querySelector(`.${props.className}`),
+          interval: null,   // 位移定時器
+          default: {},      // 儲存預設基礎物理資訊
+          moveWith: [],     // 移動時隨之連帶同動的關聯物件串列
+          el: props.className && document.querySelector(`.${props.className}`), // 綁定對應的 DOM 元素
           ...props,
         })
-        this.setStyles()
+        this.setStyles() // 渲染物理樣式
         if (props.className) {
           const {
             width,
             height
           } = this.el.getBoundingClientRect()
-          this.w = width
-          this.h = height
+          this.w = width  // 紀錄實際網頁寬度
+          this.h = height // 紀錄實際網頁高度
         }
         ;
         ['x', 'y', 'w', 'h'].forEach(key => {
-          this.default[key] = this[key]
+          this.default[key] = this[key] // 保存原始物理座標及尺寸
         })
       }
+      // 套用當前物理物理座標、角度與寬高尺寸樣式至 DOM 元素上
       setStyles() {
         Object.assign(this.el.style, {
           left: `${this.x}px`,
@@ -789,22 +835,26 @@
           height: `${this.h}px`,
           transformOrigin: this.transformOrigin,
         })
-        this.el.style.zIndex = this.z
+        this.el.style.zIndex = this.z // 設定層級
       }
+      // 設定爪子的物理座標資訊
       setClawPos(clawPos) {
         this.clawPos = clawPos
       }
+      // 設定 CSS transform-origin 旋轉定位重心的函式
       setTransformOrigin(transformOrigin) {
         this.transformOrigin =
           transformOrigin === 'center' ?
             'center' :
             `${transformOrigin.x}px ${transformOrigin.y}px`
-        this.setStyles()
+        this.setStyles() // 重新套用樣式
       }
+      // 停止當前位移定時器，並若有回呼排程則執行下一步行為的函式
       handleNext(next) {
         clearInterval(this.interval)
         if (next) next()
       }
+      // 恢復移動至特定目標物理點的包裝函式
       resumeMove({
         moveKey,
         target,
@@ -819,9 +869,11 @@
           next
         })
       }
+      // 動態更新娃娃機陰影縮放與位置參數的函式
       resizeShadow() {
-        elements.box.style.setProperty('--scale', 0.5 + this.h / maxArmLength / 2)
+        elements.box.style.setProperty('--scale', 0.5 + this.h / maxArmLength / 2) // 根據長度調縮比例
       }
+      // 控制物件向特定目標物理座標點進行平滑動畫位移的核心函式
       move({
         moveKey,
         target,
@@ -829,36 +881,37 @@
         next
       }) {
         if (this.interval) {
-          this.handleNext(next)
+          this.handleNext(next) // 若已有進行中任務則先處理完下一步
         } else {
-          const moveTarget = target || this.default[moveKey]
+          const moveTarget = target || this.default[moveKey] // 設定目標物理坐報
           this.interval = setInterval(() => {
             const distance =
               Math.abs(this[moveKey] - moveTarget) < 10 ?
                 Math.abs(this[moveKey] - moveTarget) :
-                10
+                10 // 計算剩餘距離並採 10 像素平滑漸近
             const increment = this[moveKey] > moveTarget ? -distance : distance
             if (
               increment > 0 ?
                 this[moveKey] < moveTarget :
                 this[moveKey] > moveTarget
             ) {
-              this[moveKey] += increment
-              this.setStyles()
-              if (moveKey === 'h') this.resizeShadow()
+              this[moveKey] += increment // 更新位置
+              this.setStyles()           // 渲染樣式
+              if (moveKey === 'h') this.resizeShadow() // 若爲手臂伸縮，重設陰影
               if (this.moveWith.length) {
                 this.moveWith.forEach(obj => {
                   if (!obj) return
-                  obj[moveKey === 'h' ? 'y' : moveKey] += increment
+                  obj[moveKey === 'h' ? 'y' : moveKey] += increment // 同步連動移動關聯物件
                   obj.setStyles()
                 })
               }
             } else {
-              this.handleNext(next)
+              this.handleNext(next) // 抵達目的地，執行下一步
             }
           }, moveTime || 100)
         }
       }
+      // 計算與指定目標物件之間的幾何直線距離的函式
       distanceBetween(target) {
         return Math.round(
           Math.sqrt(
@@ -868,18 +921,22 @@
       }
     }
 
+    // 娃娃機內可被抓取玩具的 Class 類別
     class Toy extends WorldObject {
+      // 玩具的建構子，隨機初始化玩具類型、大小與擺放位置座標
       constructor(props) {
-        const toyType = sortedToys[props.index]
-        const size = toys[toyType]
+        const toyType = sortedToys[props.index] // 依隨機化清單獲取當前類型
+        const size = toys[toyType]             // 獲取規格引數
         super({
           el: Object.assign(document.createElement('div'), {
-            className: `toy pix ${toyType}`,
+            className: `toy pix ${toyType}`, // 新增 DOM 元素並掛載類名
           }),
+          // 動態計算網格位置 X
           x: cornerBuffer +
             calcX(props.index, 4) * ((machineWidth - cornerBuffer * 3) / 4) +
             size.w / 2 +
             randomN(-6, 6),
+          // 動態計算網格位置 Y
           y: machineBottomTop -
             machineTop +
             cornerBuffer +
@@ -892,35 +949,37 @@
           ...size,
           ...props,
         })
-        elements.box.append(this.el)
+        elements.box.append(this.el) // 將玩具元素加入櫥窗中
         const toy = this
 
-        this.el.addEventListener('click', () => this.collectToy(toy))
-        elements.toys.push(this)
+        this.el.addEventListener('click', () => this.collectToy(toy)) // 綁定點擊收集事件
+        elements.toys.push(this) // 加入玩具實例陣列
       }
+      // 將已被抓取成功的玩具置中展示，並移入上方收集箱中
       collectToy(toy) {
         toy.el.classList.remove('selected')
-        toy.x = machineWidth / 2 - toy.w / 2
+        toy.x = machineWidth / 2 - toy.w / 2 // 移動置中
         toy.y = machineHeight / 2 - toy.h / 2
-        toy.z = 7
-        toy.el.style.setProperty('--rotate-angle', '0deg')
+        toy.z = 7 // 設定置頂渲染層級
+        toy.el.style.setProperty('--rotate-angle', '0deg') // 重設傾角
         toy.setTransformOrigin('center')
-        toy.el.classList.add('display')
-        elements.clawMachine.classList.add('show-overlay')
-        settings.collectedNumber++
+        toy.el.classList.add('display') // 套用放大彈出展示動畫特效
+        elements.clawMachine.classList.add('show-overlay') // 開啟透明遮罩
+        settings.collectedNumber++ // 收集次數加一
         elements.collectionBox.appendChild(
           Object.assign(document.createElement('div'), {
             className: `toy-wrapper ${settings.collectedNumber > 6 ? 'squeeze-in' : ''
               }`,
-            innerHTML: `<div class="toy pix ${toy.toyType}"></div>`,
+            innerHTML: `<div class="toy pix ${toy.toyType}"></div>`, // 插入至上方收集箱展示
           }),
         )
         setTimeout(() => {
           elements.clawMachine.classList.remove('show-overlay')
           if (!document.querySelector('.selected'))
-            elements.collectionArrow.classList.remove('active')
+            elements.collectionArrow.classList.remove('active') // 清除收集引導箭頭
         }, 1000)
       }
+      // 計算並設定當玩具被夾爪吸住後，受物理慣性而產生的傾斜角度的函式
       setRotateAngle() {
         const angle =
           radToDeg(
@@ -932,36 +991,38 @@
         const adjustedAngle = Math.round(adjustAngle(angle))
         this.angle =
           adjustedAngle < 180 ? adjustedAngle * -1 : 360 - adjustedAngle
-        this.el.style.setProperty('--rotate-angle', `${this.angle}deg`)
+        this.el.style.setProperty('--rotate-angle', `${this.angle}deg`) // 寫入 CSS 傾斜變數
       }
     }
 
     //* set up *//
-    elements.box.style.setProperty('--shadow-pos', `${maxArmLength}px`)
+    elements.box.style.setProperty('--shadow-pos', `${maxArmLength}px`) // 設定娃娃機陰影定位深度
 
+    // 實例化機械臂的各項核心定位組件
     const armJoint = new WorldObject({
-      className: 'arm-joint',
+      className: 'arm-joint', // 綁定關節 DOM
     })
 
     const vertRail = new WorldObject({
-      className: 'vert',
-      moveWith: [null, armJoint],
+      className: 'vert', // 綁定垂直滑軌 DOM
+      moveWith: [null, armJoint], // 垂直軌道移動時，關節同動
     })
 
     const arm = new WorldObject({
-      className: 'arm',
+      className: 'arm', // 綁定伸縮吊臂 DOM
     })
 
-    armJoint.resizeShadow()
+    armJoint.resizeShadow() // 初始化陰影
 
+    // 執行開局爪子從左上角原點自動歸位滑動的啟動動畫
     armJoint.move({
       moveKey: 'y',
-      target: machineTopHeight - machineBuffer.y,
+      target: machineTopHeight - machineBuffer.y, // 爪子移至滑軌頂端
       moveTime: 50,
       next: () =>
         vertRail.resumeMove({
           moveKey: 'x',
-          target: machineBuffer.x,
+          target: machineBuffer.x, // 爪子移至最左側
           moveTime: 50,
           next: () => {
             Object.assign(armJoint.default, {
@@ -971,15 +1032,17 @@
             Object.assign(vertRail.default, {
               x: machineBuffer.x,
             })
-            activateHoriBtn()
+            activateHoriBtn() // 完成歸位，激活第一個箭頭按鈕
           },
         }),
     })
 
+    // 碰撞偵測輔助函式，判斷兩物件是否重疊
     const doOverlap = (a, b) => {
       return b.x > a.x && b.x < a.x + a.w && b.y > a.y && b.y < a.y + a.h
     }
 
+    // 下爪後偵測與夾爪重疊度最高的玩具，若重疊則將其綁定為抓取目標
     const getClosestToy = () => {
       const claw = {
         y: armJoint.y + maxArmLength + machineBuffer.y + 7,
@@ -988,11 +1051,11 @@
         h: 32,
       }
       const overlappedToys = elements.toys.filter(t => {
-        return doOverlap(t, claw)
+        return doOverlap(t, claw) // 篩選重疊玩具
       })
 
       if (overlappedToys.length) {
-        const toy = overlappedToys.sort((a, b) => b.index - a.index)[0]
+        const toy = overlappedToys.sort((a, b) => b.index - a.index)[0] // 優先挑選最上面的玩具
         toy.setTransformOrigin({
           x: claw.x - toy.x,
           y: claw.y - toy.y,
@@ -1001,65 +1064,71 @@
           x: claw.x,
           y: claw.y,
         })
-        settings.targetToy = toy
+        settings.targetToy = toy // 綁定為當前抓取目標
       }
     }
 
+    // 迴圈建立 11 個隨機分布的初始玩具
     new Array(12).fill('').forEach((_, i) => {
-      if (i === 8) return
+      if (i === 8) return // 略過特定索引使娃娃排列有孔隙感
       new Toy({
         index: i
       })
     })
 
+    // 水平按鈕釋放後，鎖定水平按鈕並解鎖垂直下爪按鈕的控制函式
     const stopHoriBtnAndActivateVertBtn = () => {
       armJoint.interval = null
       horiBtn.deactivate()
       vertBtn.activate()
     }
 
+    // 回歸預設狀態，重新解鎖水平控制按鈕以進行下一次挑戰的控制函式
     const activateHoriBtn = () => {
       horiBtn.activate()
-        ;
-      [vertRail, armJoint, arm].forEach(c => (c.interval = null))
+      ;
+      [vertRail, armJoint, arm].forEach(c => (c.interval = null)) // 清理全部計時排程
     }
 
+    // 機械爪回到左上角落物口後釋放爪子，將夾到的玩具丟下並重設按鈕狀態的函式
     const dropToy = () => {
-      arm.el.classList.add('open')
+      arm.el.classList.add('open') // 機械爪張開
       if (settings.targetToy) {
-        settings.targetToy.z = 3
+        settings.targetToy.z = 3 // 降低渲染層級使其順利掉入落物箱
         settings.targetToy.move({
           moveKey: 'y',
-          target: machineHeight - settings.targetToy.h - 30,
+          target: machineHeight - settings.targetToy.h - 30, // 玩具向下墜落
           moveTime: 50,
         })
-          ;
-        [vertRail, armJoint, arm].forEach(obj => (obj.moveWith[0] = null))
+        ;
+        [vertRail, armJoint, arm].forEach(obj => (obj.moveWith[0] = null)) // 取消移動同動綁定
       }
       setTimeout(() => {
-        arm.el.classList.remove('open')
-        activateHoriBtn()
+        arm.el.classList.remove('open') // 閉合機械爪
+        activateHoriBtn() // 開啟下一次操作
         if (settings.targetToy) {
-          settings.targetToy.el.classList.add('selected')
-          elements.collectionArrow.classList.add('active')
+          settings.targetToy.el.classList.add('selected') // 標記為待收集狀態
+          elements.collectionArrow.classList.add('active') // 亮起收集指引箭頭
           settings.targetToy = null
         }
       }, 700)
     }
 
+    // 偵測是否成功抓取玩具並切換機械臂同步移動狀態與套用玩具抓起樣式的控制函式
     const grabToy = () => {
       if (settings.targetToy) {
         ;
         [vertRail, armJoint, arm].forEach(
-          obj => (obj.moveWith[0] = settings.targetToy),
+          obj => (obj.moveWith[0] = settings.targetToy), // 將玩具同動掛載至所有手臂部件
         )
-        settings.targetToy.setRotateAngle()
-        settings.targetToy.el.classList.add('grabbed')
+        settings.targetToy.setRotateAngle() // 重算受力頃角
+        settings.targetToy.el.classList.add('grabbed') // 套用被夾起之雪碧圖樣式
       } else {
-        arm.el.classList.add('missed')
+        arm.el.classList.add('missed') // 沒夾到，套用空夾微顫與空爪樣式
       }
     }
 
+    // 水平按鈕實例
     const horiBtn = new Button({
       className: 'hori-btn',
       isLocked: true,
@@ -1067,16 +1136,17 @@
         arm.el.classList.remove('missed')
         vertRail.move({
           moveKey: 'x',
-          target: machineWidth - armJoint.w - machineBuffer.x,
+          target: machineWidth - armJoint.w - machineBuffer.x, // 移動至最右側限制
           next: stopHoriBtnAndActivateVertBtn,
         })
       },
       releaseAction: () => {
         clearInterval(vertRail.interval)
-        stopHoriBtnAndActivateVertBtn()
+        stopHoriBtnAndActivateVertBtn() // 停止移動並換手解鎖下爪按鈕
       },
     })
 
+    // 垂直與下爪按鈕實例，負責整個伸降與回拉流程
     const vertBtn = new Button({
       className: 'vert-btn',
       isLocked: true,
@@ -1084,31 +1154,31 @@
         if (vertBtn.isLocked) return
         armJoint.move({
           moveKey: 'y',
-          target: machineBuffer.y,
+          target: machineBuffer.y, // 移動至下方最大限制
         })
       },
       releaseAction: () => {
         clearInterval(armJoint.interval)
-        vertBtn.deactivate()
-        getClosestToy()
+        vertBtn.deactivate() // 鎖定下爪按鈕禁止重複操作
+        getClosestToy() // 運算是否有重疊娃娃
         setTimeout(() => {
-          arm.el.classList.add('open')
+          arm.el.classList.add('open') // 手臂張開下探
           arm.move({
             moveKey: 'h',
-            target: maxArmLength,
+            target: maxArmLength, // 伸長吊臂向下
             next: () =>
               setTimeout(() => {
-                arm.el.classList.remove('open')
-                grabToy()
+                arm.el.classList.remove('open') // 機械爪張開抓取
+                grabToy() // 判定是否抓起並套用樣式
                 arm.resumeMove({
-                  moveKey: 'h',
+                  moveKey: 'h', // 機械臂向上縮回
                   next: () => {
                     vertRail.resumeMove({
-                      moveKey: 'x',
+                      moveKey: 'x', // 機械臂向左滑回落物口
                       next: () => {
                         armJoint.resumeMove({
-                          moveKey: 'y',
-                          next: dropToy,
+                          moveKey: 'y', // 機械臂回彈對齊落物孔
+                          next: dropToy, // 放開爪子丟落玩具
                         })
                       },
                     })

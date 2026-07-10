@@ -145,15 +145,19 @@
 </head>
 
 <body>
+  <!-- 遊戲主體外層定位容器 -->
   <div class="outer_wrapper">
+    <!-- 熊貓活動畫布的主容器 -->
     <div class="wrapper"></div>
   </div>
+  <!-- 個人署名與貼圖商店連結 -->
   <div class="sign">
     by HanJohn <a href="https://store.line.me/stickershop/author/5851575/zh-Hant?lang=zh-Hant" target="_blank"
       rel="noopener noreferrer">貼圖商店</a>
   </div>
 
   <script>
+    // 遊戲主程式初始化入口函式，當 DOM 載入後執行
     function init() {
 
       const pandaSvg = {
@@ -167,15 +171,19 @@
       const decodeRef = { a: ' h 1', b: ' h 2', e: ' h 3', g: ' h 4', j: ' h 5', A: ' v 1', B: ' v 2', E: ' v 3', G: ' v 4', J: ' v 5', n: 'h -1', u: ' h -2', k: ' h -3', x: ' h -4', i: ' h -5', N: ' v -1', U: ' v -2', K: ' v -3', X: ' v -4', I: ' v -5', w: ' v ', W: ' h ', D: '<path d="M', o: '<path fill="pink" d="M', F: '<path fill="#fff" d="M', '/': '"/>', d: '<path d="M', f: '<path fill="#fff" d="M' }
       const decode = arr => arr.split('').map(c => !decodeRef[c] ? c : decodeRef[c]).join('')
 
+      // 獲取主畫面容器
       const body = document.querySelector('.wrapper')
+      // 定義各項動作動畫影格索引數值
       const animationFrames = {
-        walk: [0, 1, 2, 1],
-        stop: [0],
-        fall: [3, 4, 5, 6, 5, 7],
-        fallen: [7],
-        standUp: [7, 8, 9, 10, 11, 12]
+        walk: [0, 1, 2, 1], // 走路動畫影格
+        stop: [0],          // 停止動作影格
+        fall: [3, 4, 5, 6, 5, 7], // 摔倒動畫影格
+        fallen: [7],              // 倒地動畫影格
+        standUp: [7, 8, 9, 10, 11, 12] // 爬起動畫影格
       }
+      // 單個熊貓影格的尺寸寬高
       const cellSize = 100
+      // 對應方向鍵在雪碧圖中的行數索引值
       const directions = {
         up: 0,
         dUp: 1,
@@ -183,6 +191,7 @@
         dDown: 3,
         down: 4,
       }
+      // 對應方向鍵名稱
       const sprites = {
         up: 'up',
         upright: 'dUp',
@@ -193,151 +202,175 @@
         left: 'side',
         upleft: 'dUp',
       }
+      // 八個方向狀態清單
       const turnDirections = Object.keys(sprites)
+      // 儲存所有熊貓實例的物件容器
       const pandas = {}
-      // Change this to set number of Pandas
+      // 初始化建立的熊貓總數
       const pandaNumber = 20
+      // 碰撞產生位移的強度像素值
       const pandaImpact = 80
+      // 影格切換動畫更新速率
       const frameSpeed = 140
+      // 累積建立熊貓數量計數器
       let pandaCount = 0
 
+      // 控制個別熊貓動畫播放與雪碧圖位置更新的動畫控制函式
       const animatePanda = (panda, pandaObj) => {
         const { frame: i, animation, frameSpeed } = pandaObj
         const pandaSprite = panda.querySelector('.panda_sprite')
+        // 更新位移背景雪碧圖
         pandaSprite.style.marginLeft = `-${animationFrames[animation][i] * cellSize}px`
         pandaSprite.style.marginTop = `-${cellSize * directions[sprites[pandaObj.direction]]}px`
+        // 迴圈遞增影格索引
         pandaObj.frame = i === animationFrames[animation].length - 1 ? 0 : i + 1
         pandaObj.frameTimer = setTimeout(() => animatePanda(panda, pandaObj), frameSpeed)
       }
 
+      // 切換熊貓當前播放的動畫名稱並將影格重設為 0 的狀態函式
       const changeAnimation = (pandaObj, animation) => {
-        pandaObj.frame = 0
-        pandaObj.animation = animation
+        pandaObj.frame = 0 // 起始影格歸零
+        pandaObj.animation = animation // 更新動畫狀態
       }
 
+      // 停止熊貓移動並將其定位與動畫設為靜止的停止函式
       const stopPanda = (panda, pandaObj) => {
         changeAnimation(pandaObj, 'stop')
         const { offsetTop, offsetLeft } = panda.style
         panda.style.marginLeft = offsetLeft
         panda.style.marginTop = offsetTop
         panda.style.zIndex = offsetTop
-        pandaObj.stop = true
+        pandaObj.stop = true // 設定停止旗標
       }
 
+      // 開始播放熊貓動畫並標記為運行狀態的啟動函式
       const startPanda = (panda, pandaObj) => {
-        animatePanda(panda, pandaObj)
-        pandaObj.stop = false
+        animatePanda(panda, pandaObj) // 啟動動畫更新
+        pandaObj.stop = false         // 啟用狀態
       }
 
+      // 獲取熊貓當前 CSS marginLeft 數值的輔助函式
       const pandaMarginLeft = panda => +panda.style.marginLeft.replace('px', '')
+      // 獲取熊貓當前 CSS marginTop 數值的輔助函式
       const pandaMarginTop = panda => +panda.style.marginTop.replace('px', '')
+      // 產生 1 到最大值之間隨機整數的輔助函式
       const randomP = max => Math.ceil(Math.random() * max)
 
+      // 檢查並限縮熊貓不超出邊框邊界，並更新其坐標與層級的定位函式
       const checkBoundaryAndUpdatePandaPos = (x, y, panda, pandaObj) => {
-        const lowerLimit = -40
-        const upperLimit = 100
+        const lowerLimit = -40 // 最小邊距限
+        const upperLimit = 100 // 最大尺寸寬高上限限縮
 
         if (x > lowerLimit && x < (body.clientWidth - upperLimit)) {
-          panda.style.marginLeft = `${x}px`
+          panda.style.marginLeft = `${x}px` // 寫入橫向位置
           pandaObj.prev[0] = x
         }
         if (y > lowerLimit && y < (body.clientHeight - upperLimit)) {
-          panda.style.marginTop = `${y}px`
-          panda.style.zIndex = y
+          panda.style.marginTop = `${y}px`  // 寫入縱向位置
+          panda.style.zIndex = y            // 依高度同步深度排序
           pandaObj.prev[1] = y
         }
       }
 
+      // 當熊貓發生碰撞後，沿碰撞反方向產生擊退滑動效果的位移函式
       const slidePanda = (panda, pandaObj) => {
         let x = pandaMarginLeft(panda)
         let y = pandaMarginTop(panda)
 
+        // 依據碰撞方向反彈位移
         if (pandaObj.hit.includes('left')) x += pandaImpact
         if (pandaObj.hit.includes('right')) x -= pandaImpact
         if (pandaObj.hit.includes('up')) y += pandaImpact
         if (pandaObj.hit.includes('down')) y -= pandaImpact
 
-        checkBoundaryAndUpdatePandaPos(x, y, panda, pandaObj)
+        checkBoundaryAndUpdatePandaPos(x, y, panda, pandaObj) // 套用限縮定位
       }
 
+      // 執行熊貓碰撞後摔倒、靜止、爬起至恢復走路的完整碰撞生命週期控制函式
       const knockPanda = (panda, pandaObj) => {
-        if (pandaObj.knocked) return
+        if (pandaObj.knocked) return // 若已摔倒狀態中則直接返回
         pandaObj.knocked = true
         pandaObj.stop = true
-        slidePanda(panda, pandaObj)
-        changeAnimation(pandaObj, 'fall')
+        slidePanda(panda, pandaObj)  // 反向滑動擊退
+        changeAnimation(pandaObj, 'fall') // 切換成摔倒動作
 
         const a = frameSpeed * 6
-        const b = 1000 * (Math.ceil(Math.random() * 4) + 1)
+        const b = 1000 * (Math.ceil(Math.random() * 4) + 1) // 隨機倒地不起秒數
         const c = frameSpeed * 6
 
         pandaObj.frameTimer = setTimeout(() => {
-          changeAnimation(pandaObj, 'fallen')
+          changeAnimation(pandaObj, 'fallen') // 摔地靜止動作
         }, a)
 
         pandaObj.frameTimer = setTimeout(() => {
-          changeAnimation(pandaObj, 'standUp')
+          changeAnimation(pandaObj, 'standUp') // 開始掙扎爬起動畫
         }, a + b)
 
         pandaObj.frameTimer = setTimeout(() => {
-          changeAnimation(pandaObj, 'walk')
+          changeAnimation(pandaObj, 'walk') // 恢復正常走路
           pandaObj.hit = false
           pandaObj.knocked = false
           pandaObj.stop = false
           panda.classList.remove('stop')
-          moveAbout(panda, pandaObj)
+          moveAbout(panda, pandaObj) // 重新啟動自主步進
         }, a + b + c)
       }
 
+      // 控制熊貓隨機決定轉向並向前走動的自主尋路與移動控制函式
       const moveAbout = (panda, pandaObj) => {
-        if (pandaObj.hit) return
-        const turnOptions = [1, 1, -1, -1, 0]
+        if (pandaObj.hit) return // 若處於撞擊狀態則暫停主動走動
+        const turnOptions = [1, 1, -1, -1, 0] // 隨機偏轉步進值
         const turnValue = turnOptions[Math.floor(Math.random() * turnOptions.length)]
         pandaObj.turnIndex += turnValue
         if (pandaObj.turnIndex < 0) pandaObj.turnIndex = 7
         if (pandaObj.turnIndex > 7) pandaObj.turnIndex = 0
-        pandaObj.direction = turnDirections[pandaObj.turnIndex]
+        pandaObj.direction = turnDirections[pandaObj.turnIndex] // 更新方向狀態
         const { direction: dir } = pandaObj
-        panda.querySelector('.panda_inner_wrapper').className = `panda_inner_wrapper facing_${dir}`
+        panda.querySelector('.panda_inner_wrapper').className = `panda_inner_wrapper facing_${dir}` // 對應轉向樣式
 
         let x = pandaMarginLeft(panda)
         let y = pandaMarginTop(panda)
 
-        const distance = 50
+        const distance = 50 // 移動步長
         if (dir !== 'up' && dir !== 'down') x += (dir.includes('left')) ? -distance : distance
         if (dir !== 'left' && dir !== 'right') y += (dir.includes('up')) ? -distance : distance
 
         if (x === pandaObj.prev[0] && y === pandaObj.prev[1]) {
-          stopPanda(panda, pandaObj)
+          stopPanda(panda, pandaObj) // 遇障礙卡住時轉為靜止
         }
 
         checkBoundaryAndUpdatePandaPos(x, y, panda, pandaObj)
         if (!pandaObj.stop) pandaObj.moveTimer = setTimeout(() => {
-          moveAbout(panda, pandaObj)
+          moveAbout(panda, pandaObj) // 遞迴更新位置
         }, pandaObj.moveSpeed)
       }
 
+      // 隨機獲取熊貓走路移動速度參數的輔助函式
       const randomMoveSpeed = () => {
         const range = [850, 900, 950, 1000, 1100]
         return range[Math.floor(Math.random() * range.length)]
       }
 
+      // 解析並拼裝 SVG 壓縮路徑數據以渲染熊貓圖形資源的輔助函式
       const mapPandaAssets = () => {
         return Object.keys(directions).map(dir => {
           return `<svg x="0px" y="0px" width="100%" height="20%" viewBox="0 0 624 48">${decode(pandaSvg[dir])}</svg>`
         }).join('')
       }
 
+      // 建立熊貓四周四個碰撞偵測探針角落元素 DOM 的輔助函式
       const mapHitCorners = pandaCount => {
         return ['upleft', 'upright', 'downleft', 'downright'].map(dir => {
           return `<div class="hit_corner" data-pos="${dir}" data-id="${pandaCount}" ></div>`
         }).join('')
       }
 
+      // 隨機獲取八個前進轉向方向之一的輔助函式
       const randomDirection = () => {
         return turnDirections[Math.floor(Math.random() * turnDirections.length)]
       }
 
+      // 實例化單隻熊貓並將其 DOM 結構與物理參數初始化並加入場景的函式
       const createPanda = (x, y) => {
         const panda = document.createElement('div')
         panda.className = 'panda_wrapper'
@@ -356,7 +389,7 @@
         panda.style.marginTop = `${y}px`
         panda.style.marginLeft = `${x}px`
         panda.style.zIndex = y
-        body.append(panda)
+        body.append(panda) // 加入 DOM
 
         pandas[pandaCount] = {
           panda,
@@ -375,11 +408,12 @@
         const pandaStatus = document.createElement('p')
         pandaStatus.dataset.index = pandaCount
 
-        startPanda(panda, pandaObj)
-        moveAbout(panda, pandaObj)
+        startPanda(panda, pandaObj) // 啟動影格更新
+        moveAbout(panda, pandaObj)  // 啟動步進尋路
         pandaCount++
       }
 
+      // 產生用於暫存碰撞探針觸碰狀態的物件結構輔助函式
       const hitObj = n => {
         let obj = {}
         for (let i = 0; i < n; i++) {
@@ -393,18 +427,21 @@
         return obj
       }
 
+      // 當特定探針發生碰撞時更新熊貓行為狀態與受撞方向的判定函式
       const hitCheck = (hitDirection, pandaObj, pandaDirection) => {
         if (hitDirection) {
-          pandaObj.direction = pandaDirection
+          pandaObj.direction = pandaDirection // 套用受力方向轉向
           pandaObj.hit = pandaDirection
         }
       }
 
+      // 判斷兩個座標值是否在小範圍重疊緩衝區內的輔助函式
       const overlap = (a, b) => {
         const buffer = 20
-        return Math.abs(a - b) < buffer
+        return Math.abs(a - b) < buffer // 當差距小於 20 像素判定爲重合
       }
 
+      // 碰撞偵測核心迴圈函式：對比所有熊貓的探針是否重疊，並觸發 knocked 擊退摔倒邏輯
       const collisionCheck = () => {
         const hitCorners = document.querySelectorAll('.hit_corner')
         const hit = hitObj(pandaCount)
@@ -416,11 +453,11 @@
           const { id: aId, pos: aPos } = a.dataset
           hitCorners.forEach(b => {
             const { id: bId, pos: bPos } = b.dataset
-            if (aId === bId) return
+            if (aId === bId) return // 略過同體探針比較
             const { x: bX, y: bY, width: bW, height: bH } = b.getBoundingClientRect()
             if (overlap(aX, bX) && overlap(aX + aW, bX + bW) && overlap(aY, bY) && overlap(aY + aH, bY + bH)
             ) {
-              hit[aId][aPos] = true
+              hit[aId][aPos] = true // 標記為碰撞狀態
               hit[bId][bPos] = true
 
               // * Uncomment below to see collision
@@ -433,6 +470,7 @@
           const { upleft, upright, downleft, downright } = hit[i]
           const panda = pandas[i]
 
+          // 進行探針受撞方向的多重分支判定
           hitCheck(upleft, panda, 'upleft')
           hitCheck(downleft, panda, 'downleft')
           hitCheck(upright, panda, 'upright')
@@ -444,10 +482,10 @@
           hitCheck(upleft && upright && downleft && downright, panda, panda.defaultFallDirection)
 
           if ((upleft || upright || downleft || downright) && !panda.knocked) {
-            pandas[i].panda.classList.add('stop')
+            pandas[i].panda.classList.add('stop') // 停止走路，轉入摔倒階段
             const { direction } = panda
             panda.panda.querySelector('.panda_inner_wrapper').className = `panda_inner_wrapper facing_${direction}`
-            knockPanda(panda.panda, panda)
+            knockPanda(panda.panda, panda) // 執行被擊倒生命週期
           }
         }
       }
@@ -456,10 +494,10 @@
       new Array(pandaNumber).fill('').map(() => {
         return [randomP(body.clientWidth - 100), randomP(body.clientHeight - 100)]
       }).forEach(pos => {
-        createPanda(pos[0], pos[1])
+        createPanda(pos[0], pos[1]) // 於隨機位置放置熊貓實例
       })
 
-      setInterval(collisionCheck, 50)
+      setInterval(collisionCheck, 50) // 每 50 毫秒執行高頻碰撞檢測
     }
 
     window.addEventListener('DOMContentLoaded', init)
