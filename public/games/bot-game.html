@@ -6,17 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>小小機器人模擬器</title>
   <style>
+    /* 全域樣式重置，統一盒模型計算方式並清除所有預設內外距 */
     * {
       box-sizing: border-box;
       padding: 0;
       margin: 0;
     }
 
+    /* 定義全域 CSS 變數，包含機器人雪碧圖背景圖片路徑與寬度計算值 */
     :root {
       --bot_bg: url(../images/games/botgame01.jpg);
       --bot_width: calc(16px * 26 * 2);
     }
 
+    /* 文字標籤重置，使其顯示為行內區塊並清除所有預設的前後段落間距 */
     p,
     h1,
     h2,
@@ -30,12 +33,14 @@
       padding-inline-start: 0px;
     }
 
+    /* 全站背景色設定為深青綠，字型採用系統無襯線字型並統一轉為大寫 */
     body {
       background-color: rgb(24, 93, 101);
       font-family: Arial, Helvetica, sans-serif;
       text-transform: uppercase;
     }
 
+    /* 全螢幕覆蓋的透明遮罩層，預設文字透明、不攔截滑鼠事件，用於遊戲暫停顯示 */
     .overlay {
       color: transparent;
       z-index: 99999;
@@ -49,11 +54,13 @@
       font-size: 14px;
     }
 
+    /* 遊戲暫停狀態下遮罩的樣式：深藍半透明背景並顯示白色提示文字 */
     .overlay.paused {
       background-color: rgba(5, 24, 50, 0.733);
       color: white;
     }
 
+    /* 最外層定位容器，撐滿整個視窗並裁切溢出內容，確保機器人不超出邊界 */
     .outer_wrapper {
       position: absolute;
       width: 100%;
@@ -61,6 +68,7 @@
       overflow: hidden;
     }
 
+    /* 點擊機器人後出現的資訊面板外層，初始位置在畫面左側外，滑入動畫為 0.4s 過渡 */
     .info {
       position: absolute;
       width: 100%;
@@ -76,6 +84,7 @@
       pointer-events: none;
     }
 
+    /* 資訊卡片主體樣式，左上角固定定位、深綠半透明背景、白色小字 */
     .info_card {
       position: absolute;
       top: 10px;
@@ -105,6 +114,7 @@
       margin-right: 10px;
     }
 
+    /* 資訊面板展開時滑入至可見區域的 open 狀態樣式 */
     .info.open {
       left: 0px;
     }
@@ -130,6 +140,7 @@
       cursor: pointer;
     }
 
+    /* 日誌顏色條橫向排列容器 */
     .log_bar {
       display: flex;
     }
@@ -172,11 +183,13 @@
       background-color: rgb(251, 89, 105);
     }
 
+    /* 機器人活動畫布容器，高度扣除底部日誌欄的空間 */
     .wrapper {
       width: 100%;
       height: calc(100% - 100px);
     }
 
+    /* 機器人雪碧圖元素，使用像素渲染以保持清晰的像素風格外觀 */
     .bot {
       background: var(--bot_bg);
       width: var(--bot_width);
@@ -186,6 +199,7 @@
       background-size: var(--bot_width) calc(16px * 2) !important;
     }
 
+    /* 滑鼠懸停時反相顏色，並將游標改為指針樣式以提示可點擊 */
     .bot:hover {
       filter: invert(100%);
       cursor: pointer;
@@ -256,6 +270,7 @@
       }
     }
 
+    /* 機器人定位包裝容器，使用絕對定位並加入 1s 緩動過渡實現平滑位移 */
     .bot_wrapper {
       position: absolute;
       width: calc(16px * 2);
@@ -264,14 +279,17 @@
       transition: 1s ease;
     }
 
+    /* 水平翻轉樣式，用於控制機器人雪碧圖的左右朝向 */
     .flip {
       transform: scale(-1, 1);
     }
 
+    /* 機器人死亡後 1 秒淡出消失的樣式 */
     .fade_away {
       animation: fade_away 1s forwards;
     }
 
+    /* 定義由完全不透明逐漸消失的淡出動畫 */
     @keyframes fade_away {
       0% {
         opacity: 1
@@ -282,6 +300,7 @@
       }
     }
 
+    /* 浮動生命值數字特效元素，帶有緩慢淡出動畫 */
     .time {
       position: absolute;
       width: 32px;
@@ -295,14 +314,17 @@
       animation: slow_fade 1s forwards;
     }
 
+    /* 生命值增加時顯示水藍色文字 */
     .time.added {
       color: aquamarine;
     }
 
+    /* 生命值減少時顯示紫色文字 */
     .time.reduced {
       color: rgb(170, 100, 251);
     }
 
+    /* 緩慢淡出動畫：前 90% 保持完全不透明，最後 10% 才消失 */
     @keyframes slow_fade {
       0% {
         opacity: 1
@@ -317,6 +339,7 @@
       }
     }
 
+    /* 顯示當前運作中機器人總數的右上角指示器文字 */
     .indicator {
       position: absolute;
       top: 20px;
@@ -327,6 +350,7 @@
       z-index: 999;
     }
 
+    /* 底部事件日誌文字面板，呈現機器人行為紀錄，不攔截滑鼠事件 */
     .log {
       position: absolute;
       padding: 0px 10px;
@@ -353,6 +377,7 @@
       line-height: 11px;
     }
 
+    /* 日誌舊訊息的輕微淡化樣式，用於新訊息出現時讓舊訊息退場 */
     .light_fade {
       animation: light_fade forwards 0.5s;
     }
@@ -379,11 +404,13 @@
       }
     }
 
+    /* 日誌最舊條目超過數量上限時的淡出移除樣式 */
     .fade {
       color: white;
       animation: fade forwards 1s;
     }
 
+    /* 定義日誌文字從半透明到完全透明的淡出動畫 */
     @keyframes fade {
       0% {
         opacity: 0.8
@@ -394,6 +421,7 @@
       }
     }
 
+    /* 個人署名文字區塊樣式，固定於畫面右下角 */
     .sign {
       position: absolute;
       bottom: 10px;
@@ -403,11 +431,13 @@
       /* 根據遊戲主題微調 */
     }
 
+    /* 署名區塊超連結繼承父元素顏色，並移除預設底線 */
     .sign a {
       color: inherit;
       text-decoration: none;
     }
 
+    /* 滑鼠懸停時顯示底線提示可點擊 */
     .sign a:hover {
       text-decoration: underline;
     }

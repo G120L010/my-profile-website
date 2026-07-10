@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>像素貓咪互動小遊戲</title>
   <style>
+    /* 全域樣式重置，統一盒模型計算方式 */
     * {
       box-sizing: border-box;
     }
 
+    /* 全域背景色設定為亮綠色，並隱藏捲軸以確保遊戲畫面不產生滾動條 */
     body {
       padding: 0;
       margin: 0;
@@ -19,6 +21,7 @@
       /* 避免遊戲本身產生捲軸 */
     }
 
+    /* 遊戲內容最外層定位容器，撐滿全視窗並裁切溢出內容 */
     .outer_wrapper {
       position: absolute;
       width: 100%;
@@ -26,6 +29,7 @@
       overflow: hidden;
     }
 
+    /* 貓咪活動畫布容器，高度留出 100px 給地面底座 */
     .wrapper {
       position: absolute;
       height: calc(100vh - 100px);
@@ -33,6 +37,7 @@
       top: 0;
     }
 
+    /* 地面底座區塊，定位於底部，深綠色背景代表草地 */
     .ground {
       position: absolute;
       bottom: 0;
@@ -41,6 +46,7 @@
       background-color: rgb(1, 143, 96);
     }
 
+    /* 貓咪主體定位容器，絕對定位於地面上方，1.5s 緩動實現水平移動動畫 */
     .cat {
       position: absolute;
       bottom: 65px;
@@ -54,16 +60,19 @@
 
     /* body */
 
+    /* 貓咪身體區塊結構，絕對定位撐滿寬高容器 */
     .body {
       position: absolute;
       height: 30px;
       width: 60px;
     }
 
+    /* 貓咪面對左方時身體在 0.5 秒內縮減後恢復原寬度的身體轉向動畫 */
     .face_left .body {
       animation: turn_body_left forwards 0.5s;
     }
 
+    /* 貓咪身體吐屏展開時在 50% 縮小寬度以模擬變向身體碰撞感的關鍵幀 */
     @keyframes turn_body_left {
 
       0%,
@@ -76,10 +85,12 @@
       }
     }
 
+    /* 貓咪面對右方時的身體轉向動畫 */
     .face_right .body {
       animation: turn_body_right forwards 0.5s;
     }
 
+    /* 轉向右方身體轉動動畫幀，與向左對稱 */
     @keyframes turn_body_right {
 
       0%,
@@ -93,6 +104,7 @@
     }
 
     /* head */
+    /* 貓頭定位容器，絕對定位於身體右上方，0.5s 過渡並置於高層級 50 */
     .cat_head {
       position: absolute;
       height: 40px;
@@ -103,6 +115,7 @@
       z-index: 50;
     }
 
+    /* 初始姿勢與面對左時，將貓頭向左側移動 */
     .first_pose .cat_head,
     .face_left .cat_head {
       right: 22px;
@@ -110,6 +123,7 @@
 
 
     /* tail */
+    /* 貓尾定位容器，絕對定位於身體左側上方，以尾巴左下角為轉動原點 */
     .tail {
       position: absolute;
       top: -25px;
@@ -119,6 +133,7 @@
       transform-origin: bottom right;
     }
 
+    /* 貓尾搖擺動畫幀，在 50% 時向左側旋轉 50 度並水平翻轉實現搖擺感 */
     @keyframes tail_motion {
 
       0%,
@@ -133,12 +148,14 @@
       }
     }
 
+    /* 初始姿勢與面對左時尾巴也切換至對稱的另一組搖擺動畫 */
     .first_pose .tail,
     .face_left .tail {
       left: 45px;
       animation: tail_motion_alt forwards 2s;
     }
 
+    /* 面對左時尾巴搖擺的對稱動畫幀，方向與右對稱互改 */
     @keyframes tail_motion_alt {
 
       0%,
@@ -154,6 +171,7 @@
     }
 
     /* legs */
+    /* 單獨腰肢結構，絕對定位並以頂部中心為轉動原點 */
     .leg {
       position: absolute;
       height: 20px;
@@ -161,6 +179,7 @@
       transform-origin: top center;
     }
 
+    /* 前肢與後肢寬高定義容器，0.7s 緩動轉向 */
     .front_legs,
     .back_legs {
       position: absolute;
@@ -247,6 +266,7 @@
     }
 
     /* jump */
+    /* 貓咪跳躍狀態包裝容器，絕對定位於底部，跳躍動畫在此層級被驅動 */
     .cat_wrapper {
       position: absolute;
       bottom: 0;
@@ -331,20 +351,24 @@
       }
     }
 
+    /* SVG 元素展開充滿對應的父容器寬高 */
     svg {
       height: 100%;
       width: 100%;
     }
 
+    /* 貓咪眼睛小塊將環形區域彩色設為綠色背景色，以展現瞇貓眼闇 */
     polygon.eyes {
       fill: rgb(1, 143, 96);
     }
 
+    /* 其他多邊形與路徑路徑小塊預設填白色 */
     polygon,
     path {
       fill: white;
     }
 
+    /* 個人署名文字區塊樣式，固定於畫面右下角 */
     .sign {
       position: absolute;
       color: white;
@@ -353,11 +377,13 @@
       font-size: 10px;
     }
 
+    /* 署名超連結變白色並移除底線 */
     a {
       color: white;
       text-decoration: none;
     }
 
+    /* 滑鼠懸停時顯示底線提示可點擊 */
     a:hover {
       text-decoration: underline;
     }

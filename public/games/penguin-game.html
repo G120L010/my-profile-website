@@ -6,18 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>像素企鵝互動小遊戲</title>
   <style>
+    /* 全域樣式重置，統一盒模型計算方式並清除僞元素預設間距 */
     * {
       box-sizing: border-box;
       padding: 0;
       margin: 0;
     }
 
+    /* 全域背景為淡藍色雪地，並隱藏滾動條以納入畫面環境 */
     body {
       background-color: rgb(231, 251, 253);
       font-family: sans-serif;
       overflow: hidden;
     }
 
+    /* 遊戲主畫布最外層定位容器，撐滿全視窗且點擊游標樣式 */
     .wrapper {
       position: absolute;
       width: 100%;
@@ -26,6 +29,7 @@
       cursor: pointer;
     }
 
+    /* 企鵅主體定位容器，絕對定位且 0.5s 緩動過渡 */
     .penguin_wrapper {
       position: absolute;
       width: 96px;
@@ -34,26 +38,31 @@
       transition: 0.5s;
     }
 
+    /* SVG 元素預設為區塊類型顯示 */
     svg {
       display: block;
     }
 
+    /* 企鵅容器內的 SVG 填充色設定為深藍色 */
     .penguin_wrapper svg {
       fill: navy;
     }
 
+    /* 企鵅內層容器，充滿寬高且不帶過渡 */
     .penguin_inner_wrapper {
       height: 100%;
       width: 100%;
       transition: 0;
     }
 
+    /* 面對左上、左方、左下方向時，將企鵅鴣小圖水平鏡像實現左向 */
     .facing_upleft,
     .facing_left,
     .facing_downleft {
       transform: scale(-1, 1);
     }
 
+    /* 企鵅雪碧圖第一播放容器，絕對定位且不攔截滑鼠事件 */
     .penguin_sprite {
       position: absolute;
       height: calc(6 * 96px);
@@ -61,12 +70,14 @@
       pointer-events: none;
     }
 
+    /* 雪碧圖內的圖片元素充滿容器寬高 */
     .penguin_sprite img {
       height: 100%;
       width: 100%;
       display: block;
     }
 
+    /* 碰撞區域外層包裝，居中對齊且不攔截滑鼠事件 */
     .hit_wrapper {
       height: 100%;
       display: flex;
@@ -75,6 +86,7 @@
       pointer-events: none;
     }
 
+    /* 企鵅身體核心碰撞區域寬高設定 */
     .hit_area {
       height: 50px;
       width: 40px;
@@ -83,6 +95,7 @@
       /* border: red 1px solid; */
     }
 
+    /* 足印元素樣式，絕對定位於最底層，像素渲染並伴隨 10 秒淡出動畫 */
     .foot_print {
       height: 30px;
       width: 30px;
@@ -94,6 +107,7 @@
       animation: forwards fade 10s;
     }
 
+    /* 足印淡出動畫幀，前 50% 保持 0.4 不透明，後 50% 逐漸消失 */
     @keyframes fade {
       0% {
         opacity: 0.4
@@ -108,6 +122,7 @@
       }
     }
 
+    /* 跳躍印輕微淡出動畫幀，較足印更淡 */
     @keyframes fade_lighter {
       0% {
         opacity: 0.1
@@ -122,6 +137,7 @@
       }
     }
 
+    /* 跳躍冰坑印記元素樣式，絕對定位於最底層，像素渲染並伴隨 10 秒淡出 */
     .jump_print {
       height: 32px;
       width: 36px;
@@ -133,6 +149,7 @@
       animation: forwards fade_lighter 10s;
     }
 
+    /* 星星導引點容器，絕對定位且置於高層級 20 */
     .star {
       position: absolute;
       width: 16px;
@@ -141,6 +158,7 @@
       z-index: 20;
     }
 
+    /* 星星雪碧圖容器，絕對定位且不攔截滑鼠事件 */
     .star_sprite {
       position: absolute;
       height: 100%;
@@ -148,14 +166,17 @@
       pointer-events: none;
     }
 
+    /* 星星容器內的 SVG 彩色設定為淡蓝f5 藍色 */
     .star svg {
       fill: rgb(148, 234, 255)
     }
 
+    /* 星星閃爍動畫展開狀態，無限循環 1 秒閃爍 */
     .star.twinkle {
       animation: infinite twinkle 1s;
     }
 
+    /* 星星閃爍動畫幀，在 50% 時放大到 1.5 倍實現閃爍感 */
     @keyframes twinkle {
       0% {
         transform: scale(1);
@@ -170,6 +191,7 @@
       }
     }
 
+    /* 個人署名文字區塊樣式，固定於畫面右下角 */
     .sign {
       position: absolute;
       color: rgb(0, 17, 255);

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>旋轉星球互動小遊戲</title>
   <style>
+    /* 全域樣式重置，統一盒模型並禁用文字選取 */
     * {
       box-sizing: border-box;
       padding: 0;
@@ -13,6 +14,7 @@
       user-select: none;
     }
 
+    /* 文字標籤重置，使其顯示為行內區塊並清除預設的段落間距 */
     p,
     h1,
     h2,
@@ -26,12 +28,14 @@
       padding-inline-start: 0px;
     }
 
+    /* 全域背景色為深藍色，並限制溢滞行為以避免頁面回彈 */
     body {
       background-color: #006781;
       font-family: Arial, Helvetica, sans-serif;
       overscroll-behavior: contain;
     }
 
+    /* 地圖快速傳送頂端指示條，固定寬度最大 600px 且 z-index 置高 */
     .location {
       position: absolute;
       top: 50px;
@@ -42,6 +46,7 @@
       z-index: 50;
     }
 
+    /* 地圖定位節點分佈橫向排列內層容器 */
     .location_mark {
       position: absolute;
       display: flex;
@@ -49,21 +54,25 @@
       height: 100%;
     }
 
+    /* 地圖密點小色塊，平分寬度且和和肉和顏色展示 */
     .location_mark>div {
       flex-grow: 1;
       height: 100%;
       background-color: #c3ac83;
     }
 
+    /* 奇數點透明展示，形成隔斷牛且樓畫效果 */
     .location_mark>div:nth-child(odd) {
       background-color: transparent;
     }
 
+    /* 懸停時顏色變跨角色並變成指針樣式提示可點擊 */
     .location_mark>div:hover {
       background-color: #7ce6f0;
       cursor: pointer;
     }
 
+    /* 地圖進度指針元素，像素圖樣式以底部中心為轉動原點 */
     .pointer {
       width: 24px;
       height: 30px;
@@ -74,6 +83,7 @@
       transform-origin: center bottom;
     }
 
+    /* 展示分層、主外層、內層容器的共用居中定位樣式 */
     .display_wrapper,
     .wrapper,
     .inner_wrapper {
@@ -87,10 +97,12 @@
       justify-content: center;
     }
 
+    /* 游戲主畫布容器，裁切溢出內容 */
     .wrapper {
       overflow: hidden;
     }
 
+    /* 調查物體彈出視窗全層，預設不攔截滑鼠事件，0.3s 過渡且縱向排列置於高層級 100 */
     .display_wrapper {
       pointer-events: none;
       transition: 0.3s;
@@ -98,21 +110,25 @@
       z-index: 100;
     }
 
+    /* 像素展示元素樣式，開啟像素渲染模式 */
     .img_display {
       image-rendering: pixelated;
     }
 
+    /* 展示視窗展開時按鈕與關閉鈕可操作樣式 */
     .display_wrapper.display button,
     .display_wrapper.display .close {
       pointer-events: auto;
       opacity: 1;
     }
 
+    /* 展示視窗展開狀態，深藍半透明背景且開啟互動 */
     .display_wrapper.display {
       pointer-events: auto;
       background-color: #032041d7;
     }
 
+    /* 展示內層容器，預設定位於視窗下方外，展開時滑入可見區域 */
     .inner_wrapper {
       pointer-events: none;
       top: 100%;
@@ -120,10 +136,12 @@
       flex-direction: column;
     }
 
+    /* 展示內層容器展開時回到畫面上方 */
     .display_wrapper.display .inner_wrapper {
       top: 0px;
     }
 
+    /* 展示視窗內按鈕的共用樣式，圓角顯示並加滑鼠制針樣式 */
     .display_wrapper button {
       padding: 14px 18px;
       border: 0px;
@@ -134,15 +152,18 @@
       cursor: pointer;
     }
 
+    /* 關閉按鈕特殊樣式，白色背景且上方留有較多的間距 */
     .display_wrapper button.close {
       background-color: white;
       margin-top: 40px;
     }
 
+    /* 懸停按鈕時顏色切換為清淣闹韓 */
     .display_wrapper button:hover {
       background-color: #7ce6f0;
     }
 
+    /* 星球圓面左半部綋谷圖案的前元素，使用重複背景回形圖案 */
     .circle::before {
       content: '';
       width: 220px;
@@ -158,6 +179,7 @@
       transition: 2s;
     }
 
+    /* 星球表面元素共用樣式，以底部中心為轉動原點 */
     .element {
       position: absolute;
       transform-origin: bottom center;
@@ -167,10 +189,12 @@
       background-color: transparent !important;
     }
 
+    /* 對話狀態中元素文字變黑色 */
     .element.change {
       color: black;
     }
 
+    /* 小熊角色像素圖樣式，絕對定位於底部且以底部中心為轉動原點 */
     .bear {
       position: absolute;
       background-image: url(../images/games/rotatingplanet03.jpg);
@@ -184,6 +208,7 @@
       transform-origin: center bottom;
     }
 
+    /* 小熊包裝容器，絕對定位且以底部中心為轉動原點 */
     .bear_wrapper {
       position: absolute;
       width: 32px;
@@ -192,6 +217,7 @@
       transform-origin: center bottom;
     }
 
+    /* 小熊頂部預警指示的後元素，預設透明，接觸元素時顯示圖片 */
     .bear_wrapper::after {
       position: absolute;
       top: 10px;
@@ -207,11 +233,13 @@
       transition: 0.1s;
     }
 
+    /* 小熊容器進入警呀狀態時顯示預警圖片並移至頂部 */
     .bear_wrapper.alert::after {
       top: 0px;
       opacity: 1;
     }
 
+    /* 小熊包裝容器內的小熊像素圖定位導元素 */
     .bear_wrapper>div {
       position: absolute;
       bottom: 0px;
@@ -219,6 +247,7 @@
       width: 32px;
     }
 
+    /* 小熊面對右方時水平鏡像，實現對稱圖片 */
     .right {
       transform: scale(-1, 1);
     }
