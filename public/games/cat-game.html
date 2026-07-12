@@ -485,8 +485,6 @@
         x: null,
         y: null
       };
-      // 宣告一個變數，用於後續管理計時器，以判斷滑鼠或觸控是否停止移動
-      let stopTimeout;
 
       // 定義貓叫聲音效檔案的相對路徑 (指向 public/sounds/CatAnimation.mp3)
       const meowSoundUrl = '../sounds/CatAnimation.mp3';
@@ -523,12 +521,6 @@
           pos.x = e.clientX;
           pos.y = e.clientY;
         }
-        // 觸發走路動畫
-        walk();
-        // 清除上一個計時器，重新計時
-        clearTimeout(stopTimeout);
-        // 設定一個新的計時器，若 200 毫秒內再無移動事件，則判定為停止，並執行 stopWalk 函式
-        stopTimeout = setTimeout(stopWalk, 200);
       };
 
       // 控制貓咪向右轉的函式
@@ -590,6 +582,15 @@
         decideTurnDirection();
         // 持續判斷貓咪的頭部擺動
         headMotion();
+
+        // 檢查貓咪是否已到達目標點，以決定是否停止腿部走路動畫以防滑冰 Bug
+        const catX = cat.getBoundingClientRect().x;
+        const targetX = cat.classList.contains('face_right') ? pos.x - 90 : pos.x + 10;
+        if (Math.abs(catX - targetX) < 10) {
+          stopWalk();
+        } else {
+          walk();
+        }
       }, 100);
 
       // 設定一個較低頻率的定時器，每 1.2 秒執行一次
@@ -598,6 +599,22 @@
         // 每隔一段時間檢查一次是否需要觸發跳躍
         jump();
       }, 1200);
+
+      // 統一處理滑鼠點擊與觸控按下事件，使貓咪能立刻朝點擊點移動
+      const handleStart = (e) => {
+        if (e.touches) {
+          pos.x = e.touches[0].clientX;
+          pos.y = e.touches[0].clientY;
+        } else {
+          pos.x = e.clientX;
+          pos.y = e.clientY;
+        }
+        walk();
+      };
+
+      // 為整個文件掛載點擊與壓下事件，以支援點擊後貓咪立即移向該點
+      document.addEventListener('mousedown', handleStart);
+      document.addEventListener('touchstart', handleStart);
 
       // 為貓咪的身體元素掛載點擊事件監聽，點擊時播放音效
       // cat.addEventListener('click', playMeowSound);
