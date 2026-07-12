@@ -648,7 +648,7 @@
       position: absolute;
       bottom: 10px;
       right: 10px;
-      font-size: 20px;
+      font-size: 15px;
       color: var(--brown);
       /* 根據遊戲主題微調 */
     }
@@ -1170,7 +1170,7 @@
     // 回歸預設狀態，重新解鎖水平控制按鈕以進行下一次挑戰的控制函式
     const activateHoriBtn = () => {
       horiBtn.activate()
-      ;
+        ;
       [vertRail, armJoint, arm].forEach(c => (c.interval = null)) // 清理全部計時排程
     }
 
@@ -1184,7 +1184,7 @@
           target: machineHeight - settings.targetToy.h - 30, // 玩具向下墜落
           moveTime: 50,
         })
-        ;
+          ;
         [vertRail, armJoint, arm].forEach(obj => (obj.moveWith[0] = null)) // 取消移動同動綁定
       }
       setTimeout(() => {

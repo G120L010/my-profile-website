@@ -688,7 +688,7 @@
 
     // 計算機器人每次移動的步進距離，包含隨機準確度模擬
     const distanceToMove = (a, b, distance) => {
-      const randomAccuracy = Math.random < 0.6 // 隨機化判定
+      const randomAccuracy = Math.random() < 0.6 // 隨機化判定
       return withinBuffer(a, b)
         ? a
         : a > b
@@ -809,9 +809,9 @@
     // 核心行為調度函式：遍歷場上所有活動中的機器人，根據鄰近目標的距離進行互動決策與行為執行
     const moveBots = logs => {
       bots.forEach((b, i) => {
-        if (!b.stop && !['multiply', 'destroyed', 'load'].includes(b.mode)) {
+        if (!b.stop && b.animation !== 'break' && !['multiply', 'destroyed', 'load'].includes(b.mode)) {
           // 搜尋除自身與非死亡載入狀態外之最近機器人
-          const closestBotData = [...distances(b, bots).filter(d => d.index !== i && !['load', 'destroyed'].includes(d.mode))].sort((a, b) => a.distance - b.distance)[0]
+          const closestBotData = [...distances(b).filter(d => d.index !== i && !['load', 'destroyed'].includes(d.mode))].sort((a, b) => a.distance - b.distance)[0]
           const closestBot = closestBotData && bots[closestBotData.index]
           if (!closestBot) {
             logs.push(`${b.id} 處於孤單狀態`)
@@ -882,15 +882,31 @@
 
     // 分裂模式下當滿足特定條件時將機器人一分為四的繁衍核心函式
     const multiply = (bot, logs) => {
-      if (bot.time % 4 === 0 && (activeBotsNo() < 40)) {
-        logs.push(`${bot.id} 進行了繁殖`)
-        createNewBots(
-          bot.xy.x, bot.xy.y,
-          bot.time, bot.history ? [bot.id, ...bot.history] : [bot.id]
-        )
-        stopBot('stop', bot) // 停止母體運作
-        bot.time = 0
-        bot.mode = 'destroyed' // 母體分裂後判定為銷毀，並清理
+      if (bot.time <= 0) {
+        bot.stop = true
+        changeAnimation('stop', bot) // 切換至停止動畫
+        bot.mode = 'stop'
+        bot.bot.className = 'bot_wrapper stop'
+        logs.push(`${bot.id} 已停止運作`) // 事件上報
+        return
+      }
+      if (bot.time % 4 === 0) {
+        if (activeBotsNo() < 40) {
+          logs.push(`${bot.id} 進行了繁殖`)
+          createNewBots(
+            bot.xy.x, bot.xy.y,
+            bot.time, bot.history ? [bot.id, ...bot.history] : [bot.id]
+          )
+          stopBot('stop', bot) // 停止母體運作
+          bot.time = 0
+          bot.mode = 'destroyed' // 母體分裂後判定為銷毀，並清理
+        } else {
+          // 若因數量上限無法繁殖，則取消繁殖狀態，重回戰場自由活動
+          bot.mode = 'hunter'
+          changeAnimation('walk', bot)
+          bot.bot.className = 'bot_wrapper hunter'
+          logs.push(`${bot.id} 取消繁殖重回戰場`)
+        }
       }
     }
 
