@@ -439,4 +439,5 @@ jobs:
 | 2026.07.10 | **文創商品特有網址重複協定疑點釐清** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 文創商品按鈕連結為 `https://httpshancreator-springcom-2.creator-spring.com/`，其中包含 `https://https`，初看容易被誤判定為重複協定的打字錯誤 (Typo)。 | 經確認該網址為 SPRI.NG 電商平台特有的正確商店域名網址（非打字出錯）。特此於歷史紀錄中標記保留，避免後續維護者或 AI 助手誤改。 |
 | 2026.07.10 | **5 款互動小遊戲註解補充完成** | `public/games/` 底下所有小遊戲檔案 | 原本的小遊戲檔案缺乏統一的中文化結構與邏輯備忘註解，需依循開發指南之嚴格規範為其補全註解以利長期維護。 | 逐一為五款小遊戲添加詳細的繁體中文註解，嚴格把關註解格式（無 Emoji 符號，HTML 放標籤上方，CSS 放規則上方，JS 放函式上方/行末防呆），並保留所有特意保留的已註解程式碼與 SVG 資料結構。 |
 | 2026.07.12 | **5 款小遊戲註解規範化與錯漏字全面修正** | `public/games/` 5 款小遊戲檔案 | 程式碼註解審查發現存在英文註解、簡體中文字型以及多處不通順的機器翻譯亂碼（如「屯素」、「收集筱」、「爬子」等），違反註解繁中化與專業度規範。 | 批次將 English 註解翻譯為繁體中文，修正簡體字形，並將所有翻譯亂碼修正為標準商業中文用詞（如「像素」、「收集箱」、「爪子」等），且 100% 保留所有程式邏輯與已註解偵錯程式碼。 |
+| 2026.07.12 | **娃娃機收集箱在手機端被裁切修正** | [claw-machine-game.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/public/games/claw-machine-game.html) | 手機畫面（寬度 < 576px）高度及寬度受限時，頂部已收集玩具展示箱的負外距 (margin-top: -74px) 將其拉出視窗頂部，造成玩具頭部被裁切。 | 新增 `@media screen and (max-width: 576px)` 媒體查詢，在手機版中將收集箱的 margin-top 改為正常的正值外距 (10px 0 15px)，完美解決頂部裁切問題。 |
 
