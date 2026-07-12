@@ -519,23 +519,25 @@
         panel.classList.toggle('open'); // 切換選單面板的展開狀態類別
       }
 
-      // 處理點擊清除按鈕時的邏輯，將熊貓數量減少回初始數量
+      // 處理點擊重置數量按鈕時的邏輯，清除全部熊貓並重新隨機上色與生成
       const handleClearPandas = (e) => {
         e.stopPropagation(); // 阻止事件冒泡到背景畫布，避免在下方生成新熊貓
-        const initialPandaCount = 20; // 初始熊貓數量
         const currentPandaKeys = Object.keys(pandas).map(Number); // 獲取當前所有熊貓實例的鍵值
-        if (currentPandaKeys.length > initialPandaCount) {
-          const keysToRemove = currentPandaKeys.slice(initialPandaCount); // 取得多出來的熊貓鍵值陣列
-          keysToRemove.forEach(key => {
-            const pandaObj = pandas[key]; // 取得對應熊貓實例物件
-            if (pandaObj) {
-              clearTimeout(pandaObj.frameTimer); // 清除動畫定時器
-              clearTimeout(pandaObj.moveTimer); // 清除移動定時器
-              pandaObj.panda.remove(); // 從 DOM 樹中移除熊貓元素
-              delete pandas[key]; // 從 pandas 物件中刪除該屬性
-            }
-          });
-        }
+        currentPandaKeys.forEach(key => {
+          const pandaObj = pandas[key]; // 取得對應熊貓實例物件
+          if (pandaObj) {
+            clearTimeout(pandaObj.frameTimer); // 清除動畫定時器
+            clearTimeout(pandaObj.moveTimer); // 清除移動定時器
+            pandaObj.panda.remove(); // 從 DOM 樹中移除熊貓元素
+            delete pandas[key]; // 從 pandas 物件中刪除該屬性
+          }
+        });
+        pandaCount = 0; // 重置熊貓累計編號，以防止識別 ID 溢出或與歷史資料混淆
+        new Array(pandaNumber).fill('').map(() => {
+          return [randomP(body.clientWidth - 100), randomP(body.clientHeight - 100)]
+        }).forEach(pos => {
+          createPanda(pos[0], pos[1]) // 於隨機位置重新放置熊貓實例，內含隨機顏色生成
+        })
       }
 
       // 產生高品質且符合美學色彩的隨機 HSL 填色字串
@@ -619,9 +621,9 @@
       const rectsOverlap = (rectA, rectB) => {
         if (!rectA || !rectB) return false; // 若任一矩形不存在則判定不重疊
         return !(rectA.right < rectB.left ||
-                 rectA.left > rectB.right ||
-                 rectA.bottom < rectB.top ||
-                 rectA.top > rectB.bottom); // 檢查是否有任何一邊沒有交集，取反即為重疊
+          rectA.left > rectB.right ||
+          rectA.bottom < rectB.top ||
+          rectA.top > rectB.bottom); // 檢查是否有任何一邊沒有交集，取反即為重疊
       }
 
       // 碰撞偵測核心迴圈函式：對比所有熊貓的探針是否重疊，並觸發 knocked 擊退摔倒邏輯
