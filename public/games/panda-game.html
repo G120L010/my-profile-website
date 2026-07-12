@@ -49,16 +49,19 @@
       z-index: -9999;
     }
 
+    /* 讓熊貓元素在滑鼠懸停時顯示為手指游標，提示可進行互動 */
     .panda_wrapper {
       position: absolute;
       width: 100px;
       height: 100px;
       overflow: hidden;
       transition: 2s;
+      cursor: pointer;
     }
 
+    /* 熊貓圖形填色，支援透過 CSS 變數動態更換多樣顏色 */
     .panda_wrapper svg {
-      fill: rgb(173, 1, 87);
+      fill: var(--panda-color, rgb(173, 1, 87));
       display: block;
     }
 
@@ -141,6 +144,95 @@
     .sign a:hover {
       text-decoration: underline;
     }
+
+    /* 控制選單容器定位於左下角，避開右下角的署名 */
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* 針對手機等行動裝置窄螢幕，將控制列稍微調高，避免水平展開時遮擋右下角的署名檔 */
+    @media (max-width: 600px) {
+      .controls {
+        bottom: 60px;
+        left: 15px;
+      }
+    }
+
+    /* 橢圓形選單切換按鈕樣式 */
+    .toggle_btn {
+      height: 44px;
+      padding: 0 16px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background-color: rgb(173, 1, 87);
+      border: 2px solid #fff;
+      border-radius: 22px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    /* 懸停與按壓切換按鈕的動態效果 */
+    .toggle_btn:hover {
+      background-color: rgb(214, 2, 108);
+      transform: scale(1.05);
+    }
+
+    .toggle_btn:active {
+      transform: scale(0.95);
+    }
+
+    /* 可收折選單面板的樣式，支援平滑水平展開動畫 */
+    .menu_panel {
+      display: flex;
+      overflow: hidden;
+      max-width: 0;
+      transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+      opacity: 0;
+      white-space: nowrap;
+    }
+
+    /* 選單展開狀態下的樣式類別 */
+    .menu_panel.open {
+      max-width: 250px;
+      opacity: 1;
+    }
+
+    /* 遊戲功能按鈕的視覺與排版樣式 */
+    .game_btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+      background-color: rgb(173, 1, 87);
+      border: 2px solid #fff;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    }
+
+    /* 按鈕滑鼠懸停狀態的色彩與陰影變化 */
+    .game_btn:hover {
+      background-color: rgb(214, 2, 108);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 按鈕點擊壓下時的縮放反饋效果 */
+    .game_btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 
@@ -149,6 +241,13 @@
   <div class="outer_wrapper">
     <!-- 熊貓活動畫布的主容器 -->
     <div class="wrapper"></div>
+  </div>
+  <!-- 控制功能按鈕區塊 -->
+  <div class="controls">
+    <button id="menu_toggle" class="toggle_btn">設定</button>
+    <div id="menu_panel" class="menu_panel">
+      <button id="clear_btn" class="game_btn">重置數量</button>
+    </div>
   </div>
   <!-- 個人署名與貼圖商店連結 -->
   <div class="sign">
@@ -217,6 +316,7 @@
 
       // 控制個別熊貓動畫播放與雪碧圖位置更新的動畫控制函式
       const animatePanda = (panda, pandaObj) => {
+        if (!panda.parentNode) return; // 若熊貓已被刪除則停止動畫更新
         const { frame: i, animation, frameSpeed } = pandaObj
         const pandaSprite = panda.querySelector('.panda_sprite')
         // 更新位移背景雪碧圖
@@ -299,14 +399,17 @@
         const c = frameSpeed * 6
 
         pandaObj.frameTimer = setTimeout(() => {
+          if (!panda.parentNode) return; // 若熊貓已被刪除則停止執行後續回呼
           changeAnimation(pandaObj, 'fallen') // 摔地靜止動作
         }, a)
 
         pandaObj.frameTimer = setTimeout(() => {
+          if (!panda.parentNode) return; // 若熊貓已被刪除則停止執行後續回呼
           changeAnimation(pandaObj, 'standUp') // 開始掙扎爬起動畫
         }, a + b)
 
         pandaObj.frameTimer = setTimeout(() => {
+          if (!panda.parentNode) return; // 若熊貓已被刪除則停止執行後續回呼
           changeAnimation(pandaObj, 'walk') // 恢復正常走路
           pandaObj.hit = false
           pandaObj.knocked = false
@@ -318,6 +421,7 @@
 
       // 控制熊貓隨機決定轉向並向前走動的自主尋路與移動控制函式
       const moveAbout = (panda, pandaObj) => {
+        if (!panda.parentNode) return; // 若熊貓已被刪除則停止尋路移動
         if (pandaObj.hit) return // 若處於撞擊狀態則暫停主動走動
         const turnOptions = [1, 1, -1, -1, 0] // 隨機偏轉步進值
         const turnValue = turnOptions[Math.floor(Math.random() * turnOptions.length)]
@@ -370,6 +474,78 @@
         return turnDirections[Math.floor(Math.random() * turnDirections.length)]
       }
 
+      // 處理點擊個別熊貓時的互動與擊退摔倒邏輯
+      const handlePandaClick = (e, panda, pandaObj) => {
+        e.stopPropagation(); // 阻止事件冒泡到背景畫布，避免重複生成熊貓
+        if (pandaObj.knocked) return; // 若熊貓已經處於摔倒狀態則直接返回
+        const rect = panda.getBoundingClientRect(); // 獲取熊貓元素的邊框資訊
+        const clickX = e.clientX - rect.left; // 計算相對橫向點擊座標
+        const clickY = e.clientY - rect.top; // 計算相對縱向點擊座標
+        const centerX = rect.width / 2; // 熊貓中心橫向位置
+        const centerY = rect.height / 2; // 熊貓中心縱向位置
+        let hitDir = ''; // 儲存受撞擊方向的字串
+        if (clickX < centerX) {
+          if (clickY < centerY) {
+            hitDir = 'upleft'; // 點擊左上角，朝右下角擊退
+          } else {
+            hitDir = 'downleft'; // 點擊左下角，朝右上角擊退
+          }
+        } else {
+          if (clickY < centerY) {
+            hitDir = 'upright'; // 點擊右上角，朝左下角擊退
+          } else {
+            hitDir = 'downright'; // 點擊右下角，朝左上角擊退
+          }
+        }
+        pandaObj.hit = hitDir; // 設定碰撞方向
+        pandaObj.direction = hitDir; // 更新熊貓方向以正確對應雪碧圖行數
+        panda.classList.add('stop'); // 停止走路，轉入摔倒階段
+        panda.querySelector('.panda_inner_wrapper').className = `panda_inner_wrapper facing_${hitDir}`; // 更新轉向樣式
+        knockPanda(panda, pandaObj); // 執行被擊倒生命週期
+      }
+
+      // 處理點擊背景畫布時生成新熊貓的邏輯
+      const handleBackgroundClick = (e) => {
+        const rect = body.getBoundingClientRect(); // 獲取畫布的邊框資訊
+        const x = e.clientX - rect.left - 50; // 計算熊貓左上角橫向位置，減去半寬以置中
+        const y = e.clientY - rect.top - 50; // 計算熊貓左上角縱向位置，減去半高以置中
+        createPanda(x, y); // 於點擊位置建立新熊貓實例
+      }
+
+      // 處理點擊控制選單收折按鈕的邏輯
+      const handleMenuToggle = (e) => {
+        e.stopPropagation(); // 阻止事件冒泡到背景畫布，避免在下方生成新熊貓
+        const panel = document.getElementById('menu_panel'); // 取得選單面板元素
+        panel.classList.toggle('open'); // 切換選單面板的展開狀態類別
+      }
+
+      // 處理點擊清除按鈕時的邏輯，將熊貓數量減少回初始數量
+      const handleClearPandas = (e) => {
+        e.stopPropagation(); // 阻止事件冒泡到背景畫布，避免在下方生成新熊貓
+        const initialPandaCount = 20; // 初始熊貓數量
+        const currentPandaKeys = Object.keys(pandas).map(Number); // 獲取當前所有熊貓實例的鍵值
+        if (currentPandaKeys.length > initialPandaCount) {
+          const keysToRemove = currentPandaKeys.slice(initialPandaCount); // 取得多出來的熊貓鍵值陣列
+          keysToRemove.forEach(key => {
+            const pandaObj = pandas[key]; // 取得對應熊貓實例物件
+            if (pandaObj) {
+              clearTimeout(pandaObj.frameTimer); // 清除動畫定時器
+              clearTimeout(pandaObj.moveTimer); // 清除移動定時器
+              pandaObj.panda.remove(); // 從 DOM 樹中移除熊貓元素
+              delete pandas[key]; // 從 pandas 物件中刪除該屬性
+            }
+          });
+        }
+      }
+
+      // 產生高品質且符合美學色彩的隨機 HSL 填色字串
+      const getRandomPandaColor = () => {
+        const hue = Math.floor(Math.random() * 360); // 隨機色相
+        const saturation = Math.floor(Math.random() * 30) + 70; // 飽和度限制在 70% 至 100% 之間以確保色彩鮮艷
+        const lightness = Math.floor(Math.random() * 20) + 30; // 亮度限制在 30% 至 50% 之間以確保與黑色輪廓形成清晰對比
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`; // 回傳 HSL 顏色值
+      }
+
       // 實例化單隻熊貓並將其 DOM 結構與物理參數初始化並加入場景的函式
       const createPanda = (x, y) => {
         const panda = document.createElement('div')
@@ -386,6 +562,8 @@
           </div>
         </div>
         `
+        const color = getRandomPandaColor(); // 獲取隨機熊貓色彩
+        panda.style.setProperty('--panda-color', color); // 設定 CSS 變數以套用填色
         panda.style.marginTop = `${y}px`
         panda.style.marginLeft = `${x}px`
         panda.style.zIndex = y
@@ -407,6 +585,8 @@
         const pandaObj = pandas[pandaCount]
         const pandaStatus = document.createElement('p')
         pandaStatus.dataset.index = pandaCount
+
+        panda.addEventListener('click', (e) => handlePandaClick(e, panda, pandaObj)); // 綁定點擊事件
 
         startPanda(panda, pandaObj) // 啟動影格更新
         moveAbout(panda, pandaObj)  // 啟動步進尋路
@@ -435,16 +615,30 @@
         }
       }
 
-      // 判斷兩個座標值是否在小範圍重疊緩衝區內的輔助函式
-      const overlap = (a, b) => {
-        const buffer = 20
-        return Math.abs(a - b) < buffer // 當差距小於 20 像素判定爲重合
+      // 判斷兩個矩形邊界是否重疊的輔助函式
+      const rectsOverlap = (rectA, rectB) => {
+        if (!rectA || !rectB) return false; // 若任一矩形不存在則判定不重疊
+        return !(rectA.right < rectB.left ||
+                 rectA.left > rectB.right ||
+                 rectA.bottom < rectB.top ||
+                 rectA.top > rectB.bottom); // 檢查是否有任何一邊沒有交集，取反即為重疊
       }
 
       // 碰撞偵測核心迴圈函式：對比所有熊貓的探針是否重疊，並觸發 knocked 擊退摔倒邏輯
       const collisionCheck = () => {
+        // 判斷兩個座標值是否在小範圍重疊緩衝區內的輔助函式
+        const overlap = (a, b) => {
+          const buffer = 20
+          return Math.abs(a - b) < buffer // 當差距小於 20 像素判定爲重合
+        }
+
         const hitCorners = document.querySelectorAll('.hit_corner')
         const hit = hitObj(pandaCount)
+
+        const controlsEl = document.querySelector('.controls') // 取得設定按鈕元素
+        const signEl = document.querySelector('.sign') // 取得簽名檔元素
+        const controlsRect = controlsEl ? controlsEl.getBoundingClientRect() : null // 獲取設定按鈕邊框
+        const signRect = signEl ? signEl.getBoundingClientRect() : null // 獲取簽名檔邊框
 
         // * 取消下方註解即可在畫面上顯示碰撞偵測框
         // hitCorners.forEach(h=>h.style.backgroundColor = 'transparent')
@@ -467,8 +661,31 @@
           })
         })
         for (let i = 0; i < pandaCount; i++) {
-          const { upleft, upright, downleft, downright } = hit[i]
           const panda = pandas[i]
+          if (!panda) continue; // 若該熊貓實例已被清除則跳過此輪檢測
+
+          const pandaRect = panda.panda.getBoundingClientRect(); // 獲取熊貓元素的邊框資訊
+          let hitUI = false; // 標記是否撞到 UI 元素
+          let hitDir = panda.defaultFallDirection; // 預設受撞方向
+
+          if (rectsOverlap(pandaRect, controlsRect)) {
+            hitUI = true; // 標記為撞上 UI
+            hitDir = 'downleft'; // 撞上左下角設定按鈕，往右上角擊退
+          } else if (rectsOverlap(pandaRect, signRect)) {
+            hitUI = true; // 標記為撞上 UI
+            hitDir = 'downright'; // 撞上右下角簽名檔，往左上角擊退
+          }
+
+          if (hitUI && !panda.knocked) {
+            panda.hit = hitDir; // 設定受撞方向以執行 slidePanda
+            panda.direction = hitDir; // 套用方向轉向以渲染正確雪碧圖與 CSS
+            pandas[i].panda.classList.add('stop'); // 停止走路，轉入摔倒階段
+            panda.panda.querySelector('.panda_inner_wrapper').className = `panda_inner_wrapper facing_${hitDir}`; // 更新轉向樣式
+            knockPanda(panda.panda, panda); // 執行被擊倒生命週期
+            continue; // 已撞上 UI 跌倒，跳過後續常規探針檢測
+          }
+
+          const { upleft, upright, downleft, downright } = hit[i]
 
           // 進行探針受撞方向的多重分支判定
           hitCheck(upleft, panda, 'upleft')
@@ -498,6 +715,9 @@
       })
 
       setInterval(collisionCheck, 50) // 每 50 毫秒執行高頻碰撞檢測
+      document.querySelector('.outer_wrapper').addEventListener('click', handleBackgroundClick); // 綁定背景點擊事件
+      document.getElementById('menu_toggle').addEventListener('click', handleMenuToggle); // 綁定選單摺疊按鈕點擊事件
+      document.getElementById('clear_btn').addEventListener('click', handleClearPandas); // 綁定清除按鈕點擊事件
     }
 
     window.addEventListener('DOMContentLoaded', init)
