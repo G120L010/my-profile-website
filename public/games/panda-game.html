@@ -111,7 +111,7 @@
       height: 40px;
     }
 
-    /* need to flip because the parent divs are flipped */
+    /* 因為父容器水平鏡像翻轉，故此處的碰撞區域亦需同步翻轉 */
     .facing_upleft .hit_area,
     .facing_left .hit_area,
     .facing_downleft .hit_area {
@@ -446,7 +446,7 @@
         const hitCorners = document.querySelectorAll('.hit_corner')
         const hit = hitObj(pandaCount)
 
-        // * Uncomment below to see collision
+        // * 取消下方註解即可在畫面上顯示碰撞偵測框
         // hitCorners.forEach(h=>h.style.backgroundColor = 'transparent')
         hitCorners.forEach(a => {
           const { x: aX, y: aY, width: aW, height: aH } = a.getBoundingClientRect()
@@ -460,7 +460,7 @@
               hit[aId][aPos] = true // 標記為碰撞狀態
               hit[bId][bPos] = true
 
-              // * Uncomment below to see collision
+              // * 取消下方註解即可在畫面上顯示碰撞偵測框
               // a.style.backgroundColor = 'orange'
               // b.style.backgroundColor = 'orange'
             }
@@ -490,7 +490,7 @@
         }
       }
 
-      // Create panda and set up collision check
+      // 建立熊貓實例並設定碰撞檢測
       new Array(pandaNumber).fill('').map(() => {
         return [randomP(body.clientWidth - 100), randomP(body.clientHeight - 100)]
       }).forEach(pos => {

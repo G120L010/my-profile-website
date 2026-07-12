@@ -29,7 +29,7 @@
       cursor: pointer;
     }
 
-    /* 企鵅主體定位容器，絕對定位且 0.5s 緩動過渡 */
+    /* 企鵝主體定位容器，絕對定位且 0.5s 緩動過渡 */
     .penguin_wrapper {
       position: absolute;
       width: 96px;
@@ -43,26 +43,26 @@
       display: block;
     }
 
-    /* 企鵅容器內的 SVG 填充色設定為深藍色 */
+    /* 企鵝容器內的 SVG 填充色設定為深藍色 */
     .penguin_wrapper svg {
       fill: navy;
     }
 
-    /* 企鵅內層容器，充滿寬高且不帶過渡 */
+    /* 企鵝內層容器，充滿寬高且不帶過渡 */
     .penguin_inner_wrapper {
       height: 100%;
       width: 100%;
       transition: 0;
     }
 
-    /* 面對左上、左方、左下方向時，將企鵅鴣小圖水平鏡像實現左向 */
+    /* 面對左上、左方、左下方向時，將企鵝小圖水平鏡像實現左向 */
     .facing_upleft,
     .facing_left,
     .facing_downleft {
       transform: scale(-1, 1);
     }
 
-    /* 企鵅雪碧圖第一播放容器，絕對定位且不攔截滑鼠事件 */
+    /* 企鵝雪碧圖第一播放容器，絕對定位且不攔截滑鼠事件 */
     .penguin_sprite {
       position: absolute;
       height: calc(6 * 96px);
@@ -86,7 +86,7 @@
       pointer-events: none;
     }
 
-    /* 企鵅身體核心碰撞區域寬高設定 */
+    /* 企鵝身體核心碰撞區域寬高設定 */
     .hit_area {
       height: 50px;
       width: 40px;
@@ -166,7 +166,7 @@
       pointer-events: none;
     }
 
-    /* 星星容器內的 SVG 彩色設定為淡蓝f5 藍色 */
+    /* 星星容器內的 SVG 彩色設定為淡藍色 */
     .star svg {
       fill: rgb(148, 234, 255)
     }
@@ -320,7 +320,7 @@
         penguinData.frameTimer = setTimeout(() => animatePenguin(penguin), speed)
         if (animation === 'celebrate' && i === 0) {
           penguinData.jump ?
-            createJumpMark(penguin) : // 掉入慶祝跳躍踏印
+            createJumpMark(penguin) : // 留下慶祝跳躍踏印
             penguinData.jump = true
         }
         if (animation !== 'celebrate') penguinData.jump = false

@@ -13,7 +13,7 @@
       box-sizing: border-box;
     }
 
-    /* 全域背景色設定，并下定全站主要顏色 CSS 變數 */
+    /* 全域背景色設定，並定義全站主要顏色 CSS 變數 */
     body {
       padding: 0;
       margin: 0;
@@ -37,7 +37,7 @@
       flex-direction: column;
     }
 
-    /* 屯素渲染类元素的尺寸計算公式，使用 --w、--h 與 --m 背景縮放劉量統一計算 */
+    /* 像素渲染類元素的尺寸計算公式，使用 --w、--h 與 --m 背景縮放變數統一計算 */
     .pix,
     .pix::before,
     .pix::after {
@@ -47,14 +47,14 @@
       background-size: calc(var(--w) * var(--m)) calc(var(--h) * var(--m));
     }
 
-    /* 屯素類元素的僞元素絕對定位設定，不填內容匹配背景圖片 */
+    /* 像素類元素的偽元素絕對定位設定，不填內容匹配背景圖片 */
     .pix::before,
     .pix::after {
       position: absolute;
       content: '';
     }
 
-    /* 娃娃機主體橋屋容器，縦向排列且包含和和肉和辺框 */
+    /* 娃娃機主體框架容器，縱向排列且包含外圍邊框 */
     .claw-machine {
       display: flex;
       flex-direction: column;
@@ -62,7 +62,7 @@
       overflow: hidden;
     }
 
-    /* 頂部已抓取玩具展示的收集筱容器，動態計算寬度與上紼位置 */
+    /* 頂部已抓取玩具展示的收集箱容器，動態計算寬度與上方位置 */
     .collection-box {
       --h: 32px;
       width: calc(var(--m) * var(--machine-width));
@@ -72,7 +72,7 @@
       justify-content: start;
     }
 
-    /* 收集筱中各玩具位置包裝容器，平分寬度 */
+    /* 收集箱中各玩具位置包裝容器，平分寬度 */
     .collection-box .toy-wrapper {
       position: relative;
       width: calc(100% / 6);
@@ -81,20 +81,20 @@
       justify-content: center;
     }
 
-    /* 收集筱內玩具的僞元素定位至容器底部展示 */
+    /* 收集箱內玩具的偽元素定位至容器底部展示 */
     .collection-box .toy-wrapper .toy::after {
       top: auto;
       bottom: 0;
     }
 
-    /* 新增玩具擠入收集筱時的寬度漸巬動畫樣式 */
+    /* 新增玩具擠入收集箱時的寬度漸變動畫樣式 */
     .toy-wrapper.squeeze-in {
       width: 0;
       animation: squeeze-in forwards 0.4s;
       animation-delay: 1.4s;
     }
 
-    /* 獵差玩具擠入時寬度展開動畫幀 */
+    /* 新抓取的玩具擠入時寬度展開動畫幀 */
     @keyframes squeeze-in {
       0% {
         width: 0;
@@ -118,7 +118,7 @@
       }
     }
 
-    /* 收集筱內玩具大寬名稱的初始隐藏狀態，伴隨延遲動畫自上滞落出現 */
+    /* 收集箱內玩具元素的初始隱藏狀態，伴隨延遲動畫自上方墜落出現 */
     .toy-wrapper .toy {
       opacity: 0;
       transform: translateY(-100vh);
@@ -126,7 +126,7 @@
       animation-delay: 1s;
     }
 
-    /* 披外娃娃機主體的半透明蓝色機器簡色過渡陰影蓟層 */
+    /* 娃娃機主體外層的半透明藍色過渡陰影漸層 */
     .claw-machine.show-overlay::after {
       content: '';
       position: absolute;
@@ -140,7 +140,7 @@
       pointer-events: none;
     }
 
-    /* 娃娃機玻璃橱窗主區域容器，包含機肇寬度與高度變數 */
+    /* 娃娃機玻璃櫥窗主區域容器，包含機器寬度與高度變數 */
     .box {
       position: relative;
       background-color: #7fcfed;
@@ -148,7 +148,7 @@
       --h: 180px;
     }
 
-    /* 機器中間橫向咨銀隔板動畫前元素 */
+    /* 機器中間橫向隔板動畫前元素 */
     .box::before {
       background-color: var(--brown);
       top: calc(70px * var(--m));
@@ -157,7 +157,7 @@
       z-index: 5;
     }
 
-    /* 機器右側裝飾蓄蓝達實機器色垂直輪廣後元素 */
+    /* 機器右側裝飾深藍色機器色垂直輪廓後元素 */
     .box::after {
       background-color: var(--machine-color);
       top: calc(70px * var(--m));
@@ -176,7 +176,7 @@
       height: calc(var(--h) * var(--m));
     }
 
-    /* 機器上半部（爬子及滑軸活動範圍），居中排列且置於層級 1 */
+    /* 機器上半部（爪子及滑軸活動範圍），居中排列且置於層級 1 */
     .machine-top {
       top: 0;
       display: flex;
@@ -184,7 +184,7 @@
       z-index: 1;
     }
 
-    /* 機器上半部玻璃蓝色半透明覆蓋層後元素 */
+    /* 機器上半部玻璃藍色半透明覆蓋層後元素 */
     .machine-top::after {
       content: '';
       top: 0;
@@ -201,7 +201,7 @@
       background-color: #def7f6;
     }
 
-    /* 落物口點位元素，絕對定位於底部並展示小窟像素圖 */
+    /* 落物口點位元素，絕對定位於底部並展示小圖像素圖 */
     .collection-point {
       position: absolute;
       bottom: 0;
@@ -219,7 +219,7 @@
       border: solid var(--blue);
     }
 
-    /* 水平滑軸樣式，白色背景上下有蓝色框線 */
+    /* 水平滑軸樣式，白色背景上下有藍色框線 */
     .rail.hori {
       --h: 5px;
       width: 100%;
@@ -228,7 +228,7 @@
       z-index: 1;
     }
 
-    /* 垂直滑軸樣式，絕對定位且左右各有蓝色框線 */
+    /* 垂直滑軸樣式，絕對定位且左右各有藍色框線 */
     .rail.vert {
       position: absolute;
       --h: 70px;
@@ -237,7 +237,7 @@
       border-width: 0 2px;
     }
 
-    /* 爬子關節節點容器，絕對定位於左上角，具備 0.3s 過渡且置於負層級 */
+    /* 爪子關節節點容器，絕對定位於左上角，具備 0.3s 過渡且置於負層級 */
     .arm-joint {
       position: absolute;
       top: 0;
@@ -248,7 +248,7 @@
       z-index: -1;
     }
 
-    /* 關節節點的後元素，顯示小圇形接頭片 */
+    /* 關節節點的後元素，顯示小圓形接頭片 */
     .arm-joint::after {
       position: absolute;
       border: solid var(--blue) 2px;
@@ -259,7 +259,7 @@
       left: calc(var(--m) * var(--w) * -0.25);
     }
 
-    /* 機械臂底部爬子最上第一片的後元素菞f8圖片 */
+    /* 機械臂底部爪子最上面第一片的後元素圖片 */
     .arm::after {
       position: absolute;
       --w: 13px;
@@ -269,12 +269,12 @@
       background-image: url(../images/games/clawmachine02.jpg);
     }
 
-    /* 機械臂未夾到玩具時的空爾爬子圖片狀態 */
+    /* 機械臂未夾到玩具時的空爪圖片狀態 */
     .arm.missed::after {
       background-image: url(../images/games/clawmachine03.jpg);
     }
 
-    /* 娃娃機控制面板區域，深蓝色背景且居右對齊文字 */
+    /* 娃娃機控制面板區域，深藍色背景且居右對齊文字 */
     .control {
       position: relative;
       --h: 60px;
@@ -299,7 +299,7 @@
       height: calc(var(--m) * 16px);
     }
 
-    /* 收集引導箇頭指示圖片元素，絕對定位於控制面板頂部左側 */
+    /* 收集引導箭頭指示圖片元素，絕對定位於控制面板頂部左側 */
     .collection-arrow {
       position: absolute;
       left: calc(var(--m) * 21px);
@@ -310,7 +310,7 @@
       filter: sepia(1) brightness(0.5);
     }
 
-    /* 底部蓋板，和和肉和色背景 */
+    /* 底部蓋板，咖啡色背景 */
     .bottom {
       bottom: 0px;
       width: 100%;
@@ -344,7 +344,7 @@
       right: calc(var(--m) * 11px);
     }
 
-    /* 機械臂幹樣式，絕對定位、白色背景且帶蓝色邊框 */
+    /* 機械臂桿樣式，絕對定位、白色背景且帶藍色邊框 */
     .arm {
       position: absolute;
       --w: 7px;
@@ -365,7 +365,7 @@
       left: calc(var(--m) * 2.5px);
     }
 
-    /* 爬子左右就篇的僞元素共用基礎尺寸與過渡 */
+    /* 爪子左右爪片的偽元素共用基礎尺寸與過渡 */
     .claws::before,
     .claws::after {
       top: 0;
@@ -374,7 +374,7 @@
       transition: 0.2s;
     }
 
-    /* 爬子左就篇圖片与轉動原點設定 */
+    /* 爪子左爪片圖片與轉動原點設定 */
     .claws::before {
       left: calc(var(--m) * -10px);
       background-image: url(../images/games/clawmachine06.jpg);
@@ -382,7 +382,7 @@
       transform-origin: top right;
     }
 
-    /* 爬子右就篇圖片與轉動原點設定 */
+    /* 爪子右爪片圖片與轉動原點設定 */
     .claws::after {
       left: calc(var(--m) * 2.5px);
       background-image: url(../images/games/clawmachine07.jpg);
@@ -390,13 +390,13 @@
       transform-origin: top left;
     }
 
-    /* 機械臂張開時，左右爬子旋轉到指定角度實現張開動作 */
+    /* 機械臂張開時，左右爪子旋轉到指定角度實現張開動作 */
     .arm.open .claws::before,
     .arm.open .claws::after {
       rotate: var(--close-angle);
     }
 
-    /* 爬子關節節點的前元素，顯示投影效果且依臂長動態縮放 */
+    /* 爪子關節節點的前元素，顯示投影效果且依臂長動態縮放 */
     .arm-joint::before {
       --w: 20px;
       --h: 16px;
@@ -424,18 +424,18 @@
       cursor: pointer;
     }
 
-    /* 水平移動按鈕旋轉 90 度將符形指向正確方向 */
+    /* 水平移動按鈕旋轉 90 度將箭頭指向正確方向 */
     .hori-btn {
       transform: rotate(90deg);
     }
 
-    /* 按鈕濃影関闃動畫樣式，表示当前可點擊的按鈕閣爍 */
+    /* 按鈕呼吸脈衝動畫樣式，表示當前可點擊的按鈕閃爍 */
     .active {
       animation: pulse infinite 1s;
       pointer-events: all;
     }
 
-    /* 按鈕導閣爍閣爍動畫幀，顏色幏屏在彩色與棕色間交替閃爍 */
+    /* 按鈕引導閃爍動畫幀，顏色在彩色與棕色間交替閃爍 */
     @keyframes pulse {
 
       0%,
@@ -471,7 +471,7 @@
       content: '';
     }
 
-    /* 熊寫玩具後元素展示正常獨立狀態圖片 */
+    /* 小熊玩具後元素展示正常獨立狀態圖片 */
     .toy.bear::after {
       --w: 24px;
       --h: 30px;
@@ -480,12 +480,12 @@
       background-image: url(../images/games/clawmachine11.jpg);
     }
 
-    /* 熊寫玩具被爬子夾取時切換為抓起狀態圖片 */
+    /* 小熊玩具被爪子夾取時切換為抓起狀態圖片 */
     .toy.bear.grabbed::after {
       background-image: url(../images/games/clawmachine12.jpg);
     }
 
-    /* 熊寫玩具在收集筱中展示的小圖狀態 */
+    /* 小熊玩具在收集箱中展示的小圖狀態 */
     .toy-wrapper .toy.bear::after {
       background-image: url(../images/games/clawmachine13.jpg);
     }
@@ -510,12 +510,12 @@
       background-image: url(../images/games/clawmachine15.jpg);
     }
 
-    /* 兔子玩具收集筱內小圖展示 */
+    /* 兔子玩具收集箱內小圖展示 */
     .toy-wrapper .toy.bunny::after {
       background-image: url(../images/games/clawmachine16.jpg);
     }
 
-    /* 瑟髦玩具後元素正常展示圖片 */
+    /* 石魔玩具後元素正常展示圖片 */
     .toy.golem::after {
       --w: 26px;
       --h: 30px;
@@ -524,12 +524,12 @@
       background-image: url(../images/games/clawmachine17.jpg);
     }
 
-    /* 瑟髦玩具被夾取時切換圖片 */
+    /* 石魔玩具被夾取時切換圖片 */
     .toy.golem.grabbed::after {
       background-image: url(../images/games/clawmachine18.jpg);
     }
 
-    /* 瑟髦玩具收集筱內小圖展示 */
+    /* 石魔玩具收集箱內小圖展示 */
     .toy-wrapper .toy.golem::after {
       background-image: url(../images/games/clawmachine19.jpg);
     }
@@ -554,18 +554,18 @@
       background-image: url(../images/games/clawmachine21.jpg);
     }
 
-    /* 黃瓜玩具收集筱內小圖展示 */
+    /* 黃瓜玩具收集箱內小圖展示 */
     .toy-wrapper .toy.cucumber::after {
       background-image: url(../images/games/clawmachine22.jpg);
     }
 
-    /* 企鵅玩具尺寸設定 */
+    /* 企鵝玩具尺寸設定 */
     .toy.penguin {
       --w: 24px;
       --h: 22px;
     }
 
-    /* 企鵅玩具後元素正常展示圖片 */
+    /* 企鵝玩具後元素正常展示圖片 */
     .toy.penguin::after {
       --w: 26px;
       --h: 24px;
@@ -574,12 +574,12 @@
       background-image: url(../images/games/clawmachine23.jpg);
     }
 
-    /* 企鵅玩具被夾取時切換圖片 */
+    /* 企鵝玩具被夾取時切換圖片 */
     .toy.penguin.grabbed::after {
       background-image: url(../images/games/clawmachine24.jpg);
     }
 
-    /* 企鵅玩具收集筱內小圖展示 */
+    /* 企鵝玩具收集箱內小圖展示 */
     .toy-wrapper .toy.penguin::after {
       background-image: url(../images/games/clawmachine25.jpg);
     }
@@ -604,7 +604,7 @@
       background-image: url(../images/games/clawmachine27.jpg);
     }
 
-    /* 機器人玩具收集筱內小圖展示 */
+    /* 機器人玩具收集箱內小圖展示 */
     .toy-wrapper .toy.robot::after {
       background-image: url(../images/games/clawmachine28.jpg);
     }
@@ -614,7 +614,7 @@
       pointer-events: all;
     }
 
-    /* 玩具抾取後從展示區縮小並淡出移除的動畫幀 */
+    /* 玩具抓取後從展示區縮小並淡出移除的動畫幀 */
     @keyframes show-toy-1 {
       0% {
         opacity: 1;
@@ -637,7 +637,7 @@
       bottom: calc(var(--m) * 8px);
     }
 
-    /* 游戲操作說明文字樣式，和和肉和色加粗 */
+    /* 遊戲操作說明文字樣式，咖啡色加粗 */
     .game-instruction {
       color: var(--brown);
       margin-top: 16px;
@@ -831,7 +831,7 @@
       return Math.round(min - 0.5 + Math.random() * (max - min + 1))
     }
 
-    //* classes *//
+    // 類別定義
 
     // 定義娃娃機控制按鈕實例的 Class 類別
     class Button {
@@ -1072,7 +1072,7 @@
       }
     }
 
-    //* set up *//
+    // 遊戲初始設定
     elements.box.style.setProperty('--shadow-pos', `${maxArmLength}px`) // 設定娃娃機陰影定位深度
 
     // 實例化機械臂的各項核心定位組件

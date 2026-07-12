@@ -28,7 +28,7 @@
       padding-inline-start: 0px;
     }
 
-    /* 全域背景色為深藍色，並限制溢滞行為以避免頁面回彈 */
+    /* 全域背景色為深藍色，並限制溢出行為以避免頁面回彈 */
     body {
       background-color: #006781;
       font-family: Arial, Helvetica, sans-serif;
@@ -54,19 +54,19 @@
       height: 100%;
     }
 
-    /* 地圖密點小色塊，平分寬度且和和肉和顏色展示 */
+    /* 地圖密點小色塊，平分寬度且以咖啡色顏色展示 */
     .location_mark>div {
       flex-grow: 1;
       height: 100%;
       background-color: #c3ac83;
     }
 
-    /* 奇數點透明展示，形成隔斷牛且樓畫效果 */
+    /* 奇數點透明展示，形成間隔格柵效果 */
     .location_mark>div:nth-child(odd) {
       background-color: transparent;
     }
 
-    /* 懸停時顏色變跨角色並變成指針樣式提示可點擊 */
+    /* 懸停時顏色變換並變成指針樣式提示可點擊 */
     .location_mark>div:hover {
       background-color: #7ce6f0;
       cursor: pointer;
@@ -141,7 +141,7 @@
       top: 0px;
     }
 
-    /* 展示視窗內按鈕的共用樣式，圓角顯示並加滑鼠制針樣式 */
+    /* 展示視窗內按鈕的共用樣式，圓角顯示並加滑鼠指針樣式 */
     .display_wrapper button {
       padding: 14px 18px;
       border: 0px;
@@ -158,12 +158,12 @@
       margin-top: 40px;
     }
 
-    /* 懸停按鈕時顏色切換為清淣闹韓 */
+    /* 懸停按鈕時顏色切換為亮青色 */
     .display_wrapper button:hover {
       background-color: #7ce6f0;
     }
 
-    /* 星球圓面左半部綋谷圖案的前元素，使用重複背景回形圖案 */
+    /* 星球圓面左半部紋路圖案的前元素，使用重複背景回形圖案 */
     .circle::before {
       content: '';
       width: 220px;
@@ -589,7 +589,7 @@
     }
 
 
-    /* responsive bits */
+    /* 響應式排版媒體查詢 */
 
     @media screen and (min-width:0px) {
       .sensei_wrapper {
@@ -666,7 +666,7 @@
 
     }
 
-    /* other */
+    /* 其他通用樣式定義 */
 
     .sign {
       position: absolute;
@@ -1209,7 +1209,7 @@
       changeBackground(circleData.mapIndex)
       if (Math.abs(circleData.angle) === 360) circleData.angle = 0
 
-      // for development
+      // 開發偵錯時的狀態輸出指標
       // indicator.innerHTML = `angle: ${circleData.angle} pos:${circleData.pos} prev: ${returnNextOrPrev(circleData.mapIndex - 1)} current: ${circleData.mapIndex} next:${returnNextOrPrev(circleData.mapIndex + 1)}`
     }
 
@@ -1315,7 +1315,7 @@
         bearData.pause = !bearData.pause
         displayWrapper.classList.toggle('display')
 
-        // unfocus from close button so it doesn't misfire with 'enter'
+        // 使關閉按鈕失去焦點，以防止按下 Enter 鍵時發生誤觸發
         if (!displayWrapper.classList.contains('display')) displays[3].blur()
         displays[1].innerHTML = circleData.activeEvent.display.caption || ''
         displays[2].innerHTML = circleData.activeEvent.display.link || ''
@@ -1433,7 +1433,7 @@
     }
 
 
-    // sensei +++
+    // 導師 NPC 互動邏輯開始
 
     // NPC 說話逐字跑馬燈打字機特效與頭像說話擺動動畫的定時器播放函式
     const displayTextGradual = (t, i) => {
@@ -1489,7 +1489,7 @@
       if (instructionKey === 'complete') senseiData.complete = true
     }
 
-    // +++
+    // 導師 NPC 互動邏輯結束
 
 
     document.querySelector('.location_mark').innerHTML = mapDataKeys.map(() => `<div class="location_link"></div>`).join('')

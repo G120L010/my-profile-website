@@ -438,4 +438,5 @@ jobs:
 | 2026.07.10 | **首頁絕對路徑導致資源未載入** | [index.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/index.html) | Favicon 圖標與入口主 JavaScript 在 index.html 中使用了斜線開頭的絕對路徑，違反靜態資源相對路徑化規範，在 GitHub Pages 部署時會指向網域根目錄而導致 404 白畫面或圖標失效。 | 移除首位斜線字元，將路徑修正為 favicon.ico 與 src/main.js 相對路徑，順利符合靜態部署防錯標準。 |
 | 2026.07.10 | **文創商品特有網址重複協定疑點釐清** | [PortfolioView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/PortfolioView.js) | 文創商品按鈕連結為 `https://httpshancreator-springcom-2.creator-spring.com/`，其中包含 `https://https`，初看容易被誤判定為重複協定的打字錯誤 (Typo)。 | 經確認該網址為 SPRI.NG 電商平台特有的正確商店域名網址（非打字出錯）。特此於歷史紀錄中標記保留，避免後續維護者或 AI 助手誤改。 |
 | 2026.07.10 | **5 款互動小遊戲註解補充完成** | `public/games/` 底下所有小遊戲檔案 | 原本的小遊戲檔案缺乏統一的中文化結構與邏輯備忘註解，需依循開發指南之嚴格規範為其補全註解以利長期維護。 | 逐一為五款小遊戲添加詳細的繁體中文註解，嚴格把關註解格式（無 Emoji 符號，HTML 放標籤上方，CSS 放規則上方，JS 放函式上方/行末防呆），並保留所有特意保留的已註解程式碼與 SVG 資料結構。 |
+| 2026.07.12 | **5 款小遊戲註解規範化與錯漏字全面修正** | `public/games/` 5 款小遊戲檔案 | 程式碼註解審查發現存在英文註解、簡體中文字型以及多處不通順的機器翻譯亂碼（如「屯素」、「收集筱」、「爬子」等），違反註解繁中化與專業度規範。 | 批次將 English 註解翻譯為繁體中文，修正簡體字形，並將所有翻譯亂碼修正為標準商業中文用詞（如「像素」、「收集箱」、「爪子」等），且 100% 保留所有程式邏輯與已註解偵錯程式碼。 |
 
