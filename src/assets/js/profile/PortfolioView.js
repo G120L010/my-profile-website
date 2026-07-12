@@ -75,7 +75,7 @@ export function usePortfolioView() {
     },
     {
       id: 7,
-      title: '旋轉星球互動小遊戲',
+      title: '旋轉星球互動冒險',
       summary: '您可以在這個迷你世界中四處走動，並與場景中的物件進行互動，體驗在旋轉球體上的移動與視角變化。',
       tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '旋轉星球'],
       image: 'images/Portfolioimg/PlanetGame.jpg',
@@ -95,7 +95,7 @@ export function usePortfolioView() {
     },
     {
       id: 9,
-      title: '像素企鵝互動小遊戲',
+      title: '與像素企鵝互動',
       summary: '一個可愛的像素企鵝會跟著你的滑鼠點擊到處走動，試著點擊畫面讓企鵝移動到指定位置吧！',
       tags: ['JavaScript', 'CSS Animation', '滑鼠點擊移動', '互動遊戲'],
       image: 'images/Portfolioimg/PenguinGame.jpg',
@@ -105,7 +105,7 @@ export function usePortfolioView() {
     },
     {
       id: 10,
-      title: '像素貓咪互動小遊戲',
+      title: '與像素貓咪互動',
       summary: '一個互動小遊戲。貓咪會跟隨滑鼠游標移動、轉向與跳躍，並在點擊貓咪時發出可愛的音效。',
       tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '像素貓咪寵物'],
       image: 'images/Portfolioimg/CatGame.jpg',
@@ -115,7 +115,7 @@ export function usePortfolioView() {
     },
     {
       id: 11,
-      title: '熊貓互相碰撞小遊戲',
+      title: '觀看熊貓互相碰撞',
       summary: '多隻像素熊貓會在畫面上隨機走動，當牠們互相碰撞時，會觸發可愛的跌倒動畫。',
       tags: ['HTML', 'CSS', 'JavaScript', '互動遊戲', '物理模擬'],
       image: 'images/Portfolioimg/PandaGame.jpg',
