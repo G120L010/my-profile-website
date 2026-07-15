@@ -59,7 +59,7 @@ export function useAboutView() {
     {
       id: 'bio-4',
       title: '專業蛻變：資展 Java 軟體工程師訓練',
-      content: '目前我正參與財團法人資訊工業策進會的職訓計畫 (產業新尖兵)，深造 Java 後端開發與系統架構設計，發展符合產業需求的專業軟體工程技能，支援未來科技與人才永續的職涯規劃，期待能與貴公司共同成長，迎戰新時代。'
+      content: '已順利完成資訊工業策進會的職訓（軟體工程師就業養成班），深造 Java 後端開發與系統架構設計，發展符合產業需求的專業軟體工程技能，支援未來科技與人才永續的職涯規劃，期待能與貴公司共同成長，迎戰新時代。'
     }
   ])
 
@@ -69,8 +69,8 @@ export function useAboutView() {
       id: 1,
       title: '資展國際 - 跨域 Java 軟體工程師就業養成班',
       period: '2026.03 - 2026.07',
-      accentClass: 'accent-frontend',
-      desc: '接受 555 小時資策會密集資訊培訓，學習 Java、Spring Boot、Vue 3 與資料庫技術。於專案「暖光之丘」擔任資料庫 ERD 設計主導，並成功實作 LINE Pay 金流與 Google Gemini API 智慧客服。',
+      accentClass: 'accent-backend',
+      desc: '接受 444 小時資策會密集資訊培訓，學習 Java、Spring Boot、Vue 3 與資料庫技術。於專案「暖光之丘」擔任資料庫 ERD 設計主導，並成功實作 LINE Pay 金流與 Google Gemini API 智慧客服。',
       image: 'images/Aboutimg/EEIT.jpg',
       url: 'images/Aboutimg/EEITYA.jpg'
     },
@@ -87,7 +87,7 @@ export function useAboutView() {
       id: 3,
       title: '日本大阪實習專案 - 產品短影音行銷廣告影片',
       period: '2025.07 - 2025.08',
-      accentClass: 'accent-design',
+      accentClass: 'accent-purple',
       desc: '於日本海外實習期間，為 SUNSTAR 研究所 Fasting Bar 健康能量棒製作推廣短影音與行銷素材，融入短影音剪輯、多媒體後製與廣告創意文案發想。',
       image: 'images/Aboutimg/SUN.jpg',
       url: 'images/Aboutimg/TV.mp4'
@@ -96,7 +96,7 @@ export function useAboutView() {
       id: 4,
       title: '2025 雙軸轉型菁英齊聚 iPAS 專場活動',
       period: '2025.06',
-      accentClass: 'accent-tools',
+      accentClass: 'accent-emerald',
       desc: '由 104 人力銀行與工研院協同辦理。通過經濟部 iPAS 淨零碳規劃管理師、環境部淨零綠領人才合格證書、以及 iPAS 人工智慧 AI 應用規劃師能力鑑定，具備數據驅動與永續規劃的雙重實務能力。',
       image: 'images/Aboutimg/104iPAS.jpg',
       url: 'https://talent.ipas.org.tw/talent/event/detail/d3bd3f271efd45ff9507cfa7466824e1'
@@ -105,7 +105,7 @@ export function useAboutView() {
       id: 5,
       title: '在校成績優良獲頒臺南市議長獎',
       period: '2024.06',
-      accentClass: 'accent-experience',
+      accentClass: 'accent-gold',
       desc: '碩士班應屆畢業學業優異，獲頒臺南市議會議長獎與智育優良獎肯定，展現卓越學習態度與關心社會議題之論文研究能力，並成為校內首位同時取得經濟部 iPAS 國家級「AI應用規劃師」及「淨零碳規劃管理師」證照之學生。',
       image: 'images/Aboutimg/Council.jpg',
       url: 'https://www.cna.com.tw/postwrite/chi/405198'
@@ -114,7 +114,7 @@ export function useAboutView() {
       id: 6,
       title: '獲選 112 年大專優秀青年',
       period: '2023.05',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-rose',
       desc: '肯定其逆境中堅持向學之精神，以及在社團領導、偏鄉節能志工服務、在校服務學生與公益行動上的積極表現，獲選為大專優秀青年。',
       image: 'images/Aboutimg/Youth.jpg',
       url: 'https://www.cna.com.tw/postwrite/chi/337943'
@@ -123,7 +123,7 @@ export function useAboutView() {
       id: 7,
       title: '入圍總統教育獎推薦名單',
       period: '2022.05',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-gold',
       desc: '不畏環境困頓發憤向學，品德優良且長期熱心社團服務與社會公益，入圍中華民國大專組年度總統教育獎推薦名單，並獲頒奮發向上獎。',
       image: 'images/Aboutimg/Pres.jpg',
       url: 'https://www.nownews.com/news/6165578'
@@ -141,7 +141,7 @@ export function useAboutView() {
       id: 9,
       title: '第 12 屆 IIIC 國際創新發明競賽金牌',
       period: '2021.11',
-      accentClass: 'accent-tools',
+      accentClass: 'accent-purple',
       desc: '參與第12屆IIIC國際創新發明競賽，與團隊共同完成實務應用作品與創新構想，於多國參賽隊伍中榮獲金牌肯定。',
       image: 'images/Aboutimg/Golds.jpg',
       url: 'https://www.cna.com.tw/postwrite/chi/304627'

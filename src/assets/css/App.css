@@ -470,6 +470,26 @@
   /* 使用紫粉色水平雙色漸變 */
 }
 
+/* 針對尊榮金或獎項卡片套用的金色漸變線 */
+.accent-gold {
+  background: linear-gradient(90deg, #f59e0b, #eab308);
+}
+
+/* 針對智慧紫或人工智慧卡片套用的紫藍色漸變線 */
+.accent-purple {
+  background: linear-gradient(90deg, #a855f7, #6366f1);
+}
+
+/* 針對淨零綠或環境永續卡片套用的綠色漸變線 */
+.accent-emerald {
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+/* 針對特定創意主題卡片套用的深玫瑰紅漸變線 */
+.accent-rose {
+  background: linear-gradient(90deg, #f43f5e, #be123c);
+}
+
 /* ========================================== */
 /* 8. 全站分頁大標題共用樣式                   */
 /* ========================================== */

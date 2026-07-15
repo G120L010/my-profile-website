@@ -22,7 +22,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.iii.org.tw/zh-TW',
       image: 'images/Certificationimg/EEIT44401.jpg',
-      accentClass: 'accent-tools',
+      accentClass: 'accent-backend',
       summary: '完成資訊工業策進會跨域Java軟體工程師核心培訓，深入學習Java物件導向、Spring Boot微服務架構、系統分析設計及資料庫整合開發。'
     },
     {
@@ -33,7 +33,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.ispan.com.tw/',
       image: 'images/Certificationimg/EEIT44402.jpg',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-purple',
       summary: '通過資展國際就業養成班之密集專案實作，掌握前後端分離開發（Spring Boot與Vue 3）、API設計、Git版本控制及團隊協作開發。'
     },
     {
@@ -44,7 +44,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.moenv.gov.tw/',
       image: 'images/Certificationimg/MOENV.jpg',
-      accentClass: 'accent-tools',
+      accentClass: 'accent-emerald',
       summary: '通過國家級綠色轉型、溫室氣體盤查、企業減碳路徑與永續規劃策略之核心培訓講師課程。'
     },
     {
@@ -55,7 +55,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://talent.ipas.org.tw/',
       image: 'images/Certificationimg/Carbon.jpg',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-emerald',
       summary: '具備淨零碳規劃管理相關之國際公約、碳管理、碳中和基礎理論知識，能協助企業推動低碳減量計畫。'
     },
     {
@@ -66,7 +66,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://talent.ipas.org.tw/',
       image: 'images/Certificationimg/AiIPAS.jpg',
-      accentClass: 'accent-frontend',
+      accentClass: 'accent-purple',
       summary: '理解資料在 AI 應用模型中扮演之關鍵角色，並具備實務導入人工智慧專案之設計與規劃能力。'
     },
     {
@@ -77,7 +77,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'http://www.nlia.org.tw/',
       image: 'images/Certificationimg/Product.jpg',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-gold',
       summary: '通過產物保險法規與實務測驗，具備產物保險商品分析、企業風險規劃與銷售資格。'
     },
     {
@@ -99,7 +99,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.csf.org.tw/',
       image: 'images/Certificationimg/TQC.jpg',
-      accentClass: 'accent-frontend',
+      accentClass: 'accent-purple',
       summary: '認證具備機器學習基礎、自然語言處理、影像辨識應用與深度學習等核心技術知識。'
     },
     {
@@ -110,7 +110,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'http://www.lia-roc.org.tw/',
       image: 'images/Certificationimg/Life.jpg',
-      accentClass: 'accent-backend',
+      accentClass: 'accent-gold',
       summary: '通過國家級法規與實務測驗，具備人身保險商品銷售資格、人身風險規劃與保險法規專業知識。'
     },
     {
@@ -143,7 +143,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.siliconstone.org/show_certificate?certificate_id=29',
       image: 'images/Certificationimg/Photoshop.jpg',
-      accentClass: 'accent-design',
+      accentClass: 'accent-rose',
       summary: '驗證具備數位圖像設計、相片編修、視覺藝術後製與 Adobe Photoshop 軟體實務操作國際證照。'
     },
     {
@@ -154,7 +154,7 @@ export function useCertificationView() {
       credentialId: '****************',
       verifyUrl: 'https://www.siliconstone.org/',
       image: 'images/Certificationimg/Photograph.jpg',
-      accentClass: 'accent-design',
+      accentClass: 'accent-experience',
       summary: '驗證取得攝影構圖、光影控制、數位相機操作與影像美學創作之國際水準專業能力。'
     },
     {
@@ -177,7 +177,7 @@ export function useCertificationView() {
       verifyUrl: 'https://skillshop.exceedlms.com/',
       image: 'images/Certificationimg/GA.jpg',
       accentClass: 'accent-tools',
-      summary: '取得 Google Analytics (分析) 個人認證，具備網站流量數據追蹤、使用者行為分析與報表解讀能力。'
+      summary: '取得 Google Analytics (分析) 個人認證，具備網站流量數據追蹤、使用者行為 analysis 與報表解讀能力。'
     }
   ])
 

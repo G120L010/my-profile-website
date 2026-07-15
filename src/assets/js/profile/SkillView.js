@@ -78,7 +78,7 @@ export function useSkillView() {
     {
       id: 5,
       title: '人工智慧與軟體操作〔AI＆Software Operation〕',
-      accentClass: 'accent-design', // 設計紫粉色彩線
+      accentClass: 'accent-purple', // 智慧紫藍色漸變彩線
       items: [
         {
           name: 'AI Application Planning',
@@ -97,7 +97,7 @@ export function useSkillView() {
     {
       id: 6,
       title: '設計與多媒體〔Design＆Multimedia〕',
-      accentClass: 'accent-frontend', // 重複使用前端藍色彩線
+      accentClass: 'accent-rose', // 創意玫瑰紅漸變彩線
       items: [
         {
           name: 'Adobe Illustrator / Photoshop',
@@ -112,7 +112,7 @@ export function useSkillView() {
     {
       id: 7,
       title: '版本控制與工具〔Version Control＆Tools〕',
-      accentClass: 'accent-backend', // 重複使用後端橘色彩線
+      accentClass: 'accent-gold', // 尊榮金色漸變彩線
       items: [
         {
           name: 'Git / GitHub',

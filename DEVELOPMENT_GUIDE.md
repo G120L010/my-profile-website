@@ -95,6 +95,11 @@
 * **工具** (`.accent-tools`)：`linear-gradient(90deg, #00ff87, #60efff)` (青綠漸變)
 * **經歷** (`.accent-experience`)：`linear-gradient(90deg, #ff8400, #ff5e62)` (橘紅漸變)
 * **特殊/設計** (`.accent-design`)：`linear-gradient(90deg, #ec008c, #fc6767)` (紫粉漸變)
+* **尊榮金/獎項** (`.accent-gold`)：`linear-gradient(90deg, #f59e0b, #eab308)` (金色漸變)
+* **智慧紫/人工智慧** (`.accent-purple`)：`linear-gradient(90deg, #a855f7, #6366f1)` (紫藍漸變)
+* **淨零綠/環境永續** (`.accent-emerald`)：`linear-gradient(90deg, #10b981, #059669)` (綠色漸變)
+* **深情玫瑰紅** (`.accent-rose`)：`linear-gradient(90deg, #f43f5e, #be123c)` (玫瑰紅漸變)
+
 
 ### ✨ 微互動動畫與特效 (Animations)
 * **雪花飄落**：由 `App.css` 透過 `@keyframes fallAnimation` 渲染 5 個透明度與速度相異的 `❄` 粒子背景層。
@@ -444,4 +449,8 @@ jobs:
 | 2026.07.12 | **貓咪遊戲走路滑冰與手機端點擊無效 Bug 修正** | [cat-game.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/public/games/cat-game.html) | (1) 貓咪走路動畫以 200ms 的 setTimeout 控制停止，而位移過渡 (transition) 達 1.5 秒，造成貓咪腿部提早停止而在畫面上「滑冰」；(2) 行動裝置單純點擊螢幕（touchstart）無法更新座標，貓咪不會移向點擊處。 | (1) 於 100ms 計時器中動態比對貓咪 current 座標與 target 座標的差值，小於 10px 時才觸發 `stopWalk`；(2) 監聽 `mousedown` 與 `touchstart` 以即時響應點擊移位需求。 |
 | 2026.07.12 | **熊貓碰撞小遊戲功能新增與 UI 避讓機制實作** | [panda-game.html](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/public/games/panda-game.html) | (1) 原始小遊戲缺乏滑鼠點擊互動與色彩變化；(2) 點擊背景產生新熊貓時，因點擊事件綁定在帶有負 `z-index` 的 `.wrapper` 上，被 HTML `body` 背景色阻隔而無效；(3) 點擊產生的擊退方向拼接為 `'leftup'` 等非標準字串，使雪碧圖行數定位為 `NaN` 造成畫面損毀；(4) 熊貓走動時常被左下角「設定」按鈕與右下角「署名檔」遮擋或卡住；(5) 手動清除新增熊貓時若不停止其背景定時任務會引發 `TypeError`；(6) 手動「設定」與「重置數量」按鈕在行動端會遮擋到右下角的署名檔；(7) 點擊重置數量按鈕時僅刪除手動多出的熊貓，未能完全將全場熊貓（包含初始 20 隻）的位置與顏色進行洗牌重置。 | (1) 新增點擊熊貓擊退及隨機 HSL 色彩填色；(2) 將背景點擊事件改綁至 `.outer_wrapper` 並使用 `e.stopPropagation()` 阻斷冒泡；(3) 依點擊四象限精準對應至 `upleft` / `upright` / `downleft` / `downright` 標準方向；(4) 於 `collisionCheck` 動態檢測包圍盒與選單及署名檔的 AABB 重疊，若重疊則朝對角（右上或左上）彈飛跌倒防止卡住；(5) 在各動畫、尋路及定時器回呼中新增 `if (!panda.parentNode) return;` 阻斷，並於碰撞偵測中對被刪除物件進行 `if (!panda) continue;`過濾；(6) 控制選單中文化並升級為膠囊圓角按鈕造型，在行動裝置上高度往上提至 `bottom: 60px` 以跟署名檔完美錯開；(7) 重構 `handleClearPandas` 函式，使其在點擊時完全清除畫面上所有的熊貓與定時器、並將 `pandaCount` 歸零後重新以新 HSL 隨機色彩與座標生成 20 隻熊貓。 |
 | 2026.07.14 | **Java結業證書項目簡介與樣式類別補充** | [CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js) | 專業認證清單中，前兩項 Java 相關結業證書之 accentClass 與 summary 內容留白，需要補充與該專業養成訓練相符的具體文字描述與配色樣式。 | 將 id: 1 與 id: 2 的 accentClass 設定為後端主題色的 `accent-backend`，並分別編寫符合資策會與資展國際培訓內容的繁體中文簡介（不含表情符號），完整呈現後端開發與前後端分離專案的實務能力。 |
+| 2026.07.15 | **結訓狀態與培訓時數更新暨樣式一致性校正** | [AboutView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/AboutView.js)<br>[CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js) | 使用者已順利結訓，需更新自傳結訓狀態、修正特色經歷的培訓時數，並解決 Java 結業證書與特色經歷中 accentClass 不一致之處。 | (1) 將 bio-4 內容改為已順利完成資策會職訓；(2) 將培訓時數修正為 444 小時；(3) 依規範將 Java 相關之特色經歷與結業證書的 accentClass 統一修正為後端配色 `accent-backend`。 |
+| 2026.07.15 | **新增與多元化漸變裝飾條色彩配色** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md)<br>[CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js)<br>[AboutView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/AboutView.js)<br>[HomeView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HomeView.js)<br>[SkillView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/SkillView.js) | 使用者期望卡片頂部裝飾條的色彩能更多樣化，原本僅有 5 種色彩且多處重複或單調。 | (1) 於 App.css 新增 `accent-gold` (尊榮金)、`accent-purple` (智慧紫)、`accent-emerald` (淨零綠)、`accent-rose` (深情玫瑰紅) 四組全新漸變色；(2) 於開發指南登錄並說明此四組色彩的應用情境；(3) 分別更新證照、特色經歷、工作經歷及技能分類數據陣列中的 `accentClass` 色彩設定，使同分頁或相鄰項目色彩不重疊，並符合其職稱或內容的意象（如環保用綠色、AI 用紫色、獎項用金色）。 |
+
+
 
