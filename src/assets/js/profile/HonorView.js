@@ -59,7 +59,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/EMBA3.pdf',
+      image: 'images/Honorimg/EMBA3.jpg',
       accentClass: 'accent-rose',
       summary: '於研究所二年級再次參加第五十一屆嵐雲文學獎徵文比賽，蟬聯新詩創作組全校第一名殊榮。'
     },
@@ -73,7 +73,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/EMBA1.pdf',
+      image: 'images/Honorimg/EMBA1.jpg',
       accentClass: 'accent-rose',
       summary: '因在研究所就讀期間在學成績優良、表現傑出，畢業時獲頒臺南市議會之議長獎鼓勵。'
     },
@@ -87,7 +87,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/EMBA4.png',
+      image: 'images/Honorimg/EMBA4.jpg',
       accentClass: 'accent-gold',
       summary: '因研究所在學學業成績極為優良，榮獲企管系碩士班第一名，由李天祥校長親自頒發獎狀表揚。'
     },
@@ -101,7 +101,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/EMBA2.pdf',
+      image: 'images/Honorimg/EMBA2.jpg',
       accentClass: 'accent-rose',
       summary: '參加校內第五十屆嵐雲文學獎徵文比賽，於新詩組競賽中榮獲全校第一名殊榮。'
     },
@@ -143,7 +143,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/JK4.pdf',
+      image: 'images/Honorimg/JK4.jpg',
       accentClass: 'accent-gold',
       summary: '於104學年度畢業典禮中擔任親善服務大使，負責引導與典禮服務，表現優異，特頒此狀。'
     },
@@ -157,7 +157,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/JK0.pdf',
+      image: 'images/Honorimg/JK0.jpg',
       accentClass: 'accent-purple',
       summary: '餐飲管理科在校學業成績優異，名列前茅，特頒此狀以資鼓勵。'
     },
@@ -171,7 +171,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/JK1.pdf',
+      image: 'images/Honorimg/JK1.jpg',
       accentClass: 'accent-rose',
       summary: '在校期間擔任親善服務大使，熱心協助學校各項公共事務與外賓接待，服務表現優異。'
     },
@@ -185,7 +185,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/JK3.pdf',
+      image: 'images/Honorimg/JK3.jpg',
       accentClass: 'accent-emerald',
       summary: '協助台南市商業會辦理第六十九屆商人節慶祝大會，熱心公益與會場服務，特頒此感謝狀。'
     },
@@ -199,7 +199,7 @@ export function useHonorView() {
       type: 'award',
       typeName: '獲獎事蹟',
       verifyUrl: '',
-      image: 'images/Honorimg/JK2.pdf',
+      image: 'images/Honorimg/JK2.jpg',
       accentClass: 'accent-emerald',
       summary: '積極參與社會服務，協助台南市商業會籌辦第六十八屆商人節慶祝大會，表現優良。'
     }
