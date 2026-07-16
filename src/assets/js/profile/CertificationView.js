@@ -109,7 +109,7 @@ export function useCertificationView() {
       date: '2024.05',
       credentialId: '****************',
       verifyUrl: 'http://www.lia-roc.org.tw/',
-      image: 'images/Certificationimg/Life.jpg',
+      image: 'images/Certificationimg/LIFEE.jpg',
       accentClass: 'accent-gold',
       summary: '通過國家級法規與實務測驗，具備人身保險商品銷售資格、人身風險規劃與保險法規專業知識。'
     },
