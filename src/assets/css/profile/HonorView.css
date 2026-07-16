@@ -1,0 +1,228 @@
+/* ========================================== */
+/* 榮譽事蹟分頁右側專屬 CSS 樣式表 */
+/* ========================================== */
+
+/* 篩選區段與標籤樣式 */
+.honor-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* 分類篩選按鈕列容器 */
+.honor-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 篩選按鈕本體樣式 */
+.btn-honor-filter {
+  background-color: var(--bg-btn);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 8px 20px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+/* 篩選按鈕懸浮與選中樣式 */
+.btn-honor-filter:hover {
+  border-color: #ff8400;
+  color: #ff8400;
+  background-color: rgba(255, 132, 0, 0.05);
+}
+
+.btn-honor-filter.active {
+  background-color: #ff8400 !important;
+  border-color: #ff8400 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.2);
+}
+
+/* 榮譽事蹟卡片本體樣式 */
+.honor-grid-card {
+  position: relative;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.4s ease;
+}
+
+/* 懸浮時浮起與發光效果 */
+.honor-grid-card:hover {
+  transform: translateY(-6px);
+  border-color: #ff8400;
+  box-shadow: 0 12px 30px rgba(255, 132, 0, 0.15);
+}
+
+/* 榮譽事蹟標題文字 */
+.honor-title {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  line-height: 1.4;
+  transition: color 0.4s ease;
+}
+
+/* 頒發機構名稱 */
+.honor-issuer {
+  color: #ff8400;
+  font-size: 0.9rem;
+}
+
+/* 時間與分類徽章 */
+.honor-meta-info {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  transition: color 0.4s ease;
+}
+
+/* 榮譽類別標籤 */
+.honor-type-badge {
+  background-color: var(--bg-btn);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+/* 榮譽內容簡介說明 */
+.honor-summary {
+  color: var(--text-sub);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  transition: color 0.4s ease;
+}
+
+/* 前往官網驗證按鈕 */
+.btn-honor-verify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+  font-size: 0.85rem !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  text-decoration: none;
+  transition: all 0.3s ease !important;
+}
+
+.btn-honor-verify:hover {
+  border-color: #ff8400 !important;
+  color: #ff8400 !important;
+  background-color: rgba(255, 132, 0, 0.05) !important;
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.1) !important;
+}
+
+/* 查看憑證按鈕 */
+.btn-honor-view {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--profile-btn-solid-bg) !important;
+  border: 1px solid var(--profile-btn-solid-bg) !important;
+  color: var(--profile-btn-solid-text) !important;
+  font-size: 0.85rem !important;
+  padding: 6px 16px !important;
+  border-radius: 8px !important;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.btn-honor-view:hover {
+  background-color: #ff9b26 !important;
+  border-color: #ff9b26 !important;
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.25) !important;
+  transform: translateY(-2px);
+}
+
+/* 圖片燈箱遮罩層 */
+.honor-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  animation: honorFadeIn 0.3s ease;
+}
+
+/* 彈窗內容容器 */
+.honor-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: honorScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 憑證大圖 */
+.honor-modal-img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* 憑證PDF容器 */
+.honor-modal-pdf {
+  width: 80vw;
+  height: 80vh;
+  border: none;
+  border-radius: 8px;
+  display: block;
+}
+
+/* 關閉按鈕 */
+.honor-modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 2rem;
+  width: 45px;
+  height: 45px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10010;
+  transition: all 0.3s ease;
+}
+
+.honor-modal-close-btn:hover {
+  background-color: #ff8400;
+  border-color: #ff8400;
+  transform: rotate(90deg);
+}
+
+/* 燈箱淡入與縮放動畫 */
+@keyframes honorFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes honorScaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

@@ -43,6 +43,13 @@ const router = createRouter({
       name: 'profile-certification',
       // 指定載入認證證照的視圖元件
       component: () => import('@/views/profile/CertificationView.vue')
+    },
+    {
+      // 當網址列為 honor 時，代表榮譽事蹟頁面
+      path: '/honor',
+      name: 'profile-honor',
+      // 指定載入榮譽事蹟的視圖元件
+      component: () => import('@/views/profile/HonorView.vue')
     }
   ]
 })

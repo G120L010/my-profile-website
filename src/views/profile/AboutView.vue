@@ -106,9 +106,9 @@
       </div>
     </div>
 
-    <!-- 第三部分：特色經歷與專案 (網格佈局) -->
+    <!-- 第三部分：特色經歷 (網格佈局) -->
     <div>
-      <h3 class="about-section-title mb-4">特色經歷與專案</h3>
+      <h3 class="about-section-title mb-4">特色經歷</h3>
       
       <div class="row g-4">
         <!-- 遍歷特色經歷資料，手機版一列一項，桌機版一列兩項 -->

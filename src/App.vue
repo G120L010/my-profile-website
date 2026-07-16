@@ -107,6 +107,12 @@
                 <span class="nav-text-main">證照</span>
                 <span class="nav-text-sub">Certifications</span>
               </RouterLink>
+
+              <!-- 路由切換 - 榮譽事蹟分頁 -->
+              <RouterLink to="/honor" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
+                <span class="nav-text-main">榮譽事蹟</span>
+                <span class="nav-text-sub">Honors</span>
+              </RouterLink>
             </div>
 
           </div>

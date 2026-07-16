@@ -120,6 +120,12 @@
 5. **新增導覽連結**：在 [App.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/App.vue) 中新增 `RouterLink`，並為其設定對應的英文副標與樣式。
 6. **開發驗證測試**：啟動 `npm run dev` 測試桌機、手機版排版是否跑版，並確認深色與淺色模式下的視覺可讀性。
 
+### 🎖️ 榮譽事蹟資料與分類開發規範
+為確保學習與獲獎歷程呈現的結構性與易讀性，於「榮譽事蹟（Honors）」分頁開發與維護時，應遵循以下分類架構：
+1. **第一層（學歷階段）**：資料必須先明確劃分為「研究所」、「大學」、「高中職」三大學歷層級。
+2. **第二層（榮譽類別）**：於各個學歷層級下，進一步細分為「學業成績單」（包含排名與名次證明）、「獲獎事蹟」、「獎學金紀錄」三種主要類別。
+3. **按鈕連結控制**：若該榮譽項目無相關新聞報導或官方連結驗證，應將 `verifyUrl` 欄位設為空字串，系統將自動隱藏「前往官網」按鈕，僅保留「查看憑證」按鈕。
+
 ---
 
 ## 4. 畫面排版與程式碼設計進度看板
@@ -136,6 +142,7 @@
 | **精選作品 / Portfolio**<br>[PortfolioView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/PortfolioView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
 | **專業技能 / Skills**<br>[SkillView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/SkillView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
 | **專業認證 / Certifications**<br>[CertificationView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/CertificationView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
+| **榮譽事蹟 / Honors**<br>[HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
 
 *圖例說明：🟢 已完成並驗證 \| 🟡 調整中/部分完成 \| 🔴 待開發*
 
@@ -451,6 +458,12 @@ jobs:
 | 2026.07.14 | **Java結業證書項目簡介與樣式類別補充** | [CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js) | 專業認證清單中，前兩項 Java 相關結業證書之 accentClass 與 summary 內容留白，需要補充與該專業養成訓練相符的具體文字描述與配色樣式。 | 將 id: 1 與 id: 2 的 accentClass 設定為後端主題色的 `accent-backend`，並分別編寫符合資策會與資展國際培訓內容的繁體中文簡介（不含表情符號），完整呈現後端開發與前後端分離專案的實務能力。 |
 | 2026.07.15 | **結訓狀態與培訓時數更新暨樣式一致性校正** | [AboutView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/AboutView.js)<br>[CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js) | 使用者已順利結訓，需更新自傳結訓狀態、修正特色經歷的培訓時數，並解決 Java 結業證書與特色經歷中 accentClass 不一致之處。 | (1) 將 bio-4 內容改為已順利完成資策會職訓；(2) 將培訓時數修正為 444 小時；(3) 依規範將 Java 相關之特色經歷與結業證書的 accentClass 統一修正為後端配色 `accent-backend`。 |
 | 2026.07.15 | **新增與多元化漸變裝飾條色彩配色** | [App.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/App.css)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md)<br>[CertificationView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/CertificationView.js)<br>[AboutView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/AboutView.js)<br>[HomeView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HomeView.js)<br>[SkillView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/SkillView.js) | 使用者期望卡片頂部裝飾條的色彩能更多樣化，原本僅有 5 種色彩且多處重複或單調。 | (1) 於 App.css 新增 `accent-gold` (尊榮金)、`accent-purple` (智慧紫)、`accent-emerald` (淨零綠)、`accent-rose` (深情玫瑰紅) 四組全新漸變色；(2) 於開發指南登錄並說明此四組色彩的應用情境；(3) 分別更新證照、特色經歷、工作經歷及技能分類數據陣列中的 `accentClass` 色彩設定，使同分頁或相鄰項目色彩不重疊，並符合其職稱或內容的意象（如環保用綠色、AI 用紫色、獎項用金色）。 |
+| 2026.07.16 | **新增榮譽事蹟路由分頁與完整功能實作** | [App.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/App.vue)<br>[index.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/router/index.js)<br>[HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue)<br>[HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[HonorView.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/profile/HonorView.css) | 使用者期望新增存放得獎獎狀、成績單、獎學金的路由與 RouterLink，需要遵循開發流程規範進行開發。 | (1) 於 index.js 註冊 /honor 路由；(2) 依 View-Logic-Style 架構建立 HonorView.vue、HonorView.js、HonorView.css 檔案；(3) 於 App.vue 導覽列新增榮譽事蹟項目；(4) 提供分類篩選與憑證大圖燈箱彈窗，完成繁體中文專業註解。 |
+| 2026.07.16 | **榮譽事蹟頁面新增高中得獎與感謝狀 PDF 資源並支援 PDF 燈箱渲染** | [HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue)<br>[HonorView.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/profile/HonorView.css)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 使用者放了高中階段的 PDF 榮譽與感謝狀，需將其資訊整合至 HonorView.js，並解決原先僅支援圖片的 modal 燈箱顯示 PDF 會破圖之限制。 | (1) 將 5 筆高中時期的學期成績優良獎狀、親善大使優異獎狀與商業會感謝狀資訊依日期降序整合至 HonorView.js；(2) 重構 HonorView.vue 的燈箱元件，當偵測到路徑為 .pdf 時改以 iframe 渲染，並在 HonorView.css 中新增 .honor-modal-pdf 響應式寬高樣式，達成雙載體相容。 |
+| 2026.07.16 | **榮譽事蹟分類重構升級雙重篩選暨前往按鈕條件渲染控制** | [HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue)<br>[HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[HonorView.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/profile/HonorView.css)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 使用者要求榮譽事蹟需先區分學歷階段（高中職、大學、研究所），再進一步劃分成績單、獲獎事蹟、獎學金，且無官網驗證網址時需隱藏前往按鈕以防空鍵點擊。 | (1) 重構資料層以支持學歷（stage）與類別（type）雙屬性，並實作雙重過濾計算屬性；(2) 於視圖層建立學歷階段、榮譽類別二階段篩選按鈕列；(3) 於 Vue 模板針對「前往官網」按鈕加上 v-if="honor.verifyUrl" 進行條件渲染，使其無網址時自動隱藏；(4) 於開發指南載入對應的榮譽事蹟資料分類規範。 |
+| 2026.07.16 | **榮譽事蹟頁面新增研究所 EMBA 歷程並清空大學資料且重編 ID 序** | [HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 使用者放了研究所 EMBA 的 PDF 與圖片歷程，要求按時間序更新，並清空大學的資料，且規定成績單為 ID: 1、高中職依序往後排。 | (1) 將 EMBA 的歷年成績單、系名次第一名、議長獎、學業成績第一名、新詩創作第一名等 6 筆數據整合至 HonorView.js，分配為 id: 1 至 6；(2) 清空大學階段的數據，並將高中職的 5 筆歷程依序重排為 id: 7 至 11，維持正確的時間與結構。 |
+| 2026.07.16 | **排名與名次證明歸類於學業成績單分類** | [HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 使用者期望將「畢業生系名次證明書」等排名相關資料與「學期總成績單」歸在同一個分類以簡化展示。 | 於 HonorView.js 中，將「畢業生系名次證明書」(id: 2) 的 type 設為 transcript (學業成績單)，使其能與成績單合併在同一個類別中進行篩選與呈現。 |
+| 2026.07.16 | **大學階段歷年成績單與名次證明書新增** | [HonorView.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/profile/HonorView.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 新增大學時期（崑山科技大學資工系）的歷年成績單與名次證明書 PDF 檔案資源。 | (1) 於 HonorView.js 新增大學（stage: 'university'）的歷年成績單及名次證明書 2 筆數據，分配為 id: 7 與 8，類型皆設為 transcript；(2) 將原高中職的 5 筆歷程 ID 順延往後重編為 id: 9 至 13，以維護正確的學歷時間排序。 |
 
 
 
