@@ -93,6 +93,20 @@ export function useHonorView() {
     },
     {
       id: 6,
+      title: '113學年度宗倬章先生優秀學生獎學金',
+      issuer: '宗倬章先生教育基金會',
+      date: '2024.11',
+      stage: 'graduate',
+      stageName: '碩士班',
+      type: 'scholarship',
+      typeName: '獎學金',
+      verifyUrl: 'https://udn.com/news/story/6885/8408626',
+      image: 'images/Honorimg/EMBA5.jpg',
+      accentClass: 'accent-gold',
+      summary: '學業成績表現優良，榮獲財團法人宗倬章先生教育基金會113年度獎學金肆萬元整。'
+    },
+    {
+      id: 7,
       title: '第50屆嵐雲文學獎新詩創作組第一名',
       issuer: '通識教育中心',
       date: '2024.06',
@@ -106,7 +120,7 @@ export function useHonorView() {
       summary: '參加校內第五十屆嵐雲文學獎徵文比賽，於新詩創作組競賽中榮獲全校第一名殊榮。'
     },
     {
-      id: 7,
+      id: 8,
       title: '大學部歷年總成績單',
       issuer: '教務處',
       date: '2023.09',
@@ -120,7 +134,7 @@ export function useHonorView() {
       summary: '歷年學業總平均成績為88.18分（A），大學部四技畢業，實得總學分數136學分。'
     },
     {
-      id: 8,
+      id: 9,
       title: '大學部系排名次證明書',
       issuer: '教務處',
       date: '2023.09',
@@ -134,7 +148,7 @@ export function useHonorView() {
       summary: '大學部畢業系排名次第五名畢業（全系共63人，佔百分比7.94%）。'
     },
     {
-      id: 9,
+      id: 10,
       title: '111學年度吳林盡獎學金',
       issuer: '財團法人吳林盡教育基金會',
       date: '2023.12',
@@ -148,7 +162,7 @@ export function useHonorView() {
       summary: '學業成績表現優良，獲頒財團法人吳林盡教育基金會大專組獎學金。'
     },
     {
-      id: 10,
+      id: 11,
       title: '111學年度畢業典禮獲頒群育獎',
       issuer: '崑山科技大學',
       date: '2023.06',
@@ -162,7 +176,7 @@ export function useHonorView() {
       summary: '積極參與社團及群體活動，服務表現優異，於畢業典禮榮獲群育獎表揚。'
     },
     {
-      id: 11,
+      id: 12,
       title: '第49屆嵐雲文學獎新詩創作組第二名',
       issuer: '通識教育中心',
       date: '2023.06',
@@ -176,7 +190,7 @@ export function useHonorView() {
       summary: '參加第四十九屆嵐雲文學獎徵文比賽，於新詩創作組榮獲全校第二名佳績。'
     },
     {
-      id: 12,
+      id: 13,
       title: '第38屆學生專題製作成果展作品第二名',
       issuer: '崑山科技大學',
       date: '2023.06',
@@ -190,7 +204,7 @@ export function useHonorView() {
       summary: '四技資訊工程系畢業專題成果傑出，榮獲第三十八屆學生專題製作成果展作品第二名。'
     },
     {
-      id: 13,
+      id: 14,
       title: '2023入圍總統教育獎奮發向上優秀學生',
       issuer: '中華民國教育部',
       date: '2023.05',
@@ -204,7 +218,7 @@ export function useHonorView() {
       summary: '不畏逆境而奮發上進、熱心服務奉獻，榮獲教育部2023總統教育獎「奮發向上優秀學生獎」。'
     },
     {
-      id: 14,
+      id: 15,
       title: 'DLT數位生活科技研討會論文發表會',
       issuer: '國立高雄科技大學',
       date: '2023.05',
@@ -218,7 +232,7 @@ export function useHonorView() {
       summary: '於2023 DLT 數位生活科技研討會發表論文《開放式交通動態圖資共享平台》，特頒此證。'
     },
     {
-      id: 15,
+      id: 16,
       title: '111年度參與服務學習教育表現優良學生獎',
       issuer: '課外活動暨服務學習組',
       date: '2023.04',
@@ -232,7 +246,7 @@ export function useHonorView() {
       summary: '熱心參與服務學習教育，在社團及各項公共服務活動中表現優良，特頒獎狀嘉許。'
     },
     {
-      id: 16,
+      id: 17,
       title: '獲頒凌霄寶殿武龍宮獎助學金',
       issuer: '大灣凌霄寶殿武龍宮',
       date: '2023.04',
@@ -246,7 +260,7 @@ export function useHonorView() {
       summary: '品學兼優、在學期間學習領域表現優異，獲頒凌霄寶殿武龍宮獎學金以資鼓勵。'
     },
     {
-      id: 17,
+      id: 18,
       title: '擔任環境生態教育服務社社長',
       issuer: '課外活動暨服務學習組',
       date: '2023.03',
@@ -260,7 +274,7 @@ export function useHonorView() {
       summary: '於110年9月1日至112年3月期間擔任「環境生態教育服務社」社長，負責社團經營與服務推廣。'
     },
     {
-      id: 18,
+      id: 19,
       title: '獲頒大專優秀青年當選證書',
       issuer: '中華民國青年救國團',
       date: '2023.03',
@@ -274,7 +288,7 @@ export function useHonorView() {
       summary: '熱心參與校內外公共服務與社團事務，表現傑出，經遴選當選為中華民國112年大專優秀青年。'
     },
     {
-      id: 19,
+      id: 20,
       title: '111年度e-Portfolio達人競賽優等獎',
       issuer: '崑山科技大學',
       date: '2022.12',
@@ -288,7 +302,7 @@ export function useHonorView() {
       summary: '參與111年度高等教育深耕計畫「e-Portfolio達人競賽」，學業與學習歷程成果優異榮獲優等。'
     },
     {
-      id: 20,
+      id: 21,
       title: '萬潤2022創新創意競賽入圍',
       issuer: '萬潤科技股份有限公司',
       date: '2022.10',
@@ -302,7 +316,7 @@ export function useHonorView() {
       summary: '以研發作品《開放式交通圖資共享平台》參賽，榮獲萬潤2022創新創意競賽入圍獎。'
     },
     {
-      id: 21,
+      id: 22,
       title: '獲頒111年度陳忠陳葉蕊獎助學金',
       issuer: '財團法人陳忠陳葉蕊文教基金會',
       date: '2022.08',
@@ -316,7 +330,7 @@ export function useHonorView() {
       summary: '敦品勵學、奮發向上，學業成績表現優良，獲頒陳忠陳葉蕊文教基金會獎學金。'
     },
     {
-      id: 22,
+      id: 23,
       title: '110年青年志工團隊競賽青年組績優服務獎',
       issuer: '教育部青年發展署',
       date: '2022.03',
@@ -330,7 +344,7 @@ export function useHonorView() {
       summary: '擔任「崑山科大愛築積節能守衛隊」隊員，熱心公益參與志工服務，榮獲青年組績優服務獎。'
     },
     {
-      id: 23,
+      id: 24,
       title: '110學年度第1學期學期成績優異書卷獎',
       issuer: '崑山科技大學',
       date: '2022.03',
@@ -344,7 +358,7 @@ export function useHonorView() {
       summary: '四技在校學業表現卓越，於110學年度第1學期學期成績優異，特頒此狀以資鼓勵。'
     },
     {
-      id: 24,
+      id: 25,
       title: '獲頒第五屆鴻海獎學鯨',
       issuer: '鴻海教育基金會',
       date: '2021.12',
@@ -358,7 +372,7 @@ export function useHonorView() {
       summary: '展現逆境求學熱誠、學業成績優異，榮獲110年第五屆鴻海獎學鯨大專院校獎助學金。'
     },
     {
-      id: 25,
+      id: 26,
       title: 'TSIA國際美業菁英賽最佳設計獎',
       issuer: '中華沙龍產業發展協會',
       date: '2021.12',
@@ -372,7 +386,7 @@ export function useHonorView() {
       summary: '參加2021 TSIA 國際美業菁英賽，榮獲「國際商品網拍攝影組」最佳設計獎。'
     },
     {
-      id: 26,
+      id: 27,
       title: '第十二屆 IIIC 國際創新發明競賽金牌獎證書',
       issuer: '中華創新發明學會',
       date: '2021.11',
@@ -386,7 +400,7 @@ export function useHonorView() {
       summary: '以作品《智能生活安全防疫用紫外線殺菌系統》參賽，榮獲第十二屆 IIIC 國際創新發明競賽金牌。'
     },
     {
-      id: 27,
+      id: 28,
       title: '萬潤2021創新創意競賽佳作獎',
       issuer: '萬潤科技股份有限公司',
       date: '2021.10',
@@ -400,7 +414,7 @@ export function useHonorView() {
       summary: '團隊研發作品《智能生活安全防疫用紫外線殺菌系統》參賽，榮獲萬潤2021創新創意競賽佳作。'
     },
     {
-      id: 28,
+      id: 29,
       title: '109學年度第2學期學業成績優異書卷獎',
       issuer: '崑山科技大學',
       date: '2021.09',
@@ -414,7 +428,7 @@ export function useHonorView() {
       summary: '四技在學學業表現優異，名列前茅，於109學年度第2學期榮獲學業成績優異獎狀。'
     },
     {
-      id: 29,
+      id: 30,
       title: '104學年度畢業典禮親善服務大使表現優異',
       issuer: '臺南市亞洲高級餐旅職業學校',
       date: '2016.06',
@@ -428,7 +442,7 @@ export function useHonorView() {
       summary: '於104學年度畢業典禮中擔任親善服務大使，負責引導與典禮服務，表現優異，特頒此狀。'
     },
     {
-      id: 30,
+      id: 31,
       title: '104學年度第1學期學期成績優良獎',
       issuer: '臺南市亞洲高級餐旅職業學校',
       date: '2016.04',
@@ -442,7 +456,7 @@ export function useHonorView() {
       summary: '餐飲管理科在校學業成績優異，名列前茅，特頒此狀以資鼓勵。'
     },
     {
-      id: 31,
+      id: 32,
       title: '擔任親善服務大使熱心服務表現優異',
       issuer: '臺南市亞洲高級餐旅職業學校',
       date: '2016.03',
@@ -456,7 +470,7 @@ export function useHonorView() {
       summary: '在校期間擔任親善服務大使，熱心協助學校各項公共事務與外賓接待，服務表現優異。'
     },
     {
-      id: 32,
+      id: 33,
       title: '協助辦理第六十九屆商人節慶祝大會感謝狀',
       issuer: '台南市商業會',
       date: '2015.11',
@@ -470,7 +484,7 @@ export function useHonorView() {
       summary: '協助台南市商業會辦理第六十九屆商人節慶祝大會，熱心公益與會場服務，特頒此感謝狀。'
     },
     {
-      id: 33,
+      id: 34,
       title: '協助辦理第六十八屆商人節慶祝大會感謝狀',
       issuer: '台南市商業會',
       date: '2014.11',
