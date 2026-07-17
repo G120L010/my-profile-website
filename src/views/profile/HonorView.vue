@@ -9,33 +9,35 @@
     </div>
 
     <!-- 教育階段篩選列：提供全部、研究所、大學、高中職的動態篩選 -->
-    <div class="honor-filter-section mb-3">
-      <div class="filter-label">學歷階段：</div>
-      <div class="honor-filter-bar">
+    <div class="honor-filter-section mb-4">
+      <div class="filter-header d-flex justify-content-between align-items-center mb-2">
+        <div class="filter-label m-0">學歷階段：</div>
         <button 
           @click="setStageFilter('all')" 
-          class="btn btn-honor-filter" 
+          class="btn btn-honor-all-btn" 
           :class="{ active: selectedStage === 'all' }"
         >
           全部顯示
         </button>
+      </div>
+      <div class="honor-segmented-control">
         <button 
           @click="setStageFilter('graduate')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedStage === 'graduate' }"
         >
           研究所
         </button>
         <button 
           @click="setStageFilter('university')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedStage === 'university' }"
         >
           大學
         </button>
         <button 
           @click="setStageFilter('highschool')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedStage === 'highschool' }"
         >
           高中
@@ -43,34 +45,36 @@
       </div>
     </div>
 
-    <!-- 榮譽類別篩選列：提供全部、學業成績單、獲獎事蹟、獎學金紀錄的動態篩選 -->
+    <!-- 榮譽類別篩選列：提供全部、學業成績、獲獎事蹟、獎學金紀錄的動態篩選 -->
     <div class="honor-filter-section mb-4">
-      <div class="filter-label">榮譽類別：</div>
-      <div class="honor-filter-bar">
+      <div class="filter-header d-flex justify-content-between align-items-center mb-2">
+        <div class="filter-label m-0">榮譽類別：</div>
         <button 
           @click="setTypeFilter('all')" 
-          class="btn btn-honor-filter" 
+          class="btn btn-honor-all-btn" 
           :class="{ active: selectedType === 'all' }"
         >
           全部類別
         </button>
+      </div>
+      <div class="honor-segmented-control">
         <button 
           @click="setTypeFilter('transcript')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedType === 'transcript' }"
         >
-          學業成績單
+          學業成績
         </button>
         <button 
           @click="setTypeFilter('award')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedType === 'award' }"
         >
           獲獎事蹟
         </button>
         <button 
           @click="setTypeFilter('scholarship')" 
-          class="btn btn-honor-filter" 
+          class="control-item" 
           :class="{ active: selectedType === 'scholarship' }"
         >
           獎學金

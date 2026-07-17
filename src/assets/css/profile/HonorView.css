@@ -15,36 +15,95 @@
   color: var(--text-muted);
 }
 
-/* 分類篩選按鈕列容器 */
-.honor-filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* 篩選按鈕本體樣式 */
-.btn-honor-filter {
+/* 右上角獨立的「全部」篩選按鈕 */
+.btn-honor-all-btn {
   background-color: var(--bg-btn);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
-  font-size: 0.9rem;
-  padding: 8px 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 14px;
   border-radius: 20px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+  outline: none;
 }
 
-/* 篩選按鈕懸浮與選中樣式 */
-.btn-honor-filter:hover {
+.btn-honor-all-btn:hover {
   border-color: #ff8400;
   color: #ff8400;
   background-color: rgba(255, 132, 0, 0.05);
 }
 
-.btn-honor-filter.active {
+.btn-honor-all-btn.active {
   background-color: #ff8400 !important;
   border-color: #ff8400 !important;
   color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(255, 132, 0, 0.25);
+}
+
+/* ========================================== */
+/* 新型 Segmented Control 分段切換器樣式 (像開關一樣) */
+/* ========================================== */
+.honor-segmented-control {
+  display: flex;
+  width: 100%;
+  background-color: var(--bg-btn);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 2px;
+  position: relative;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+  overflow: hidden;
+}
+
+/* 個別切換按鈕項目 */
+.control-item {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 8px 4px;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 懸浮狀態 */
+.control-item:hover:not(.active) {
+  color: var(--text-main);
+  background-color: rgba(255, 132, 0, 0.05);
+}
+
+/* 激活選中狀態 (高亮橘色開關效果) */
+.control-item.active {
+  background-color: #ff8400 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 132, 0, 0.3);
+}
+
+/* 行動端與窄螢幕優化，若寬度太窄則啟用微幅橫向滑動，防止字體擠壓或折行 */
+@media screen and (max-width: 480px) {
+  .honor-segmented-control {
+    overflow-x: auto;
+    /* 隱藏滾動條但保留滑動功能 */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .honor-segmented-control::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+  .control-item {
+    padding: 8px 12px; /* 增加左右 padding，讓滑動時有邊距 */
+    font-size: 0.82rem; /* 手機上字體稍微縮小 */
+  }
 }
 
 /* 榮譽事蹟卡片本體樣式 */
