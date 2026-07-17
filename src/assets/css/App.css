@@ -73,14 +73,73 @@
   transition: background-color 0.4s ease, border-color 0.4s ease;
 }
 
-/* 只有在桌機版大螢幕（Bootstrap lg 斷點以上）時，左側名片才需要粘滯固定 */
-@media (min-width: 992px) {
+/* 只有在桌機版大螢幕且視窗高度大於等於 660px 時，左側名片才需要粘滯固定 */
+@media (min-width: 992px) and (min-height: 660px) {
   .profile-sidebar-card {
     /* 使用粘滯固定，但移除最大高度限制與內部滾動條，確保左側名片卡片完整呈現 */
     position: sticky;
-    top: 2rem;
+    top: 1.5rem;
   }
 }
+
+/* 當在大螢幕且視窗高度小於 820px 時，收縮左側名片的間距與元素尺寸以防內容截斷 */
+@media (min-width: 992px) and (max-height: 820px) {
+  .profile-sidebar-card {
+    padding: 1rem !important; /* 縮減外框內置邊距 */
+    top: 1rem !important; /* 降低貼附高度以釋放頂部空間 */
+  }
+  
+  .profile-sidebar-card .avatar-circle-box {
+    width: 100px !important; /* 縮減頭像寬度 */
+    height: 100px !important; /* 縮減頭像高度 */
+    margin-bottom: 0.4rem !important;
+  }
+  
+  .profile-sidebar-card .user-name-text {
+    font-size: 1.25rem !important; /* 縮減姓名文字大小 */
+    margin-bottom: 0.2rem !important;
+  }
+  
+  .profile-sidebar-card .user-title-text {
+    font-size: 0.85rem !important; /* 縮減職稱文字大小 */
+    margin-bottom: 0.4rem !important;
+  }
+  
+  .profile-sidebar-card .user-bio-text {
+    font-size: 0.78rem !important; /* 縮減自傳文字大小 */
+    line-height: 1.38 !important;
+    margin-bottom: 0.4rem !important;
+  }
+  
+  .profile-sidebar-card .btn-profile-solid,
+  .profile-sidebar-card .btn-profile-outline {
+    padding: 0.35rem 0.85rem !important; /* 縮減按鈕內邊距 */
+    font-size: 0.82rem !important;
+  }
+  
+  /* 縮減按鈕外距 */
+  .profile-sidebar-card .d-flex.gap-3.justify-content-center {
+    margin-bottom: 0.4rem !important;
+  }
+  
+  /* 縮減導覽選單間距 */
+  .profile-sidebar-card .d-flex.flex-column.gap-2 {
+    gap: 0.2rem !important;
+  }
+  
+  .profile-sidebar-card .custom-nav-item {
+    padding: 0.35rem 0.75rem !important; /* 縮減選單項目內邊距 */
+  }
+  
+  .profile-sidebar-card .nav-text-main {
+    font-size: 0.85rem !important; /* 縮減選單主文字大小 */
+  }
+  
+  .profile-sidebar-card .nav-text-sub {
+    font-size: 0.72rem !important; /* 縮減選單副文字大小 */
+  }
+}
+
 
 /* 自訂 Chrome/Safari/Edge 側邊欄細微滾動條樣式，維持精緻質感 */
 .profile-sidebar-card::-webkit-scrollbar {

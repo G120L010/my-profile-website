@@ -17,7 +17,7 @@
           class="btn btn-honor-filter" 
           :class="{ active: selectedStage === 'all' }"
         >
-          全部階段
+          全部顯示
         </button>
         <button 
           @click="setStageFilter('graduate')" 
@@ -38,7 +38,7 @@
           class="btn btn-honor-filter" 
           :class="{ active: selectedStage === 'highschool' }"
         >
-          高中職
+          高中
         </button>
       </div>
     </div>
@@ -73,7 +73,7 @@
           class="btn btn-honor-filter" 
           :class="{ active: selectedType === 'scholarship' }"
         >
-          獎學金紀錄
+          獎學金
         </button>
       </div>
     </div>
@@ -127,7 +127,7 @@
               target="_blank" 
               class="btn btn-honor-verify w-100 fw-medium d-flex align-items-center justify-content-center gap-1"
             >
-              <span>前往官網</span>
+              <span>詳細內容</span>
               <span class="small">↗</span>
             </a>
           </div>
