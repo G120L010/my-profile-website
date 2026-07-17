@@ -8,8 +8,8 @@
       <h2 class="page-main-title m-0">專業技能 / Skills</h2>
     </div>
 
-    <!-- Bootstrap 網格系統行容器：g-4 代表卡片之間有 1.5rem 的邊距 -->
-    <div class="row g-4">
+    <!-- Bootstrap 網格系統行容器：g-4 代表卡片之間有 1.5rem 的邊距，置中對齊最後一行的剩餘卡片 -->
+    <div class="row g-4 justify-content-center">
       
       <!-- 使用 v-for 指令循環渲染 skillCategories 陣列中所有的技術分類卡片 -->
       <!-- col-12 在手機版單欄排滿，col-md-6 在平板雙欄並排，col-lg-4 在桌機三欄並排 -->

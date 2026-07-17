@@ -19,6 +19,9 @@ export function useAppView() {
   // 【打字機索引】宣告一個普通的整數變數，用來記錄打字機目前跑到了第幾個字元的索引位置
   let currentIndex = 0
 
+  // 【打字機計時器】儲存打字機定時器的實例，用以在組件銷毀時安全清除，防堵記憶體洩漏
+  let typeTimer = null
+
   // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 false 代表淺色白天模式
   const isDarkMode = ref(false)
 
@@ -74,7 +77,7 @@ export function useAppView() {
       // 將索引計數器往後加 1，代表前進到下一個字元位置
       currentIndex++
       // 呼叫瀏覽器內建的延時排程函式，設定每隔 120 毫秒重新執行一次自己，做出打字間隔感
-      setTimeout(typeEffect, 120)
+      typeTimer = setTimeout(typeEffect, 120)
     }
   }
 
@@ -115,6 +118,10 @@ export function useAppView() {
    */
   onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
+    // 安全清除打字機排程計時器，防堵記憶體洩漏與重複定時任務
+    if (typeTimer) {
+      clearTimeout(typeTimer)
+    }
   })
 
   // 將網頁模板 (Template) 需要用來顯示與點擊綁定的變數及函式完整包裝導出

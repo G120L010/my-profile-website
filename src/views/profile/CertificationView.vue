@@ -8,8 +8,8 @@
       <h2 class="page-main-title m-0">專業認證 / Certifications</h2>
     </div>
 
-    <!-- Bootstrap 網格系統行容器：g-4 代表子欄位之間有舒適的間距 -->
-    <div class="row g-4">
+    <!-- Bootstrap 網格系統行容器：g-4 代表子欄位之間有舒適的間距，置中對齊最後一行的剩餘卡片 -->
+    <div class="row g-4 justify-content-center">
       
       <!-- 使用 v-for 指令循環渲染 certifications 陣列中宣告的所有證照卡片 -->
       <!-- col-12 在手機版單欄排滿，col-md-6 在電腦版呈雙欄排版 (兩欄並排) -->

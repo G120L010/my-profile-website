@@ -19,7 +19,7 @@ export function useHonorView() {
   const selectedType = ref('all')
 
   // 建立結構化的榮譽事蹟數據響應式陣列，包含標題、頒發機構、時間、學歷階段、榮譽類別、簡介、驗證網址與展示圖片
-  // 依時間排序，研究所佔 id: 1 至 6，高中職佔 id: 7 至 11
+  // 依學歷階段與時間排序，碩士班佔 id: 1 至 7，大學佔 id: 8 至 29，高中職佔 id: 30 至 34
   const honors = ref([
     {
       id: 1,
@@ -103,7 +103,7 @@ export function useHonorView() {
       verifyUrl: 'https://udn.com/news/story/6885/8408626',
       image: 'images/Honorimg/EMBA5.jpg',
       accentClass: 'accent-gold',
-      summary: '學業成績表現優良，榮獲財團法人宗倬章先生教育基金會113年度獎學金肆萬元整。'
+      summary: '學業成績表現優良，獲頒財團法人宗倬章先生教育基金會113年度獎學金。'
     },
     {
       id: 7,

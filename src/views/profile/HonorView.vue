@@ -78,8 +78,8 @@
       </div>
     </div>
 
-    <!-- Bootstrap 網格系統行容器 -->
-    <div class="row g-4">
+    <!-- Bootstrap 網格系統行容器，置中對齊最後一行的剩餘卡片 -->
+    <div class="row g-4 justify-content-center">
       
       <!-- 使用 v-for 指令循環渲染過濾後的榮譽事蹟卡片 -->
       <!-- col-12 在手機版單欄排滿，col-md-6 在電腦版呈雙欄排版 -->
@@ -117,7 +117,7 @@
           <div class="card-action-bar mt-auto d-flex gap-2">
             <!-- 查看憑證按鈕：點擊開啟燈箱彈窗放大觀看圖片或PDF -->
             <button @click="showHonor(honor.image)" class="btn btn-honor-view w-100 fw-medium d-flex align-items-center justify-content-center gap-1">
-              <span>查看憑證</span>
+              <span>點我查看</span>
               <span class="small">★</span>
             </button>
             <!-- 前往官網按鈕：當 verifyUrl 有資料時才顯示（例如新聞報導或驗證連結） -->
@@ -127,7 +127,7 @@
               target="_blank" 
               class="btn btn-honor-verify w-100 fw-medium d-flex align-items-center justify-content-center gap-1"
             >
-              <span>詳細內容</span>
+              <span>了解更多</span>
               <span class="small">↗</span>
             </a>
           </div>

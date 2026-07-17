@@ -593,3 +593,26 @@
     box-shadow: 0 0 8px var(--neon-glow-color), 0 0 18px rgba(0, 136, 204, 0.4), inset 0 0 4px var(--neon-glow-color);
   }
 }
+
+/* ========================================== */
+/* 9. 行動端與窄螢幕特別優化區                 */
+/* ========================================== */
+
+/* 手機版與窄螢幕下防懸浮按鈕遮擋內容之優化 */
+@media (max-width: 991.98px) {
+  .content-main-box {
+    padding-bottom: 7.5rem !important; /* 確保滾動到底部時，內容能被完全推至懸浮按鈕上方，防範遮擋與點擊衝突 */
+  }
+}
+
+/* 行動裝置懸浮按鈕緊貼邊緣微調，防止大邊距遮擋閱讀區 */
+@media (max-width: 576px) {
+  .custom-theme-toggle-btn {
+    bottom: 1.5rem !important;
+    right: 1.25rem !important;
+  }
+  .custom-scroll-top-btn {
+    bottom: 5.25rem !important;
+    right: 1.25rem !important;
+  }
+}
