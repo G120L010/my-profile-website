@@ -42,9 +42,25 @@
             <!-- 遮罩內部下半部：操作按鈕列 (d-flex 並排) -->
             <div class="overlay-action-buttons d-flex gap-3">
               <!-- 遍歷專案按鈕列表，動態渲染各別作品的按鈕文字與連結 -->
-              <a v-for="btn in project.buttons" :key="btn.text" :href="btn.url" target="_blank" class="btn btn-overlay-action w-100 fw-medium">
-                {{ btn.text }}
-              </a>
+              <template v-for="btn in project.buttons" :key="btn.text">
+                <!-- 情況 A：若為影片媒體網址，則改用按鈕觸發本地燈箱彈窗播放 -->
+                <button 
+                  v-if="isMediaUrl(btn.url)" 
+                  @click="showVideo(btn.url)" 
+                  class="btn btn-overlay-action w-100 fw-medium"
+                >
+                  {{ btn.text }}
+                </button>
+                <!-- 情況 B：若為一般網頁連結，維持使用超連結另開新分頁 -->
+                <a 
+                  v-else 
+                  :href="btn.url" 
+                  target="_blank" 
+                  class="btn btn-overlay-action w-100 fw-medium"
+                >
+                  {{ btn.text }}
+                </a>
+              </template>
             </div>
 
           </div>
@@ -53,6 +69,33 @@
       </div>
 
     </div>
+
+    <!-- 專案影片播放燈箱彈窗 -->
+    <!-- v-if="activeVideoUrl" 當有選取的影片網址時顯示此遮罩層 -->
+    <!-- @click.self 點擊背景遮罩處時自動關閉視窗，防呆設計 -->
+    <div v-if="activeVideoUrl" class="portfolio-modal-overlay" @click.self="closeVideo">
+      <div class="portfolio-modal-content">
+        <!-- 關閉按鈕 -->
+        <button class="portfolio-modal-close-btn" @click="closeVideo">&times;</button>
+        <!-- 依影片類型動態選擇 iframe 或是 video 標籤進行播放 -->
+        <iframe 
+          v-if="activeVideoUrl.includes('youtube') || activeVideoUrl.includes('youtu.be')" 
+          :src="activeVideoUrl" 
+          class="portfolio-modal-iframe" 
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen
+        ></iframe>
+        <video 
+          v-else 
+          :src="activeVideoUrl" 
+          class="portfolio-modal-video" 
+          controls 
+          autoplay
+        ></video>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -63,6 +106,16 @@ import '@/assets/css/profile/PortfolioView.css'
 // 【業務邏輯匯入】引入作品集頁面的 Composable 函數檔 (負責管理專案清單的 Ref 響應式陣列)
 import { usePortfolioView } from '@/assets/js/profile/PortfolioView.js'
 
-// 【解構載入】從 Composable 中取出專案陣列 (projects)，以提供給上面 HTML 進行遍歷渲染
-const { projects } = usePortfolioView()
+// 【解模載入】從 Composable 中取出專案陣列與燈箱狀態控制方法，以提供給上面 HTML 進行綁定渲染
+const { projects, activeVideoUrl, showVideo, closeVideo } = usePortfolioView()
+
+/**
+ * 輔助判斷網址是否為影音媒體資源的函式
+ * 支援副檔名為 .mp4 與各種類型的 YouTube 影片播放網址
+ */
+const isMediaUrl = (url) => {
+  if (!url) return false
+  const u = url.toLowerCase()
+  return u.endsWith('.mp4') || u.includes('youtube.com') || u.includes('youtu.be') || u.includes('youtube-nocookie.com')
+}
 </script>

@@ -18,7 +18,7 @@ export function usePortfolioView() {
       tags: ['Java 21', 'Spring Boot', 'Vue 3', 'SQL Server', '程式碼開發'],
       image: 'images/Portfolioimg/Petshop.jpg',
       buttons: [
-        { text: '瀏覽作品', url: 'images/Aboutimg/TV.mp4' },
+        { text: '瀏覽作品', url: 'https://www.youtube-nocookie.com/embed/dsJ_Xb0vB28?si=FlLKzg40ei9fPpVH' },
         { text: '原始碼', url: 'https://github.com/' }
       ]
     },
@@ -135,8 +135,24 @@ export function usePortfolioView() {
     }
   ])
 
-  // 將作品陣列 projects 導出，讓 PortfolioView.vue 可以載入讀取
+  // 建立控制影片播放燈箱彈出的響應式變數，儲存目前播放的影片網址，null 代表關閉狀態
+  const activeVideoUrl = ref(null)
+
+  // 開啟影片播放燈箱彈窗，記錄點擊的影音網址
+  const showVideo = (videoUrl) => {
+    activeVideoUrl.value = videoUrl
+  }
+
+  // 關閉影片播放燈箱彈窗，將網址變數歸零
+  const closeVideo = () => {
+    activeVideoUrl.value = null
+  }
+
+  // 將作品陣列 projects 與影音控制狀態方法導出，讓 PortfolioView.vue 可以載入讀取與綁定
   return {
-    projects
+    projects,
+    activeVideoUrl,
+    showVideo,
+    closeVideo
   }
 }
