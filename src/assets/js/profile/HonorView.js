@@ -45,7 +45,7 @@ export function useHonorView() {
       type: 'transcript',
       typeName: '學業成績單',
       verifyUrl: '',
-      image: 'images/Honorimg/EmbaTranscript2.pdf',
+      image: 'images/Honorimg/EmbaTranscript2.jpg',
       accentClass: 'accent-gold',
       summary: '企業管理研究所畢業生系排名次第一名畢業。'
     },
@@ -129,7 +129,7 @@ export function useHonorView() {
       type: 'transcript',
       typeName: '學業成績單',
       verifyUrl: '',
-      image: 'images/Honorimg/UniversityEmbaTranscript2.pdf',
+      image: 'images/Honorimg/UniversityEmbaTranscript2.jpg',
       accentClass: 'accent-gold',
       summary: '資訊工程系畢業生系名次第五名畢業（全系共63人，佔百分比7.94%）。'
     },
