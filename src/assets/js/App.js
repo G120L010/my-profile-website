@@ -23,7 +23,10 @@ export function useAppView() {
   let typeTimer = null
 
   // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 false 代表淺色白天模式
-  const isDarkMode = ref(false)
+  // const isDarkMode = ref(false)
+
+  // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 true 代表深色黑夜模式
+  const isDarkMode = ref(true)
 
   // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態，大於 300px 時為真
   const showScrollTopBtn = ref(false)
@@ -107,7 +110,9 @@ export function useAppView() {
     // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
     typeEffect()
     // 網頁初始化一進來時，預設先在 html 標籤打上淺色模式的 data-theme="light" 屬性，確保畫面預設為白天模式
-    document.documentElement.setAttribute('data-theme', 'light')
+    // document.documentElement.setAttribute('data-theme', 'light')
+    // 網頁初始化一進來時，預設先在 html 標籤打上深色模式的 data-theme="dark" 屬性，確保畫面預設為黑夜模式
+    document.documentElement.setAttribute('data-theme', 'dark')
     // 註冊滾動監聽事件以控制回到頂部按鈕的隱現
     window.addEventListener('scroll', handleScroll)
   })

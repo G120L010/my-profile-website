@@ -474,6 +474,7 @@ jobs:
 | 2026.07.17 | **榮譽事蹟篩選按鈕換行排版優化** | [HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue) | 使用者希望在篩選按鈕中，將「全部顯示」與「全部類別」獨立成一行，使其在視覺與分類操作上更為直覺、排版更加整齊。 | 將「全部顯示」與「全部類別」按鈕自原本的 `.honor-filter-bar` 抽離，獨立封裝在各自的整行容器中，維持與子項目（學歷、類別）的自適應兩行排列結構。 |
 | 2026.07.17 | **榮譽事蹟篩選器升級為分段切換器 (Segmented Control)** | [HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue)<br>[HonorView.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/profile/HonorView.css) | 解決在手機或窄螢幕下篩選按鈕因跳行顯得複雜雜亂之問題，希望能有類似 app navbar 或開關一樣的直觀對齊感。 | 將篩選按鈕（含全部與子項目）重構為 Segmented Control 設計，消除按鈕邊框與外距，採用 flex 均分比例，並在極小螢幕（<480px）下啟用微幅橫向滾動（隱藏滾動條），達成類似 iOS/Android 實體開關的無跳行精緻視覺。 |
 | 2026.07.17 | **篩選標頭與「全部」按鈕置於同一列** | [HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue)<br>[HonorView.css](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/css/profile/HonorView.css) | 為了避免「全部」按鈕擠壓下方 Segmented Control 子按鈕的寬度，將其拆出與「學歷階段：」及「榮譽類別：」標籤文字置於同一行左右並排，釋放下方開關之顯示空間。 | 在各自篩選區塊最上方使用 flex header 讓標題與「全部」按鈕分立左右，下方的分段切換器僅剩三個子項目以 flex: 1 均分排列，在手機上呈現完美對稱不跳行。 |
+| 2026.07.17 | **全站預設主題變更為深色黑夜模式** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js) | 使用者希望一開啟履歷網站時，預設顯示科技感十足的深色黑夜模式，而非白天淺色模式。 | 將 App.js 中的 isDarkMode 響應式變數預設值改為 true，並同步在 onMounted 生命週期鉤子中將 html 標籤的預設 data-theme 屬性變更為 dark。 |
 
 
 
