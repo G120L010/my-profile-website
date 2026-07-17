@@ -18,6 +18,15 @@
     <button @click="toggleTheme" class="btn custom-theme-toggle-btn" :title="isDarkMode ? '切換為白天模式' : '切換為黑夜模式'">
       <!-- 根據 isDarkMode 的真假值動態顯示 太陽 或 月亮 符號 -->
       <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
+
+      <!-- 趣味開關燈提示氣泡，一進頁面時主動引導使用者 -->
+      <!-- @click.stop 阻止事件冒泡，防止關閉氣泡時點擊到主題切換按鈕 -->
+      <transition name="theme-tip-fade">
+        <div v-if="showThemeTip" class="theme-toggle-tip" @click.stop>
+          <span>太暗了嗎？點我開燈！</span>
+          <button class="theme-tip-close-btn" @click.stop="showThemeTip = false">&times;</button>
+        </div>
+      </transition>
     </button>
 
     <!-- 懸浮固定於右下角的回到頂部按鈕 -->
@@ -139,6 +148,6 @@ import '@/assets/css/App.css'
 // 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換邏輯)
 import { useAppView } from '@/assets/js/App.js'
 
-// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態及置頂方法，以在 Template 模板中做變數綁定與顯示
-const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop } = useAppView()
+// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法及提示氣泡變數，以在 Template 模板中做變數綁定與顯示
+const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip } = useAppView()
 </script>

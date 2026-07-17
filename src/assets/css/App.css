@@ -85,58 +85,69 @@
 /* 當在大螢幕且視窗高度小於 820px 時，收縮左側名片的間距與元素尺寸以防內容截斷 */
 @media (min-width: 992px) and (max-height: 820px) {
   .profile-sidebar-card {
-    padding: 1rem !important; /* 縮減外框內置邊距 */
-    top: 1rem !important; /* 降低貼附高度以釋放頂部空間 */
+    padding: 1rem !important;
+    /* 縮減外框內置邊距 */
+    top: 1rem !important;
+    /* 降低貼附高度以釋放頂部空間 */
   }
-  
+
   .profile-sidebar-card .avatar-circle-box {
-    width: 100px !important; /* 縮減頭像寬度 */
-    height: 100px !important; /* 縮減頭像高度 */
+    width: 100px !important;
+    /* 縮減頭像寬度 */
+    height: 100px !important;
+    /* 縮減頭像高度 */
     margin-bottom: 0.4rem !important;
   }
-  
+
   .profile-sidebar-card .user-name-text {
-    font-size: 1.25rem !important; /* 縮減姓名文字大小 */
+    font-size: 1.25rem !important;
+    /* 縮減姓名文字大小 */
     margin-bottom: 0.2rem !important;
   }
-  
+
   .profile-sidebar-card .user-title-text {
-    font-size: 0.85rem !important; /* 縮減職稱文字大小 */
+    font-size: 0.85rem !important;
+    /* 縮減職稱文字大小 */
     margin-bottom: 0.4rem !important;
   }
-  
+
   .profile-sidebar-card .user-bio-text {
-    font-size: 0.78rem !important; /* 縮減自傳文字大小 */
+    font-size: 0.78rem !important;
+    /* 縮減自傳文字大小 */
     line-height: 1.38 !important;
     margin-bottom: 0.4rem !important;
   }
-  
+
   .profile-sidebar-card .btn-profile-solid,
   .profile-sidebar-card .btn-profile-outline {
-    padding: 0.35rem 0.85rem !important; /* 縮減按鈕內邊距 */
+    padding: 0.35rem 0.85rem !important;
+    /* 縮減按鈕內邊距 */
     font-size: 0.82rem !important;
   }
-  
+
   /* 縮減按鈕外距 */
   .profile-sidebar-card .d-flex.gap-3.justify-content-center {
     margin-bottom: 0.4rem !important;
   }
-  
+
   /* 縮減導覽選單間距 */
   .profile-sidebar-card .d-flex.flex-column.gap-2 {
     gap: 0.2rem !important;
   }
-  
+
   .profile-sidebar-card .custom-nav-item {
-    padding: 0.35rem 0.75rem !important; /* 縮減選單項目內邊距 */
+    padding: 0.35rem 0.75rem !important;
+    /* 縮減選單項目內邊距 */
   }
-  
+
   .profile-sidebar-card .nav-text-main {
-    font-size: 0.85rem !important; /* 縮減選單主文字大小 */
+    font-size: 0.85rem !important;
+    /* 縮減選單主文字大小 */
   }
-  
+
   .profile-sidebar-card .nav-text-sub {
-    font-size: 0.72rem !important; /* 縮減選單副文字大小 */
+    font-size: 0.72rem !important;
+    /* 縮減選單副文字大小 */
   }
 }
 
@@ -601,7 +612,8 @@
 /* 手機版與窄螢幕下防懸浮按鈕遮擋內容之優化 */
 @media (max-width: 991.98px) {
   .content-main-box {
-    padding-bottom: 7.5rem !important; /* 確保滾動到底部時，內容能被完全推至懸浮按鈕上方，防範遮擋與點擊衝突 */
+    padding-bottom: 7.5rem !important;
+    /* 確保滾動到底部時，內容能被完全推至懸浮按鈕上方，防範遮擋與點擊衝突 */
   }
 }
 
@@ -611,8 +623,83 @@
     bottom: 1.5rem !important;
     right: 1.25rem !important;
   }
+
   .custom-scroll-top-btn {
     bottom: 5.25rem !important;
     right: 1.25rem !important;
+  }
+}
+
+/* ========================================== */
+/* 主題切換趣味提示氣泡與微幅抖動動畫         */
+/* ========================================== */
+
+.theme-toggle-tip {
+  position: absolute;
+  right: calc(100% + 15px);
+  /* 固定於按鈕左側，間隙 15px */
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, #ff8400, #ff5500);
+  /* 亮眼溫暖的漸層背景 */
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 20px 4px 4px 20px;
+  /* 特殊趣味對話框圓角 */
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 85, 0, 0.4);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10005;
+  animation: themeTipBounce 1.5s infinite alternate ease-in-out;
+  /* 引人注目的呼吸抖動特效 */
+  pointer-events: auto;
+  /* 允許點擊氣泡內部的關閉按鈕 */
+}
+
+
+
+/* 提示氣泡內部的關閉小叉叉 */
+.theme-tip-close-btn {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 2px;
+  transition: all 0.2s ease;
+}
+
+.theme-tip-close-btn:hover {
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+/* 提示氣泡之 Vue transition 動態淡入淡出特效 */
+.theme-tip-fade-enter-active,
+.theme-tip-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.theme-tip-fade-enter-from,
+.theme-tip-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-50%) translateX(12px);
+  /* 滑動淡出效果 */
+}
+
+/* 提示氣泡引人注意的呼吸抖動動畫 */
+@keyframes themeTipBounce {
+  0% {
+    transform: translateY(-50%) translateX(0);
+  }
+
+  100% {
+    transform: translateY(-50%) translateX(-5px);
   }
 }

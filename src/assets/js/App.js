@@ -28,6 +28,10 @@ export function useAppView() {
   // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 true 代表深色黑夜模式
   const isDarkMode = ref(true)
 
+  // 【主題提示變數】控制右下角開燈/關燈趣味提示氣泡的隱現，預設一進入畫面時為 true 顯示
+  const showThemeTip = ref(true)
+  let themeTipTimer = null
+
   // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態，大於 300px 時為真
   const showScrollTopBtn = ref(false)
 
@@ -91,6 +95,9 @@ export function useAppView() {
     // 將原本儲存黑夜狀態的布林值進行反轉，如果是真(true)就變假(false)，如果是假(false)就變真(true)
     isDarkMode.value = !isDarkMode.value
 
+    // 點擊切換主題時，自動關閉右下角的趣味開關燈提示氣泡
+    showThemeTip.value = false
+
     // 進行條件檢查，如果目前為真 (深色模式)
     if (isDarkMode.value) {
       // 透過瀏覽器 DOM 原生語法，去網頁最外層的 <html> 標籤上設定為 data-theme="dark" 屬性
@@ -115,6 +122,11 @@ export function useAppView() {
     document.documentElement.setAttribute('data-theme', 'dark')
     // 註冊滾動監聽事件以控制回到頂部按鈕的隱現
     window.addEventListener('scroll', handleScroll)
+
+    // 設定 8 秒後自動隱藏開關燈氣泡提示的定時器
+    themeTipTimer = setTimeout(() => {
+      showThemeTip.value = false
+    }, 8000)
   })
 
   /**
@@ -127,6 +139,10 @@ export function useAppView() {
     if (typeTimer) {
       clearTimeout(typeTimer)
     }
+    // 安全清除主題提示氣泡定時器
+    if (themeTipTimer) {
+      clearTimeout(themeTipTimer)
+    }
   })
 
   // 將網頁模板 (Template) 需要用來顯示與點擊綁定的變數及函式完整包裝導出
@@ -135,6 +151,7 @@ export function useAppView() {
     isDarkMode,
     toggleTheme,
     showScrollTopBtn,
-    scrollToTop
+    scrollToTop,
+    showThemeTip
   }
 }
