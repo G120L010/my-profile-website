@@ -93,9 +93,9 @@
             <div :class="['card-accent-line', honor.accentClass]"></div>
             
             <!-- 發證與頒發機構名稱，並列呈現學歷階段與分類標籤 -->
-            <div class="d-flex justify-content-between align-items-center mb-1">
+            <div class="honor-card-header mb-1">
               <span class="honor-issuer fw-bold">{{ honor.issuer }}</span>
-              <div class="d-flex gap-1">
+              <div class="honor-badges-container">
                 <span class="honor-type-badge">{{ honor.stageName }}</span>
                 <span class="honor-type-badge">{{ honor.typeName }}</span>
               </div>

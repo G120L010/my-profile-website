@@ -72,6 +72,19 @@
   transition: color 0.4s ease;
 }
 
+/* 發證與頒發機構容器 */
+.honor-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 榮譽標籤容器 */
+.honor-badges-container {
+  display: flex;
+  gap: 4px;
+}
+
 /* 頒發機構名稱 */
 .honor-issuer {
   color: #ff8400;
@@ -225,4 +238,14 @@
 @keyframes honorScaleIn {
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* 手機版與窄螢幕排版適配 */
+@media screen and (max-width: 576px) {
+  .honor-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px !important;
+  }
 }
