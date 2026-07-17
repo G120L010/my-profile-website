@@ -336,6 +336,32 @@
   /* 懸浮時微幅放大並輕微旋轉，增加細緻互動感 */
 }
 
+/* 當提示氣泡存在時，按鈕發出溫暖的橘色光輝，呼應開燈提示 */
+.custom-theme-toggle-btn.has-tip {
+  border-color: #ff8400 !important;
+  color: #ff8400 !important;
+  box-shadow: 0 0 8px #ff8400, inset 0 0 4px #ff8400 !important;
+  animation: neonPulseWarm 1.8s infinite alternate ease-in-out !important;
+}
+
+.custom-theme-toggle-btn.has-tip:hover {
+  background-color: #ff8400 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px #ff8400, 0 0 30px #ff8400 !important;
+}
+
+/* 橘黃色溫暖呼吸發光動畫 */
+@keyframes neonPulseWarm {
+  0% {
+    box-shadow: 0 0 3px #ff8400, 0 0 8px rgba(255, 132, 0, 0.2), inset 0 0 1px #ff8400;
+    opacity: 0.95;
+  }
+  100% {
+    box-shadow: 0 0 8px #ff8400, 0 0 18px rgba(255, 132, 0, 0.4), inset 0 0 4px #ff8400;
+    opacity: 1;
+  }
+}
+
 /* ========================================== */
 /* 5.1 右下角懸浮回到頂部按鈕                  */
 /* ========================================== */

@@ -15,7 +15,7 @@
     <!-- 懸浮固定於右下角的深淺色切換圓形按鈕 -->
     <!-- @click="toggleTheme" 點擊時觸發 App.js 中的切換黑夜/白天模式函式 -->
     <!-- :title 在滑鼠懸停按鈕時顯示說明的提示文字 -->
-    <button @click="toggleTheme" class="btn custom-theme-toggle-btn" :title="isDarkMode ? '切換為白天模式' : '切換為黑夜模式'">
+    <button @click="toggleTheme" class="btn custom-theme-toggle-btn" :class="{ 'has-tip': showThemeTip }" :title="isDarkMode ? '切換為白天模式' : '切換為黑夜模式'">
       <!-- 根據 isDarkMode 的真假值動態顯示 太陽 或 月亮 符號 -->
       <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
 
