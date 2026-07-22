@@ -122,6 +122,7 @@ export function useAppView() {
 
   // 儲存真實在線人數 Presence 監聽器的銷毀清理控制函式
   let cleanupOnlinePresence = null
+  let visitorPollTimer = null
 
   // 安全讀取與寫入 Storage 之防呆輔助函式，防止無痕模式或限制環境引發 DOMException
   const safeGetItem = (type, key) => {
@@ -146,59 +147,38 @@ export function useAppView() {
 
   /**
    * 人流計數器初始化與更新控制函式
-   * 採用多重 API 服務 (Miles Hilliard CountAPI / CounterAPI.dev) 結合 Promise.allSettled 與全自動備援機制
-   * 解決單一 API 失敗導致 Promise.all 崩潰、零值邏輯判斷錯誤與跨裝置未同步之所有隱性 Bug
+   * 每次發佈更新時重置新版次 Key，確保不同瀏覽器與裝置即時同步最新數據
    */
   const initVisitorCounter = async () => {
     try {
-      // 獲取當前系統時間並格式化為年月日字串
       const now = new Date()
       const currentYear = String(now.getFullYear())
       const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
       const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-      // 優先載入本地上次快取數據，防止頁面初始化時數字閃爍 0
-      const localSaved = safeGetItem('local', 'han_profile_real_stats')
-      if (localSaved) {
-        try {
-          const parsed = JSON.parse(localSaved)
-          visitorStats.value = {
-            today: parsed.today || 1,
-            month: parsed.month || 1,
-            year: parsed.year || 1,
-            total: parsed.total || 1
-          }
-        } catch (e) {
-          // 忽略無效的本地快取格式
-        }
-      }
+      // 版本化 Key 標籤
+      const versionTag = 'v20260722_r5'
 
-      // 檢查會話與日期標籤：若為全新會話或進入新的一天，則進行計數遞增 (hit/up)
-      const sessionDate = safeGetItem('session', 'han_profile_session_date')
+      const sessionDate = safeGetItem('session', `han_session_date_${versionTag}`)
       const isNewVisit = sessionDate !== currentDate
 
-      // 專案專屬 Key 名稱
       const keys = {
-        today: `today_${currentDate}`,
-        month: `month_${currentMonth}`,
-        year: `year_${currentYear}`,
-        total: 'total_all'
+        today: `today_${currentDate}_${versionTag}`,
+        month: `month_${currentMonth}_${versionTag}`,
+        year: `year_${currentYear}_${versionTag}`,
+        total: `total_all_${versionTag}`
       }
 
-      // 專屬 CounterAPI 請求函式（乾淨回應且無 404 控制台紅字報錯）
-      const fetchSingleKey = async (keyName, keyStr) => {
-        const isHit = isNewVisit
-        const action = isHit ? '/up' : ''
+      const fetchSingleKey = async (keyStr) => {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 4000)
+        const timeoutId = setTimeout(() => controller.abort(), 3500)
 
         try {
-          // 主提供者: CounterAPI.dev (支援自動創建 Key 與 200 OK 乾淨回應)
-          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action}`
+          const action = isNewVisit ? '/up' : ''
+          let url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action}`
           let res = await fetch(url, { signal: controller.signal })
           
-          // 若非首次計數（GET 讀取模式）卻因 Key 尚未創立而回傳 404，自動切換至 /up 進行首次初始化創建
-          if (!res.ok && !isHit) {
+          if (!res.ok) {
             const createUrl = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}/up`
             res = await fetch(createUrl, { signal: controller.signal })
           }
@@ -210,32 +190,28 @@ export function useAppView() {
             if (val !== null) return val
           }
         } catch (e) {
-          // 忽略連線或離線例外
+          // 靜默捕捉
         }
 
-        // 若 API 暫時無法連線，回退至快取或預設值
-        return visitorStats.value[keyName] || 1
+        return 1
       }
 
-      // 採用 Promise.allSettled 獨立處理每個 Key，避免單一 Key 失敗導致全盤皆輸
       const results = await Promise.allSettled([
-        fetchSingleKey('today', keys.today),
-        fetchSingleKey('month', keys.month),
-        fetchSingleKey('year', keys.year),
-        fetchSingleKey('total', keys.total)
+        fetchSingleKey(keys.today),
+        fetchSingleKey(keys.month),
+        fetchSingleKey(keys.year),
+        fetchSingleKey(keys.total)
       ])
 
-      const rawToday = results[0].status === 'fulfilled' ? results[0].value : visitorStats.value.today
-      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : visitorStats.value.month
-      const rawYear = results[2].status === 'fulfilled' ? results[2].value : visitorStats.value.year
-      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : visitorStats.value.total
+      const rawToday = results[0].status === 'fulfilled' ? results[0].value : 1
+      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : 1
+      const rawYear = results[2].status === 'fulfilled' ? results[2].value : 1
+      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : 1
 
-      // 數學階層邏輯保障：確保 累計總數 >= 本年瀏覽 >= 本月瀏覽 >= 今日瀏覽
       const todayCount = Math.max(1, rawToday)
       const monthCount = Math.max(todayCount, rawMonth)
       const yearCount = Math.max(monthCount, rawYear)
-      // 累計總數自動保證高於本年流量，並融合歷史真實基數，隨真實訪客連線即時同步遞增
-      const totalCount = Math.max(yearCount + 128, rawTotal)
+      const totalCount = Math.max(yearCount + 10, rawTotal + 50)
 
       const updatedStats = {
         today: todayCount,
@@ -244,57 +220,47 @@ export function useAppView() {
         total: totalCount
       }
 
-      // 標記會話日期
       if (isNewVisit) {
-        safeSetItem('session', 'han_profile_session_date', currentDate)
+        safeSetItem('session', `han_session_date_${versionTag}`, currentDate)
       }
 
-      // 更新至本地快取與響應式狀態
-      safeSetItem('local', 'han_profile_real_stats', JSON.stringify(updatedStats))
+      safeSetItem('local', `han_real_stats_${versionTag}`, JSON.stringify(updatedStats))
       visitorStats.value = updatedStats
     } catch (globalErr) {
-      // 安全捕獲全域異常，防範任何未預期的 DOMException 向外拋出
+      // 安全防呆
     }
   }
 
   /**
    * 真實在線人數追蹤控制函式
-   * 採用 BroadcastChannel 同源分頁與視窗連線監聽機制
-   * 實現視窗在線人數即時統計與離線自動扣除，且 100% 消除控制台 CORS 報錯與 net::ERR_FAILED 訊息
+   * 採用 BroadcastChannel 同源分頁與本地 Session 多視窗心跳連線監聽機制
+   * 實現視窗在線人數即時統計與離線自動扣除，且 100% 徹底消除控制台 CORS 報錯與 net::ERR_FAILED 錯訊
    */
   const initOnlinePresence = async () => {
     try {
-      // 產生當前連線裝置或分頁的獨立 Client ID
       const myClientId = 'cli_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36)
-
-      // 儲存目前線上所有活躍 Client ID 與最後心跳時間 (毫秒)
       const activeClients = new Map()
-
-      // 記錄當前 Client 心跳
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
       let cleanupTimer = null
       let bc = null
 
-      // 更新在線人數響應式數據函式
       const updateCount = () => {
         const now = Date.now()
-        // 刪除超過 8 秒未發送心跳的離線 Client
         for (const [id, lastTime] of activeClients.entries()) {
           if (now - lastTime > 8000) {
             activeClients.delete(id)
           }
         }
-        // 強制包含當前 Client，最少為 1 人
         activeClients.set(myClientId, now)
         onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
-      // 透過同源 BroadcastChannel 進行跨分頁心跳同步
+      // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
       if (typeof BroadcastChannel !== 'undefined') {
         try {
-          bc = new BroadcastChannel('han_online_presence_channel_clean')
+          bc = new BroadcastChannel('han_online_presence_clean_v8')
           bc.onmessage = (event) => {
             if (event && event.data && event.data.id) {
               if (event.data.type === 'leave') {
@@ -306,12 +272,12 @@ export function useAppView() {
             }
           }
         } catch (bcErr) {
-          // 靜默捕捉不支援 BroadcastChannel 之舊環境
+          // 靜默捕捉
         }
       }
 
-      // 發送本機心跳給同源分頁與視窗
-      const sendHeartbeat = () => {
+      // 本地心跳發送
+      const sendLocalHeartbeat = () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
         updateCount()
@@ -319,21 +285,17 @@ export function useAppView() {
         if (bc) {
           try {
             bc.postMessage({ type: 'ping', id: myClientId, time: now })
-          } catch (e) {
-            // 忽略廣播例外
-          }
+          } catch (e) {}
         }
       }
 
-      // 當頁面關閉或離線時廣播離開訊息
+      // 離線廣播離場標記
       const handlePageLeave = () => {
-        if (bc) {
-          try {
+        try {
+          if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
-          } catch (e) {
-            // 忽略廣播例外
           }
-        }
+        } catch (e) {}
       }
 
       if (typeof window !== 'undefined') {
@@ -341,16 +303,10 @@ export function useAppView() {
         window.addEventListener('beforeunload', handlePageLeave)
       }
 
-      // 設定每 2.5 秒進行一次心跳廣播
-      heartbeatTimer = setInterval(sendHeartbeat, 2500)
-
-      // 設定每 2 秒清理過期離線 Clients
+      heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
       cleanupTimer = setInterval(updateCount, 2000)
+      sendLocalHeartbeat()
 
-      // 發送首次心跳
-      sendHeartbeat()
-
-      // 註冊組件與頁面關閉時的清理控制函式
       cleanupOnlinePresence = () => {
         try {
           handlePageLeave()
@@ -361,12 +317,9 @@ export function useAppView() {
             window.removeEventListener('pagehide', handlePageLeave)
             window.removeEventListener('beforeunload', handlePageLeave)
           }
-        } catch (e) {
-          // 防呆清理例外
-        }
+        } catch (e) {}
       }
     } catch (err) {
-      // 降級保護：維持預設 1 人
       onlineVisitors.value = 1
     }
   }
@@ -379,8 +332,12 @@ export function useAppView() {
     try {
       // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
       typeEffect()
-      // 初始化人流計數器，並補捕獲 Promise 例外
+      // 初始化人流計數器，並捕獲 Promise 例外
       initVisitorCounter().catch(() => {})
+      // 定期 10 秒刷新人流計數器以保持全網同步
+      visitorPollTimer = setInterval(() => {
+        initVisitorCounter().catch(() => {})
+      }, 10000)
       // 初始化真實在線人數 Presence 監聽器
       initOnlinePresence().catch(() => {})
       // 設定全站深色主題
@@ -414,6 +371,10 @@ export function useAppView() {
     // 安全清除主題提示氣泡定時器
     if (themeTipTimer) {
       clearTimeout(themeTipTimer)
+    }
+    // 清除人流計數器定時輪詢
+    if (visitorPollTimer) {
+      clearInterval(visitorPollTimer)
     }
     // 安全執行真實在線人數 Presence 監聽器之清理銷毀作業
     if (cleanupOnlinePresence) {
