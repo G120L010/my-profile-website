@@ -119,60 +119,88 @@ export function useAppView() {
 
   /**
    * 人流計數器初始化與更新控制函式
-   * 透過本地存儲 (localStorage) 與日期檢查進行自動遞增與歸零
+   * 優先透過全網真實 CountAPI 服務進行計數與數據存取，若無網路或超時則自動轉回本地 LocalStorage 備援
    */
-  const initVisitorCounter = () => {
+  const initVisitorCounter = async () => {
+    // 主動清理舊版帶有虛構基數之本地存儲快取
+    if (localStorage.getItem('han_profile_visitor_stats')) {
+      localStorage.removeItem('han_profile_visitor_stats')
+    }
+
     // 獲取當前系統時間並格式化為年月日字串
     const now = new Date()
     const currentYear = String(now.getFullYear())
-    const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    const currentDate = `${currentMonth}-${String(now.getDate()).padStart(2, '0')}`
+    const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
+    const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-    // 預設參考基數 (讓網站剛發布時具備基礎的人流展示)
-    const baseStats = {
-      today: 18,
-      month: 356,
-      year: 2840,
-      total: 5120
-    }
-
-    // 試圖讀取本地存儲的人流數據與最後存取日期標籤
-    const savedStatsStr = localStorage.getItem('han_profile_visitor_stats')
-    const lastDate = localStorage.getItem('han_profile_visitor_last_date') || ''
-    const lastMonth = localStorage.getItem('han_profile_visitor_last_month') || ''
-    const lastYear = localStorage.getItem('han_profile_visitor_last_year') || ''
-
-    let stats = savedStatsStr ? JSON.parse(savedStatsStr) : { ...baseStats }
-
-    // 日期跨度判定與歸零重置邏輯
-    if (lastYear !== currentYear) {
-      stats.year = 1
-    }
-    if (lastMonth !== currentMonth) {
-      stats.month = 1
-    }
-    if (lastDate !== currentDate) {
-      stats.today = 1
-    }
-
-    // 會話紀錄檢查：若在此會話中首次載入頁面，則進行計數遞增
+    // 專案專屬之 API 命名空間與會話狀態檢查
+    const namespace = 'hanjohn_profile_website_v2'
     const hasVisitedSession = sessionStorage.getItem('han_profile_session_visited')
-    if (!hasVisitedSession) {
-      stats.today += 1
-      stats.month += 1
-      stats.year += 1
-      stats.total += 1
-      sessionStorage.setItem('han_profile_session_visited', 'true')
+    const action = hasVisitedSession ? 'get' : 'hit'
+
+    // 通用帶有 3.5 秒連線超時防呆之 API 請求函式
+    const fetchApiCount = async (key) => {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 3500)
+      const url = `https://api.countapi.xyz/${action}/${namespace}/${key}`
+      const response = await fetch(url, { signal: controller.signal })
+      clearTimeout(timeoutId)
+      if (!response.ok) {
+        throw new Error(`HTTP error status ${response.status}`)
+      }
+      const data = await response.json()
+      return data.value || 1
     }
 
-    // 寫回本地存儲並更新當前日期標記
-    localStorage.setItem('han_profile_visitor_stats', JSON.stringify(stats))
-    localStorage.setItem('han_profile_visitor_last_date', currentDate)
-    localStorage.setItem('han_profile_visitor_last_month', currentMonth)
-    localStorage.setItem('han_profile_visitor_last_year', currentYear)
+    try {
+      // 嘗試非同步並發取得全網真實日、月、年及總瀏覽人流
+      const [todayCount, monthCount, yearCount, totalCount] = await Promise.all([
+        fetchApiCount(`today_${currentDate}`),
+        fetchApiCount(`month_${currentMonth}`),
+        fetchApiCount(`year_${currentYear}`),
+        fetchApiCount('total_all')
+      ])
 
-    // 更新響應式狀態以渲染至視圖層
-    visitorStats.value = stats
+      // 標記當前會話已完成防刷新計數
+      if (!hasVisitedSession) {
+        sessionStorage.setItem('han_profile_session_visited', 'true')
+      }
+
+      // 更新響應式狀態以渲染至視圖層
+      visitorStats.value = {
+        today: todayCount,
+        month: monthCount,
+        year: yearCount,
+        total: totalCount
+      }
+    } catch (err) {
+      // 備援機制：當 API 連線失敗或遭阻擋時，自動無縫回退使用本地從 1 開始之 LocalStorage 計數
+      const savedStatsStr = localStorage.getItem('han_profile_real_stats')
+      const lastDate = localStorage.getItem('han_profile_visitor_last_date') || ''
+      const lastMonth = localStorage.getItem('han_profile_visitor_last_month') || ''
+      const lastYear = localStorage.getItem('han_profile_visitor_last_year') || ''
+
+      let stats = savedStatsStr ? JSON.parse(savedStatsStr) : { today: 1, month: 1, year: 1, total: 1 }
+
+      if (lastYear !== currentYear) stats.year = 1
+      if (lastMonth !== currentMonth) stats.month = 1
+      if (lastDate !== currentDate) stats.today = 1
+
+      if (!hasVisitedSession) {
+        stats.today += 1
+        stats.month += 1
+        stats.year += 1
+        stats.total += 1
+        sessionStorage.setItem('han_profile_session_visited', 'true')
+      }
+
+      localStorage.setItem('han_profile_real_stats', JSON.stringify(stats))
+      localStorage.setItem('han_profile_visitor_last_date', currentDate)
+      localStorage.setItem('han_profile_visitor_last_month', currentMonth)
+      localStorage.setItem('han_profile_visitor_last_year', currentYear)
+
+      visitorStats.value = stats
+    }
   }
 
   /**
