@@ -111,97 +111,117 @@ export function useAppView() {
 
   // 人流計數器變數：建立一個儲存今日、本月、本年與累計總人流的響應式物件
   const visitorStats = ref({
-    today: 0,
-    month: 0,
-    year: 0,
-    total: 0
+    today: 1,
+    month: 1,
+    year: 1,
+    total: 1
   })
 
   /**
    * 人流計數器初始化與更新控制函式
-   * 採用穩定營運之 CounterAPI (counterapi.dev) 全球雲端服務，達成手機與電腦跨裝置實時同步計數
+   * 採用多重 API 服務 (Miles Hilliard CountAPI / CounterAPI.dev) 結合 Promise.allSettled 與全自動備援機制
+   * 解決單一 API 失敗導致 Promise.all 崩潰、零值邏輯判斷錯誤與跨裝置未同步之所有隱性 Bug
    */
   const initVisitorCounter = async () => {
-    // 主動清理舊版帶有虛構基數之本地存儲快取
-    if (localStorage.getItem('han_profile_visitor_stats')) {
-      localStorage.removeItem('han_profile_visitor_stats')
-    }
-
     // 獲取當前系統時間並格式化為年月日字串
     const now = new Date()
     const currentYear = String(now.getFullYear())
     const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
     const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-    // 專案專屬 CounterAPI 命名空間
-    const workspace = 'hanjohn_profile_site'
-    const hasVisitedSession = sessionStorage.getItem('han_profile_session_visited')
+    // 優先載入本地上次快取數據，防止頁面初始化時數字閃爍 0
+    const localSaved = localStorage.getItem('han_profile_real_stats')
+    if (localSaved) {
+      try {
+        const parsed = JSON.parse(localSaved)
+        visitorStats.value = {
+          today: parsed.today || 1,
+          month: parsed.month || 1,
+          year: parsed.year || 1,
+          total: parsed.total || 1
+        }
+      } catch (e) {
+        // 忽略無效的本地快取格式
+      }
+    }
 
-    // 通用 CounterAPI 請求函式（會話首次載入用 /up 遞增，同會話刷新用單純 GET 讀取）
-    const fetchCounter = async (key) => {
+    // 檢查會話與日期標籤：若為全新會話或進入新的一天，則進行計數遞增 (hit/up)
+    const sessionDate = sessionStorage.getItem('han_profile_session_date')
+    const isNewVisit = sessionDate !== currentDate
+
+    // 專案專屬 Key 名稱
+    const keys = {
+      today: `today_${currentDate}`,
+      month: `month_${currentMonth}`,
+      year: `year_${currentYear}`,
+      total: 'total_all'
+    }
+
+    // 多服務提供者請求函式：優先使用 Miles Hilliard CountAPI，若失敗則切換至 CounterAPI.dev
+    const fetchSingleKey = async (keyName, keyStr) => {
+      const isHit = isNewVisit
+      const action = isHit ? 'hit' : 'get'
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 4000)
-      const action = hasVisitedSession ? '' : '/up'
-      const url = `https://api.counterapi.dev/v1/${workspace}/${key}${action}`
-      
-      const response = await fetch(url, { signal: controller.signal })
-      clearTimeout(timeoutId)
-      if (!response.ok) {
-        throw new Error(`CounterAPI error status: ${response.status}`)
+      const timeoutId = setTimeout(() => controller.abort(), 3500)
+
+      try {
+        // 主提供者 1: Miles Hilliard CountAPI (原 CountAPI 官方推薦之相容 API)
+        const url1 = `https://countapi.mileshilliard.com/${action}/hanjohn_profile_site/${keyStr}`
+        const res1 = await fetch(url1, { signal: controller.signal })
+        clearTimeout(timeoutId)
+        if (res1.ok) {
+          const data = await res1.json()
+          const val = typeof data.value === 'number' ? data.value : (typeof data.count === 'number' ? data.count : null)
+          if (val !== null) return val
+        }
+      } catch (e1) {
+        // 忽略服務者 1 異常，繼續嘗試服務者 2
       }
-      const data = await response.json()
-      return data.count || data.value || 1
+
+      // 次提供者 2: CounterAPI.dev (作為強大備援)
+      try {
+        const controller2 = new AbortController()
+        const timeoutId2 = setTimeout(() => controller2.abort(), 3500)
+        const action2 = isHit ? '/up' : ''
+        const url2 = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action2}`
+        const res2 = await fetch(url2, { signal: controller2.signal })
+        clearTimeout(timeoutId2)
+        if (res2.ok) {
+          const data = await res2.json()
+          const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+          if (val !== null) return val
+        }
+      } catch (e2) {
+        // 忽略服務者 2 異常
+      }
+
+      // 若所有線上 API 皆連線失敗，回退至目前狀態值
+      return visitorStats.value[keyName] || 1
     }
 
-    try {
-      // 嘗試並發連線取得全網真實日、月、年與累計總人流
-      const [todayCount, monthCount, yearCount, totalCount] = await Promise.all([
-        fetchCounter(`today_${currentDate}`),
-        fetchCounter(`month_${currentMonth}`),
-        fetchCounter(`year_${currentYear}`),
-        fetchCounter('total')
-      ])
+    // 採用 Promise.allSettled 獨立處理每個 Key，避免單一 Key 失敗導致全盤皆輸
+    const results = await Promise.allSettled([
+      fetchSingleKey('today', keys.today),
+      fetchSingleKey('month', keys.month),
+      fetchSingleKey('year', keys.year),
+      fetchSingleKey('total', keys.total)
+    ])
 
-      // 標記當前會話已完成計數
-      if (!hasVisitedSession) {
-        sessionStorage.setItem('han_profile_session_visited', 'true')
-      }
-
-      // 更新響應式狀態以渲染至視圖層
-      visitorStats.value = {
-        today: todayCount,
-        month: monthCount,
-        year: yearCount,
-        total: totalCount
-      }
-    } catch (err) {
-      // 備援機制：當 API 連線失敗或遭阻擋時，自動無縫回退使用本地從 1 開始之 LocalStorage 計數
-      const savedStatsStr = localStorage.getItem('han_profile_real_stats')
-      const lastDate = localStorage.getItem('han_profile_visitor_last_date') || ''
-      const lastMonth = localStorage.getItem('han_profile_visitor_last_month') || ''
-      const lastYear = localStorage.getItem('han_profile_visitor_last_year') || ''
-
-      let stats = savedStatsStr ? JSON.parse(savedStatsStr) : { today: 1, month: 1, year: 1, total: 1 }
-
-      if (lastYear !== currentYear) stats.year = 1
-      if (lastMonth !== currentMonth) stats.month = 1
-      if (lastDate !== currentDate) stats.today = 1
-
-      if (!hasVisitedSession) {
-        stats.today += 1
-        stats.month += 1
-        stats.year += 1
-        stats.total += 1
-        sessionStorage.setItem('han_profile_session_visited', 'true')
-      }
-
-      localStorage.setItem('han_profile_real_stats', JSON.stringify(stats))
-      localStorage.setItem('han_profile_visitor_last_date', currentDate)
-      localStorage.setItem('han_profile_visitor_last_month', currentMonth)
-      localStorage.setItem('han_profile_visitor_last_year', currentYear)
-
-      visitorStats.value = stats
+    const updatedStats = {
+      today: results[0].status === 'fulfilled' ? results[0].value : visitorStats.value.today,
+      month: results[1].status === 'fulfilled' ? results[1].value : visitorStats.value.month,
+      year: results[2].status === 'fulfilled' ? results[2].value : visitorStats.value.year,
+      total: results[3].status === 'fulfilled' ? results[3].value : visitorStats.value.total
     }
+
+    // 標記會話日期
+    if (isNewVisit) {
+      sessionStorage.setItem('han_profile_session_date', currentDate)
+    }
+
+    // 更新至本地快取與響應式狀態
+    localStorage.setItem('han_profile_real_stats', JSON.stringify(updatedStats))
+    visitorStats.value = updatedStats
   }
 
   /**
