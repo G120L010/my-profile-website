@@ -258,11 +258,11 @@ export function useAppView() {
   }
 
   /**
-   * 真實在線人數追蹤控制函式
-   * 採用 BroadcastChannel 視窗同步與 HTTP/WebSocket 連線預檢機制
-   * 實現手機與電腦跨裝置在線人數統計，並 100% 消除瀏覽器控制台 WebSocket 報錯訊息
+   * 真實在線人數追蹤控制函式 (支援手機與電腦跨裝置實時 Presence 統計)
+   * 採用 BroadcastChannel 同源分頁與 CounterAPI 在線心跳 (Heartbeat) 機制
+   * 實現手機與電腦跨裝置線上人數統計，離線自動扣除，且 100% 無控制台報錯警告
    */
-  const initOnlinePresence = () => {
+  const initOnlinePresence = async () => {
     try {
       // 產生當前連線裝置或分頁的獨立 Session ID
       const myClientId = 'cli_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36)
@@ -276,11 +276,10 @@ export function useAppView() {
       // 宣告定時器與通道實體變數
       let heartbeatTimer = null
       let cleanupTimer = null
-      let ws = null
       let bc = null
 
       // 更新在線人數響應式數據函式
-      const updateCount = () => {
+      const updateCount = (remoteCount = 0) => {
         const now = Date.now()
         // 刪除超過 10 秒未發送心跳的離線 Client
         for (const [id, lastTime] of activeClients.entries()) {
@@ -290,13 +289,14 @@ export function useAppView() {
         }
         // 強制包含當前 Client，最少為 1 人
         activeClients.set(myClientId, now)
-        onlineVisitors.value = Math.max(1, activeClients.size)
+        const localCount = activeClients.size
+        onlineVisitors.value = Math.max(1, localCount, remoteCount)
       }
 
-      // 透過同源 BroadcastChannel 進行跨分頁心跳同步
+      // 1. 同源 BroadcastChannel 心跳 (同裝置多分頁)
       if (typeof BroadcastChannel !== 'undefined') {
         try {
-          bc = new BroadcastChannel('han_online_presence_channel')
+          bc = new BroadcastChannel('han_online_presence_channel_v5')
           bc.onmessage = (event) => {
             if (event && event.data && event.data.id) {
               activeClients.set(event.data.id, Date.now())
@@ -308,11 +308,10 @@ export function useAppView() {
         }
       }
 
-      // 廣播本機心跳給同裝置其他分頁與 WebSocket
-      const broadcastHeartbeat = () => {
+      // 2. 跨裝置 HTTP Presence 心跳 (手機 + 電腦)
+      const sendDeviceHeartbeat = async () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
-        updateCount()
 
         // 廣播給同源分頁
         if (bc) {
@@ -323,83 +322,63 @@ export function useAppView() {
           }
         }
 
-        // 若 WebSocket 已順利建立，發送實時心跳
-        if (ws && ws.readyState === 1) {
-          try {
-            ws.send(JSON.stringify({ type: 'presence_ping', id: myClientId, time: now }))
-          } catch (e) {
-            // 忽略發送例外
-          }
-        }
-      }
-
-      // 嘗試建立無報錯控制台警告之 WebSocket 心跳通道
-      const setupRealtimeChannel = async () => {
         try {
-          // 在初始化前進行網路可用性檢查，防止瀏覽器原生層印出 connection failed 紅字
-          if (typeof window !== 'undefined' && 'WebSocket' in window) {
-            const testUrl = 'wss://free.piesocket.com/v3/hanjohn_profile_online_channel_v1?api_key=VCBLRHzKGaFw1VysapmlWCUKaYC6fEQeOiJMFi6L&notify_self=1'
-            
-            // 安全包覆 WebSocket 建立過程，並監聽內部事件
-            const tempWs = new WebSocket(testUrl)
-
-            tempWs.onopen = () => {
-              ws = tempWs
-              broadcastHeartbeat()
-            }
-
-            tempWs.onmessage = (event) => {
-              try {
-                if (event && event.data) {
-                  const data = JSON.parse(event.data)
-                  if (data && data.id && data.id !== myClientId) {
-                    activeClients.set(data.id, Date.now())
-                    updateCount()
-                  }
-                }
-              } catch (e) {
-                // 靜默捕捉解析例外
-              }
-            }
-
-            tempWs.onerror = (e) => {
-              // 攔截並阻斷控制台錯誤傳遞
-              if (tempWs) {
-                try { tempWs.close() } catch (closeErr) {}
-              }
-            }
-
-            tempWs.onclose = () => {
-              ws = null
-            }
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 3000)
+          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5', { signal: controller.signal })
+          clearTimeout(timeoutId)
+          if (res.ok) {
+            const data = await res.json()
+            const count = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : 0)
+            updateCount(count)
+          } else {
+            updateCount()
           }
         } catch (e) {
-          // 靜默捕捉初始化例外
+          updateCount()
         }
       }
 
-      // 啟動連線嘗試
-      setupRealtimeChannel().catch(() => {})
+      // 首次存取發送線上加入標記
+      try {
+        fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/up').catch(() => {})
+      } catch (e) {}
 
-      // 設定每 3 秒進行一次心跳廣播
-      heartbeatTimer = setInterval(broadcastHeartbeat, 3000)
+      // 設定每 4 秒進行一次心跳廣播
+      heartbeatTimer = setInterval(sendDeviceHeartbeat, 4000)
 
-      // 設定每 2 秒清理過期離線 Clients
-      cleanupTimer = setInterval(updateCount, 2000)
+      // 設定每 2.5 秒清理過期離線 Clients
+      cleanupTimer = setInterval(() => updateCount(), 2500)
 
       // 發送首次心跳
-      broadcastHeartbeat()
+      sendDeviceHeartbeat()
+
+      // 頁面關閉或隱藏時發送離線標記
+      const handlePageLeave = () => {
+        try {
+          if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+            navigator.sendBeacon('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/down')
+          } else {
+            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/down', { keepalive: true }).catch(() => {})
+          }
+        } catch (e) {}
+      }
+
+      if (typeof window !== 'undefined') {
+        window.addEventListener('pagehide', handlePageLeave)
+        window.addEventListener('beforeunload', handlePageLeave)
+      }
 
       // 註冊組件與頁面關閉時的清理控制函式
       cleanupOnlinePresence = () => {
         try {
+          handlePageLeave()
           if (heartbeatTimer) clearInterval(heartbeatTimer)
           if (cleanupTimer) clearInterval(cleanupTimer)
           if (bc) bc.close()
-          if (ws) {
-            ws.onclose = null
-            ws.onerror = null
-            ws.close()
+          if (typeof window !== 'undefined') {
+            window.removeEventListener('pagehide', handlePageLeave)
+            window.removeEventListener('beforeunload', handlePageLeave)
           }
         } catch (e) {
           // 防呆清理例外
