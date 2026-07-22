@@ -117,6 +117,12 @@ export function useAppView() {
     total: 1
   })
 
+  // 在線人數變數：建立一個記錄當前真實線上人數的響應式變數，預設值設定為 1
+  const onlineVisitors = ref(1)
+
+  // 儲存真實在線人數 Presence 監聽器的銷毀清理控制函式
+  let cleanupOnlinePresence = null
+
   // 安全讀取與寫入 Storage 之防呆輔助函式，防止無痕模式或限制環境引發 DOMException
   const safeGetItem = (type, key) => {
     try {
@@ -252,6 +258,69 @@ export function useAppView() {
   }
 
   /**
+   * 真實在線人數追蹤控制函式
+   * 採用 Firebase Realtime Database 機制進行實時 Presence 連線監聽
+   * 實現跨 Clients 即時線上人數統計與離線 (onDisconnect) 自動退訂清除
+   */
+  const initOnlinePresence = async () => {
+    try {
+      // 透過 CDN 動態載入 Firebase ESM 核心與資料庫模組
+      const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js')
+      const { getDatabase, ref, push, onValue, onDisconnect, set, remove, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js')
+
+      // Firebase 專案組態與 Realtime Database 端點設定
+      const firebaseConfig = {
+        databaseURL: 'https://hanjohn-profile-default-rtdb.firebaseio.com'
+      }
+
+      // 檢查並安全獲取或建立 Firebase App 實例
+      const existingApps = getApps()
+      const app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig, 'visitorOnlineApp')
+      const db = getDatabase(app)
+
+      // 定義在線 Clients Presence 根節點與當前 Client 隨機 key
+      const presenceRef = ref(db, 'online_clients')
+      const clientRef = push(presenceRef)
+
+      // 註冊當 Client 關閉瀏覽器分頁、視窗或斷線時，自動由 Firebase 伺服器端移除
+      onDisconnect(clientRef).remove()
+
+      // 寫入當前 Client 狀態與時間戳記
+      await set(clientRef, {
+        onlineAt: serverTimestamp(),
+        sessionId: safeGetItem('session', 'han_session_id') || Math.random().toString(36).substring(2)
+      })
+
+      // 訂閱在線 Clients 變動事件，即時更新 onlineVisitors 響應式數值
+      const unsubscribe = onValue(presenceRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const val = snapshot.val()
+          const count = val ? Object.keys(val).length : 1
+          onlineVisitors.value = Math.max(1, count)
+        } else {
+          onlineVisitors.value = 1
+        }
+      }, () => {
+        // 讀取權限或網路連線讀取異常時之降級處理
+        onlineVisitors.value = 1
+      })
+
+      // 註冊組件銷毀時的清理 Hook 函式
+      cleanupOnlinePresence = () => {
+        try {
+          if (typeof unsubscribe === 'function') unsubscribe()
+          remove(clientRef).catch(() => {})
+        } catch (e) {
+          // 銷毀例外靜默防呆
+        }
+      }
+    } catch (err) {
+      // 網路隔離或 CDN 載入受阻時，維持預設 1 人
+      onlineVisitors.value = 1
+    }
+  }
+
+  /**
    * 註冊 Vue 的生命週期鉤子
    * 當全站主外殼組件在網頁上正式渲染掛載完畢後自動觸發
    */
@@ -261,6 +330,8 @@ export function useAppView() {
       typeEffect()
       // 初始化人流計數器，並補捕獲 Promise 例外
       initVisitorCounter().catch(() => {})
+      // 初始化真實在線人數 Presence 監聽器
+      initOnlinePresence().catch(() => {})
       // 設定全站深色主題
       if (typeof document !== 'undefined' && document.documentElement) {
         document.documentElement.setAttribute('data-theme', 'dark')
@@ -293,6 +364,10 @@ export function useAppView() {
     if (themeTipTimer) {
       clearTimeout(themeTipTimer)
     }
+    // 安全執行真實在線人數 Presence 監聽器之清理銷毀作業
+    if (cleanupOnlinePresence) {
+      cleanupOnlinePresence()
+    }
   })
 
   // 將網頁模板 (Template) 需要用來顯示與點擊綁定的變數及函式完整包裝導出
@@ -303,6 +378,7 @@ export function useAppView() {
     showScrollTopBtn,
     scrollToTop,
     showThemeTip,
-    visitorStats
+    visitorStats,
+    onlineVisitors
   }
 }

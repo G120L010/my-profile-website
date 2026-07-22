@@ -124,10 +124,16 @@
               </RouterLink>
             </div>
 
-            <!-- 全站人流計數器面板卡片：展示日、月、年與累計人流數據 -->
+            <!-- 全站人流計數器面板卡片：展示在線人數與日、月、年及累計人流數據 -->
             <div class="visitor-counter-box mt-3 p-3 rounded-3">
               <div class="visitor-counter-header d-flex justify-content-between align-items-center mb-2">
-                <span class="visitor-title-text fw-bold">網站瀏覽人流</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="visitor-title-text fw-bold">網站瀏覽人流</span>
+                  <div class="online-status-badge d-flex align-items-center px-2 py-1 rounded-pill">
+                    <span class="online-pulse-dot me-1"></span>
+                    <span class="online-status-text">目前在線：<strong class="online-count-number">{{ onlineVisitors }}</strong> 人</span>
+                  </div>
+                </div>
                 <span class="visitor-sub-text">Visitors</span>
               </div>
               <div class="row g-2 text-center visitor-stats-grid">
@@ -179,9 +185,9 @@
 // 引入全站的 CSS 樣式定義檔
 import '@/assets/css/App.css'
 
-// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換與人流計數邏輯)
+// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換、在線人數與人流計數邏輯)
 import { useAppView } from '@/assets/js/App.js'
 
-// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法、提示氣泡變數及人流計數物件，以在 Template 模板中做變數綁定與顯示
-const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip, visitorStats } = useAppView()
+// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法、提示氣泡變數、在線人數及人流計數物件，以在 Template 模板中做變數綁定與顯示
+const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip, visitorStats, onlineVisitors } = useAppView()
 </script>
