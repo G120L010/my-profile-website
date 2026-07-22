@@ -258,13 +258,13 @@ export function useAppView() {
   }
 
   /**
-   * 真實在線人數追蹤控制函式 (支援手機與電腦跨裝置實時 Presence 統計)
-   * 採用 BroadcastChannel 同源分頁與 CounterAPI 在線心跳 (Heartbeat) 機制
-   * 實現手機與電腦跨裝置線上人數統計，離線自動扣除，且 100% 無控制台報錯警告
+   * 真實在線人數追蹤控制函式
+   * 採用 BroadcastChannel 同源分頁與視窗連線監聽機制
+   * 實現視窗在線人數即時統計與離線自動扣除，且 100% 消除控制台 CORS 報錯與 net::ERR_FAILED 訊息
    */
   const initOnlinePresence = async () => {
     try {
-      // 產生當前連線裝置或分頁的獨立 Session ID
+      // 產生當前連線裝置或分頁的獨立 Client ID
       const myClientId = 'cli_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36)
 
       // 儲存目前線上所有活躍 Client ID 與最後心跳時間 (毫秒)
@@ -273,33 +273,35 @@ export function useAppView() {
       // 記錄當前 Client 心跳
       activeClients.set(myClientId, Date.now())
 
-      // 宣告定時器與通道實體變數
       let heartbeatTimer = null
       let cleanupTimer = null
       let bc = null
 
       // 更新在線人數響應式數據函式
-      const updateCount = (remoteCount = 0) => {
+      const updateCount = () => {
         const now = Date.now()
-        // 刪除超過 10 秒未發送心跳的離線 Client
+        // 刪除超過 8 秒未發送心跳的離線 Client
         for (const [id, lastTime] of activeClients.entries()) {
-          if (now - lastTime > 10000) {
+          if (now - lastTime > 8000) {
             activeClients.delete(id)
           }
         }
         // 強制包含當前 Client，最少為 1 人
         activeClients.set(myClientId, now)
-        const localCount = activeClients.size
-        onlineVisitors.value = Math.max(1, localCount, remoteCount)
+        onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
-      // 1. 同源 BroadcastChannel 心跳 (同裝置多分頁)
+      // 透過同源 BroadcastChannel 進行跨分頁心跳同步
       if (typeof BroadcastChannel !== 'undefined') {
         try {
-          bc = new BroadcastChannel('han_online_presence_channel_v5')
+          bc = new BroadcastChannel('han_online_presence_channel_clean')
           bc.onmessage = (event) => {
             if (event && event.data && event.data.id) {
-              activeClients.set(event.data.id, Date.now())
+              if (event.data.type === 'leave') {
+                activeClients.delete(event.data.id)
+              } else {
+                activeClients.set(event.data.id, Date.now())
+              }
               updateCount()
             }
           }
@@ -308,66 +310,45 @@ export function useAppView() {
         }
       }
 
-      // 2. 跨裝置 HTTP Presence 心跳 (手機 + 電腦)
-      const sendDeviceHeartbeat = async () => {
+      // 發送本機心跳給同源分頁與視窗
+      const sendHeartbeat = () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
+        updateCount()
 
-        // 廣播給同源分頁
         if (bc) {
           try {
-            bc.postMessage({ id: myClientId, time: now })
+            bc.postMessage({ type: 'ping', id: myClientId, time: now })
           } catch (e) {
-            // 忽略廣播拋錯
+            // 忽略廣播例外
           }
-        }
-
-        try {
-          const controller = new AbortController()
-          const timeoutId = setTimeout(() => controller.abort(), 3000)
-          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5', { signal: controller.signal })
-          clearTimeout(timeoutId)
-          if (res.ok) {
-            const data = await res.json()
-            const count = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : 0)
-            updateCount(count)
-          } else {
-            updateCount()
-          }
-        } catch (e) {
-          updateCount()
         }
       }
 
-      // 首次存取發送線上加入標記
-      try {
-        fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/up').catch(() => {})
-      } catch (e) {}
-
-      // 設定每 4 秒進行一次心跳廣播
-      heartbeatTimer = setInterval(sendDeviceHeartbeat, 4000)
-
-      // 設定每 2.5 秒清理過期離線 Clients
-      cleanupTimer = setInterval(() => updateCount(), 2500)
-
-      // 發送首次心跳
-      sendDeviceHeartbeat()
-
-      // 頁面關閉或隱藏時發送離線標記
+      // 當頁面關閉或離線時廣播離開訊息
       const handlePageLeave = () => {
-        try {
-          if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-            navigator.sendBeacon('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/down')
-          } else {
-            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/online_presence_v5/down', { keepalive: true }).catch(() => {})
+        if (bc) {
+          try {
+            bc.postMessage({ type: 'leave', id: myClientId })
+          } catch (e) {
+            // 忽略廣播例外
           }
-        } catch (e) {}
+        }
       }
 
       if (typeof window !== 'undefined') {
         window.addEventListener('pagehide', handlePageLeave)
         window.addEventListener('beforeunload', handlePageLeave)
       }
+
+      // 設定每 2.5 秒進行一次心跳廣播
+      heartbeatTimer = setInterval(sendHeartbeat, 2500)
+
+      // 設定每 2 秒清理過期離線 Clients
+      cleanupTimer = setInterval(updateCount, 2000)
+
+      // 發送首次心跳
+      sendHeartbeat()
 
       // 註冊組件與頁面關閉時的清理控制函式
       cleanupOnlinePresence = () => {
