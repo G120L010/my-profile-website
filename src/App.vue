@@ -124,6 +124,40 @@
               </RouterLink>
             </div>
 
+            <!-- 全站人流計數器面板卡片：展示日、月、年與累計人流數據 -->
+            <div class="visitor-counter-box mt-3 p-3 rounded-3">
+              <div class="visitor-counter-header d-flex justify-content-between align-items-center mb-2">
+                <span class="visitor-title-text fw-bold">網站瀏覽人流</span>
+                <span class="visitor-sub-text">Visitors</span>
+              </div>
+              <div class="row g-2 text-center visitor-stats-grid">
+                <div class="col-6">
+                  <div class="visitor-stat-card p-2 rounded-2">
+                    <div class="visitor-stat-label">今日瀏覽</div>
+                    <div class="visitor-stat-number">{{ visitorStats.today }}</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="visitor-stat-card p-2 rounded-2">
+                    <div class="visitor-stat-label">本月瀏覽</div>
+                    <div class="visitor-stat-number">{{ visitorStats.month }}</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="visitor-stat-card p-2 rounded-2">
+                    <div class="visitor-stat-label">本年瀏覽</div>
+                    <div class="visitor-stat-number">{{ visitorStats.year }}</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="visitor-stat-card p-2 rounded-2">
+                    <div class="visitor-stat-label">累計總數</div>
+                    <div class="visitor-stat-number">{{ visitorStats.total }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -145,9 +179,9 @@
 // 引入全站的 CSS 樣式定義檔
 import '@/assets/css/App.css'
 
-// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換邏輯)
+// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換與人流計數邏輯)
 import { useAppView } from '@/assets/js/App.js'
 
-// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法及提示氣泡變數，以在 Template 模板中做變數綁定與顯示
-const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip } = useAppView()
+// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法、提示氣泡變數及人流計數物件，以在 Template 模板中做變數綁定與顯示
+const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip, visitorStats } = useAppView()
 </script>

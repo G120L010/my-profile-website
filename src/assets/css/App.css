@@ -729,3 +729,50 @@
     transform: translateY(-50%) translateX(-5px);
   }
 }
+
+/* ========================================== */
+/* 全站人流計數器面板樣式與主題適配           */
+/* ========================================== */
+
+.visitor-counter-box {
+  background-color: var(--bg-btn);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.visitor-title-text {
+  color: var(--text-main);
+  font-size: 0.88rem;
+  letter-spacing: 0.5px;
+}
+
+.visitor-sub-text {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.visitor-stat-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.visitor-stat-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--profile-btn-solid-bg);
+  box-shadow: 0 4px 12px rgba(255, 132, 0, 0.15);
+}
+
+.visitor-stat-label {
+  color: var(--text-sub);
+  font-size: 0.72rem;
+  margin-bottom: 2px;
+}
+
+.visitor-stat-number {
+  color: var(--text-main);
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}

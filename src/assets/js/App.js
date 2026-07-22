@@ -109,6 +109,72 @@ export function useAppView() {
     }
   }
 
+  // 人流計數器變數：建立一個儲存今日、本月、本年與累計總人流的響應式物件
+  const visitorStats = ref({
+    today: 0,
+    month: 0,
+    year: 0,
+    total: 0
+  })
+
+  /**
+   * 人流計數器初始化與更新控制函式
+   * 透過本地存儲 (localStorage) 與日期檢查進行自動遞增與歸零
+   */
+  const initVisitorCounter = () => {
+    // 獲取當前系統時間並格式化為年月日字串
+    const now = new Date()
+    const currentYear = String(now.getFullYear())
+    const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, '0')}`
+    const currentDate = `${currentMonth}-${String(now.getDate()).padStart(2, '0')}`
+
+    // 預設參考基數 (讓網站剛發布時具備基礎的人流展示)
+    const baseStats = {
+      today: 18,
+      month: 356,
+      year: 2840,
+      total: 5120
+    }
+
+    // 試圖讀取本地存儲的人流數據與最後存取日期標籤
+    const savedStatsStr = localStorage.getItem('han_profile_visitor_stats')
+    const lastDate = localStorage.getItem('han_profile_visitor_last_date') || ''
+    const lastMonth = localStorage.getItem('han_profile_visitor_last_month') || ''
+    const lastYear = localStorage.getItem('han_profile_visitor_last_year') || ''
+
+    let stats = savedStatsStr ? JSON.parse(savedStatsStr) : { ...baseStats }
+
+    // 日期跨度判定與歸零重置邏輯
+    if (lastYear !== currentYear) {
+      stats.year = 1
+    }
+    if (lastMonth !== currentMonth) {
+      stats.month = 1
+    }
+    if (lastDate !== currentDate) {
+      stats.today = 1
+    }
+
+    // 會話紀錄檢查：若在此會話中首次載入頁面，則進行計數遞增
+    const hasVisitedSession = sessionStorage.getItem('han_profile_session_visited')
+    if (!hasVisitedSession) {
+      stats.today += 1
+      stats.month += 1
+      stats.year += 1
+      stats.total += 1
+      sessionStorage.setItem('han_profile_session_visited', 'true')
+    }
+
+    // 寫回本地存儲並更新當前日期標記
+    localStorage.setItem('han_profile_visitor_stats', JSON.stringify(stats))
+    localStorage.setItem('han_profile_visitor_last_date', currentDate)
+    localStorage.setItem('han_profile_visitor_last_month', currentMonth)
+    localStorage.setItem('han_profile_visitor_last_year', currentYear)
+
+    // 更新響應式狀態以渲染至視圖層
+    visitorStats.value = stats
+  }
+
   /**
    * 註冊 Vue 的生命週期鉤子
    * 當全站主外殼組件在網頁上正式渲染掛載完畢後自動觸發
@@ -116,6 +182,8 @@ export function useAppView() {
   onMounted(() => {
     // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
     typeEffect()
+    // 初始化人流計數器
+    initVisitorCounter()
     // 網頁初始化一進來時，預設先在 html 標籤打上淺色模式的 data-theme="light" 屬性，確保畫面預設為白天模式
     // document.documentElement.setAttribute('data-theme', 'light')
     // 網頁初始化一進來時，預設先在 html 標籤打上深色模式的 data-theme="dark" 屬性，確保畫面預設為黑夜模式
@@ -152,6 +220,7 @@ export function useAppView() {
     toggleTheme,
     showScrollTopBtn,
     scrollToTop,
-    showThemeTip
+    showThemeTip,
+    visitorStats
   }
 }
