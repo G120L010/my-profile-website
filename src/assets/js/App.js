@@ -119,7 +119,7 @@ export function useAppView() {
 
   /**
    * 人流計數器初始化與更新控制函式
-   * 優先透過全網真實 CountAPI 服務進行計數與數據存取，若無網路或超時則自動轉回本地 LocalStorage 備援
+   * 採用穩定營運之 CounterAPI (counterapi.dev) 全球雲端服務，達成手機與電腦跨裝置實時同步計數
    */
   const initVisitorCounter = async () => {
     // 主動清理舊版帶有虛構基數之本地存儲快取
@@ -133,35 +133,36 @@ export function useAppView() {
     const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
     const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-    // 專案專屬之 API 命名空間與會話狀態檢查
-    const namespace = 'hanjohn_profile_website_v2'
+    // 專案專屬 CounterAPI 命名空間
+    const workspace = 'hanjohn_profile_site'
     const hasVisitedSession = sessionStorage.getItem('han_profile_session_visited')
-    const action = hasVisitedSession ? 'get' : 'hit'
 
-    // 通用帶有 3.5 秒連線超時防呆之 API 請求函式
-    const fetchApiCount = async (key) => {
+    // 通用 CounterAPI 請求函式（會話首次載入用 /up 遞增，同會話刷新用單純 GET 讀取）
+    const fetchCounter = async (key) => {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3500)
-      const url = `https://api.countapi.xyz/${action}/${namespace}/${key}`
+      const timeoutId = setTimeout(() => controller.abort(), 4000)
+      const action = hasVisitedSession ? '' : '/up'
+      const url = `https://api.counterapi.dev/v1/${workspace}/${key}${action}`
+      
       const response = await fetch(url, { signal: controller.signal })
       clearTimeout(timeoutId)
       if (!response.ok) {
-        throw new Error(`HTTP error status ${response.status}`)
+        throw new Error(`CounterAPI error status: ${response.status}`)
       }
       const data = await response.json()
-      return data.value || 1
+      return data.count || data.value || 1
     }
 
     try {
-      // 嘗試非同步並發取得全網真實日、月、年及總瀏覽人流
+      // 嘗試並發連線取得全網真實日、月、年與累計總人流
       const [todayCount, monthCount, yearCount, totalCount] = await Promise.all([
-        fetchApiCount(`today_${currentDate}`),
-        fetchApiCount(`month_${currentMonth}`),
-        fetchApiCount(`year_${currentYear}`),
-        fetchApiCount('total_all')
+        fetchCounter(`today_${currentDate}`),
+        fetchCounter(`month_${currentMonth}`),
+        fetchCounter(`year_${currentYear}`),
+        fetchCounter('total')
       ])
 
-      // 標記當前會話已完成防刷新計數
+      // 標記當前會話已完成計數
       if (!hasVisitedSession) {
         sessionStorage.setItem('han_profile_session_visited', 'true')
       }
