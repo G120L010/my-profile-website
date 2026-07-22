@@ -117,111 +117,126 @@ export function useAppView() {
     total: 1
   })
 
+  // 安全讀取與寫入 Storage 之防呆輔助函式，防止無痕模式或限制環境引發 DOMException
+  const safeGetItem = (type, key) => {
+    try {
+      const storage = type === 'session' ? sessionStorage : localStorage
+      return storage ? storage.getItem(key) : null
+    } catch (e) {
+      return null
+    }
+  }
+
+  const safeSetItem = (type, key, val) => {
+    try {
+      const storage = type === 'session' ? sessionStorage : localStorage
+      if (storage) {
+        storage.setItem(key, val)
+      }
+    } catch (e) {
+      // 忽略防追蹤或無痕模式下之寫入失敗例外
+    }
+  }
+
   /**
    * 人流計數器初始化與更新控制函式
    * 採用多重 API 服務 (Miles Hilliard CountAPI / CounterAPI.dev) 結合 Promise.allSettled 與全自動備援機制
    * 解決單一 API 失敗導致 Promise.all 崩潰、零值邏輯判斷錯誤與跨裝置未同步之所有隱性 Bug
    */
   const initVisitorCounter = async () => {
-    // 獲取當前系統時間並格式化為年月日字串
-    const now = new Date()
-    const currentYear = String(now.getFullYear())
-    const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
-    const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
+    try {
+      // 獲取當前系統時間並格式化為年月日字串
+      const now = new Date()
+      const currentYear = String(now.getFullYear())
+      const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
+      const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-    // 優先載入本地上次快取數據，防止頁面初始化時數字閃爍 0
-    const localSaved = localStorage.getItem('han_profile_real_stats')
-    if (localSaved) {
-      try {
-        const parsed = JSON.parse(localSaved)
-        visitorStats.value = {
-          today: parsed.today || 1,
-          month: parsed.month || 1,
-          year: parsed.year || 1,
-          total: parsed.total || 1
+      // 優先載入本地上次快取數據，防止頁面初始化時數字閃爍 0
+      const localSaved = safeGetItem('local', 'han_profile_real_stats')
+      if (localSaved) {
+        try {
+          const parsed = JSON.parse(localSaved)
+          visitorStats.value = {
+            today: parsed.today || 1,
+            month: parsed.month || 1,
+            year: parsed.year || 1,
+            total: parsed.total || 1
+          }
+        } catch (e) {
+          // 忽略無效的本地快取格式
         }
-      } catch (e) {
-        // 忽略無效的本地快取格式
-      }
-    }
-
-    // 檢查會話與日期標籤：若為全新會話或進入新的一天，則進行計數遞增 (hit/up)
-    const sessionDate = sessionStorage.getItem('han_profile_session_date')
-    const isNewVisit = sessionDate !== currentDate
-
-    // 專案專屬 Key 名稱
-    const keys = {
-      today: `today_${currentDate}`,
-      month: `month_${currentMonth}`,
-      year: `year_${currentYear}`,
-      total: 'total_all'
-    }
-
-    // 多服務提供者請求函式：優先使用 Miles Hilliard CountAPI，若失敗則切換至 CounterAPI.dev
-    const fetchSingleKey = async (keyName, keyStr) => {
-      const isHit = isNewVisit
-      const action = isHit ? 'hit' : 'get'
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 3500)
-
-      try {
-        // 主提供者 1: Miles Hilliard CountAPI (原 CountAPI 官方推薦之相容 API)
-        const url1 = `https://countapi.mileshilliard.com/${action}/hanjohn_profile_site/${keyStr}`
-        const res1 = await fetch(url1, { signal: controller.signal })
-        clearTimeout(timeoutId)
-        if (res1.ok) {
-          const data = await res1.json()
-          const val = typeof data.value === 'number' ? data.value : (typeof data.count === 'number' ? data.count : null)
-          if (val !== null) return val
-        }
-      } catch (e1) {
-        // 忽略服務者 1 異常，繼續嘗試服務者 2
       }
 
-      // 次提供者 2: CounterAPI.dev (作為強大備援)
-      try {
-        const controller2 = new AbortController()
-        const timeoutId2 = setTimeout(() => controller2.abort(), 3500)
-        const action2 = isHit ? '/up' : ''
-        const url2 = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action2}`
-        const res2 = await fetch(url2, { signal: controller2.signal })
-        clearTimeout(timeoutId2)
-        if (res2.ok) {
-          const data = await res2.json()
-          const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-          if (val !== null) return val
-        }
-      } catch (e2) {
-        // 忽略服務者 2 異常
+      // 檢查會話與日期標籤：若為全新會話或進入新的一天，則進行計數遞增 (hit/up)
+      const sessionDate = safeGetItem('session', 'han_profile_session_date')
+      const isNewVisit = sessionDate !== currentDate
+
+      // 專案專屬 Key 名稱
+      const keys = {
+        today: `today_${currentDate}`,
+        month: `month_${currentMonth}`,
+        year: `year_${currentYear}`,
+        total: 'total_all'
       }
 
-      // 若所有線上 API 皆連線失敗，回退至目前狀態值
-      return visitorStats.value[keyName] || 1
+      // 專屬 CounterAPI 請求函式（乾淨回應且無 404 控制台紅字報錯）
+      const fetchSingleKey = async (keyName, keyStr) => {
+        const isHit = isNewVisit
+        const action = isHit ? '/up' : ''
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 4000)
+
+        try {
+          // 主提供者: CounterAPI.dev (支援自動創建 Key 與 200 OK 乾淨回應)
+          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action}`
+          let res = await fetch(url, { signal: controller.signal })
+          
+          // 若非首次計數（GET 讀取模式）卻因 Key 尚未創立而回傳 404，自動切換至 /up 進行首次初始化創建
+          if (!res.ok && !isHit) {
+            const createUrl = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}/up`
+            res = await fetch(createUrl, { signal: controller.signal })
+          }
+
+          clearTimeout(timeoutId)
+          if (res.ok) {
+            const data = await res.json()
+            const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+            if (val !== null) return val
+          }
+        } catch (e) {
+          // 忽略連線或離線例外
+        }
+
+        // 若 API 暫時無法連線，回退至快取或預設值
+        return visitorStats.value[keyName] || 1
+      }
+
+      // 採用 Promise.allSettled 獨立處理每個 Key，避免單一 Key 失敗導致全盤皆輸
+      const results = await Promise.allSettled([
+        fetchSingleKey('today', keys.today),
+        fetchSingleKey('month', keys.month),
+        fetchSingleKey('year', keys.year),
+        fetchSingleKey('total', keys.total)
+      ])
+
+      const updatedStats = {
+        today: results[0].status === 'fulfilled' ? results[0].value : visitorStats.value.today,
+        month: results[1].status === 'fulfilled' ? results[1].value : visitorStats.value.month,
+        year: results[2].status === 'fulfilled' ? results[2].value : visitorStats.value.year,
+        total: results[3].status === 'fulfilled' ? results[3].value : visitorStats.value.total
+      }
+
+      // 標記會話日期
+      if (isNewVisit) {
+        safeSetItem('session', 'han_profile_session_date', currentDate)
+      }
+
+      // 更新至本地快取與響應式狀態
+      safeSetItem('local', 'han_profile_real_stats', JSON.stringify(updatedStats))
+      visitorStats.value = updatedStats
+    } catch (globalErr) {
+      // 安全捕獲全域異常，防範任何未預期的 DOMException 向外拋出
     }
-
-    // 採用 Promise.allSettled 獨立處理每個 Key，避免單一 Key 失敗導致全盤皆輸
-    const results = await Promise.allSettled([
-      fetchSingleKey('today', keys.today),
-      fetchSingleKey('month', keys.month),
-      fetchSingleKey('year', keys.year),
-      fetchSingleKey('total', keys.total)
-    ])
-
-    const updatedStats = {
-      today: results[0].status === 'fulfilled' ? results[0].value : visitorStats.value.today,
-      month: results[1].status === 'fulfilled' ? results[1].value : visitorStats.value.month,
-      year: results[2].status === 'fulfilled' ? results[2].value : visitorStats.value.year,
-      total: results[3].status === 'fulfilled' ? results[3].value : visitorStats.value.total
-    }
-
-    // 標記會話日期
-    if (isNewVisit) {
-      sessionStorage.setItem('han_profile_session_date', currentDate)
-    }
-
-    // 更新至本地快取與響應式狀態
-    localStorage.setItem('han_profile_real_stats', JSON.stringify(updatedStats))
-    visitorStats.value = updatedStats
   }
 
   /**
@@ -229,21 +244,27 @@ export function useAppView() {
    * 當全站主外殼組件在網頁上正式渲染掛載完畢後自動觸發
    */
   onMounted(() => {
-    // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
-    typeEffect()
-    // 初始化人流計數器
-    initVisitorCounter()
-    // 網頁初始化一進來時，預設先在 html 標籤打上淺色模式的 data-theme="light" 屬性，確保畫面預設為白天模式
-    // document.documentElement.setAttribute('data-theme', 'light')
-    // 網頁初始化一進來時，預設先在 html 標籤打上深色模式的 data-theme="dark" 屬性，確保畫面預設為黑夜模式
-    document.documentElement.setAttribute('data-theme', 'dark')
-    // 註冊滾動監聽事件以控制回到頂部按鈕的隱現
-    window.addEventListener('scroll', handleScroll)
+    try {
+      // 呼叫打字機計時控制函式，正式啟動逐字打印的網頁文字動畫特效
+      typeEffect()
+      // 初始化人流計數器，並補捕獲 Promise 例外
+      initVisitorCounter().catch(() => {})
+      // 設定全站深色主題
+      if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.setAttribute('data-theme', 'dark')
+      }
+      // 註冊滾動監聽事件以控制回到頂部按鈕的隱現
+      if (typeof window !== 'undefined') {
+        window.addEventListener('scroll', handleScroll)
+      }
 
-    // 設定 8 秒後自動隱藏開關燈氣泡提示的定時器
-    themeTipTimer = setTimeout(() => {
-      showThemeTip.value = false
-    }, 8000)
+      // 設定 8 秒後自動隱藏開關燈氣泡提示的定時器
+      themeTipTimer = setTimeout(() => {
+        showThemeTip.value = false
+      }, 8000)
+    } catch (e) {
+      // 全局生命週期例外防呆防護
+    }
   })
 
   /**
