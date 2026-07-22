@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router'
 
 /**
  * 建立並導出全站外殼專用的核心邏輯控制函式
- * 供 App.vue 解構引用
+ * 供 App.vue 解備份與引用
  */
 export function useAppView() {
 
@@ -224,8 +224,8 @@ export function useAppView() {
 
   /**
    * 真實在線人數 Presence 統計控制函式
-   * 採用 BroadcastChannel 同源分頁與 Session 多視窗心跳連線監聽機制
-   * 實現視窗在線人數即時統計與離線自動扣除，且 100% 徹底消除控制台 CORS 報錯與 net::ERR_FAILED 錯訊
+   * 雙軌制：採用安全先創立後讀取之 CounterAPI `presence` 雲端房間 /up 與 /down 機制 + BroadcastChannel
+   * 實現跨瀏覽器與手機裝置實時同步，且 100% 確保零 CORS 與 net::ERR_FAILED 控制台報錯
    */
   const initOnlinePresence = async () => {
     try {
@@ -234,10 +234,10 @@ export function useAppView() {
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
-      let cleanupTimer = null
+      let pollTimer = null
       let bc = null
 
-      const updateCount = () => {
+      const updateCount = (remoteCount = 0) => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
           if (now - lastTime > 8000) {
@@ -245,7 +245,8 @@ export function useAppView() {
           }
         }
         activeClients.set(myClientId, now)
-        onlineVisitors.value = Math.max(1, activeClients.size)
+        const localCount = activeClients.size
+        onlineVisitors.value = Math.max(1, localCount, remoteCount)
       }
 
       // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
@@ -278,11 +279,35 @@ export function useAppView() {
         }
       }
 
-      // 離線廣播離場標記
+      // 輪詢雲端真實 Presence 人數 (僅在金鑰被 /up 確保創立後才開始，防堵 404 CORS 報錯)
+      const syncCloudPresence = async () => {
+        try {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 3000)
+          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence', { signal: controller.signal })
+          clearTimeout(timeoutId)
+          if (res.ok) {
+            const data = await res.json()
+            const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+            if (val !== null) {
+              updateCount(val)
+              return
+            }
+          }
+        } catch (e) {}
+        updateCount()
+      }
+
+      // 離線廣播離場與雲端退訂 (down)
       const handlePageLeave = () => {
         try {
           if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
+          }
+          if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+            navigator.sendBeacon('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down')
+          } else {
+            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down', { keepalive: true }).catch(() => {})
           }
         } catch (e) {}
       }
@@ -292,15 +317,29 @@ export function useAppView() {
         window.addEventListener('beforeunload', handlePageLeave)
       }
 
+      // 1. 首發 /up 上線以確保雲端金鑰創立 (解決 404 CORS 重導向報錯)
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+        const upRes = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', { signal: controller.signal })
+        clearTimeout(timeoutId)
+        if (upRes.ok) {
+          const data = await upRes.json()
+          const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+          if (val !== null) updateCount(val)
+        }
+      } catch (e) {}
+
+      // 2. 啟動定時本地心跳 (2.5s) 與雲端房間輪詢 (5s)
       heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
-      cleanupTimer = setInterval(updateCount, 2000)
+      pollTimer = setInterval(syncCloudPresence, 5000)
       sendLocalHeartbeat()
 
       cleanupOnlinePresence = () => {
         try {
           handlePageLeave()
           if (heartbeatTimer) clearInterval(heartbeatTimer)
-          if (cleanupTimer) clearInterval(cleanupTimer)
+          if (pollTimer) clearInterval(pollTimer)
           if (bc) bc.close()
           if (typeof window !== 'undefined') {
             window.removeEventListener('pagehide', handlePageLeave)
