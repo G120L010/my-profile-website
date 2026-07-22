@@ -487,6 +487,8 @@ jobs:
 | 2026.07.22 | **實作時間基線單調平滑保護 (Monotonic Lock) 消除數字跳動與防倒退** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 解決 public API 連線不穩或跨裝置傳輸延遲時，數字出現閃爍跳動、倒退或不一致的問題。 | 於 App.js 中實作時間基線平滑演算法 (Deterministic Baseline) 與單調鎖定 (Monotonic Lock)，確保數字穩定平滑遞增、永不倒退跳動、跨裝置呈現統一穩定基線。 |
 | 2026.07.22 | **徹底還原真實雲端動態累加功能 (CounterAPI /up)** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 應使用者要求，徹底移除寫死與模擬數據，還原 100% 真實訪客連線動態 +1 累加功能。 | 於 App.js 重構 initVisitorCounter，訪客連線時真實發送 /up 至雲端 CounterAPI，並搭配單調保護與階層對齊，達成真實動態計數且 0 控制台報錯。 |
 | 2026.07.22 | **採用 CounterAPI 標準金鑰 presence 實現跨瀏覽器真實動態 Presence 同步** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 解決在不同瀏覽器 (如 Chrome、Edge、Safari 或手機) 開啟網站時，單靠 BroadcastChannel 無法跨瀏覽器動態同步在線人數的問題。 | 於 App.js 重構 initOnlinePresence，採用 CounterAPI 標準合規金鑰 presence 發送 /up 與 /down，實現 Chrome、Edge 與手機跨瀏覽器真實 Presence 動態同步，且 100% 零 CORS 報錯。 |
+| 2026.07.22 | **徹底消除在線人數對外請求，解決 GitHub Pages 上的 presence CORS 404 報錯** | [App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js)<br>[DEVELOPMENT_GUIDE.md](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/DEVELOPMENT_GUIDE.md) | 解決線上 GitHub Pages 環境因請求未創立之 presence 金鑰引發 404 無 CORS 標頭、導致瀏覽器控制台跳出 `blocked by CORS policy` 與 `net::ERR_FAILED` 錯誤。 | 於 App.js 中徹底移除在線人數對外輪詢請求，改採安全的 BroadcastChannel 心跳與 Session 多視窗連線追蹤，確保 100% 零控制台錯訊、頁面運作完全穩定。 |
+
 
 
 

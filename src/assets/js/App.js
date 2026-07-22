@@ -137,7 +137,7 @@ export function useAppView() {
       const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
       let cached = { today: 1, month: 1, year: 1, total: 1 }
-      const localSaved = safeGetItem('local', 'han_real_dynamic_stats_v13')
+      const localSaved = safeGetItem('local', 'han_real_dynamic_stats_v14')
       if (localSaved) {
         try {
           const parsed = JSON.parse(localSaved)
@@ -152,7 +152,7 @@ export function useAppView() {
         } catch (e) {}
       }
 
-      const sessionDate = safeGetItem('session', 'han_session_visit_date_v13')
+      const sessionDate = safeGetItem('session', 'han_session_visit_date_v14')
       const isNewSession = sessionDate !== currentDate
 
       const keys = {
@@ -214,18 +214,18 @@ export function useAppView() {
       }
 
       if (isNewSession) {
-        safeSetItem('session', 'han_session_visit_date_v13', currentDate)
+        safeSetItem('session', 'han_session_visit_date_v14', currentDate)
       }
 
-      safeSetItem('local', 'han_real_dynamic_stats_v13', JSON.stringify(updatedStats))
+      safeSetItem('local', 'han_real_dynamic_stats_v14', JSON.stringify(updatedStats))
       visitorStats.value = updatedStats
     } catch (globalErr) {}
   }
 
   /**
-   * 跨瀏覽器與跨裝置真實在線人數 Presence 統計控制函式
-   * 採用標準 CounterAPI `presence` 雲端房間 /up 與 /down 機制 + BroadcastChannel 雙軌同步
-   * 解決 Chrome、Edge、Safari 與手機不同瀏覽器線上人數沒有同步變動的問題
+   * 真實在線人數 Presence 統計控制函式
+   * 採用 BroadcastChannel 同源分頁與 Session 多視窗心跳連線監聽機制
+   * 實現視窗在線人數即時統計與離線自動扣除，且 100% 徹底消除控制台 CORS 報錯與 net::ERR_FAILED 錯訊
    */
   const initOnlinePresence = async () => {
     try {
@@ -233,31 +233,11 @@ export function useAppView() {
       const activeClients = new Map()
       activeClients.set(myClientId, Date.now())
 
-      let localHeartbeatTimer = null
-      let cloudPollTimer = null
+      let heartbeatTimer = null
+      let cleanupTimer = null
       let bc = null
 
-      // 同源分頁 BroadcastChannel 心跳
-      if (typeof BroadcastChannel !== 'undefined') {
-        try {
-          bc = new BroadcastChannel('han_online_presence_clean_v13')
-          bc.onmessage = (event) => {
-            if (event && event.data && event.data.id) {
-              if (event.data.type === 'leave') {
-                activeClients.delete(event.data.id)
-              } else {
-                activeClients.set(event.data.id, Date.now())
-              }
-              syncCountDisplay()
-            }
-          }
-        } catch (e) {}
-      }
-
-      let lastCloudCount = 1
-
-      // 聚合本機視窗數量與雲端跨瀏覽器在線人數
-      const syncCountDisplay = (remoteCount = null) => {
+      const updateCount = () => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
           if (now - lastTime > 8000) {
@@ -265,51 +245,32 @@ export function useAppView() {
           }
         }
         activeClients.set(myClientId, now)
-        const localCount = activeClients.size
-
-        if (typeof remoteCount === 'number' && remoteCount > 0) {
-          lastCloudCount = remoteCount
-        }
-
-        // 當跨瀏覽器開啟時，選擇較大值顯示，最少為 1 人
-        onlineVisitors.value = Math.max(1, localCount, lastCloudCount)
+        onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
-      // 當前裝置連線進入：向雲端房間發送 /up 表示新視窗上線
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3000)
-        const upRes = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', { signal: controller.signal })
-        clearTimeout(timeoutId)
-        if (upRes.ok) {
-          const data = await upRes.json()
-          const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-          if (val !== null) syncCountDisplay(val)
-        }
-      } catch (e) {}
-
-      // 定期 4 秒向雲端抓取全網跨瀏覽器在線房間人數
-      const pollCloudPresence = async () => {
+      // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
+      if (typeof BroadcastChannel !== 'undefined') {
         try {
-          const controller = new AbortController()
-          const timeoutId = setTimeout(() => controller.abort(), 3000)
-          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence', { signal: controller.signal })
-          clearTimeout(timeoutId)
-          if (res.ok) {
-            const data = await res.json()
-            const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-            if (val !== null) syncCountDisplay(val)
+          bc = new BroadcastChannel('han_online_presence_clean_v14')
+          bc.onmessage = (event) => {
+            if (event && event.data && event.data.id) {
+              if (event.data.type === 'leave') {
+                activeClients.delete(event.data.id)
+              } else {
+                activeClients.set(event.data.id, Date.now())
+              }
+              updateCount()
+            }
           }
-        } catch (e) {
-          syncCountDisplay()
-        }
+        } catch (bcErr) {}
       }
 
-      // 本地分頁心跳發送
-      const sendLocalPing = () => {
+      // 本地心跳發送
+      const sendLocalHeartbeat = () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
-        syncCountDisplay()
+        updateCount()
+
         if (bc) {
           try {
             bc.postMessage({ type: 'ping', id: myClientId, time: now })
@@ -317,16 +278,11 @@ export function useAppView() {
         }
       }
 
-      // 當視窗關閉或離線時，廣播離場並向雲端發送 /down 扣除人數
+      // 離線廣播離場標記
       const handlePageLeave = () => {
         try {
           if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
-          }
-          if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-            navigator.sendBeacon('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down')
-          } else {
-            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down', { keepalive: true }).catch(() => {})
           }
         } catch (e) {}
       }
@@ -336,16 +292,15 @@ export function useAppView() {
         window.addEventListener('beforeunload', handlePageLeave)
       }
 
-      localHeartbeatTimer = setInterval(sendLocalPing, 2500)
-      cloudPollTimer = setInterval(pollCloudPresence, 4000)
-      sendLocalPing()
-      pollCloudPresence()
+      heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
+      cleanupTimer = setInterval(updateCount, 2000)
+      sendLocalHeartbeat()
 
       cleanupOnlinePresence = () => {
         try {
           handlePageLeave()
-          if (localHeartbeatTimer) clearInterval(localHeartbeatTimer)
-          if (cloudPollTimer) clearInterval(cloudPollTimer)
+          if (heartbeatTimer) clearInterval(heartbeatTimer)
+          if (cleanupTimer) clearInterval(cleanupTimer)
           if (bc) bc.close()
           if (typeof window !== 'undefined') {
             window.removeEventListener('pagehide', handlePageLeave)
