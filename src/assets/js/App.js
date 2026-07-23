@@ -237,7 +237,8 @@ export function useAppView() {
       let pollTimer = null
       let bc = null
       let isLeader = false
-      let lastCloudCount = 0
+      let currentRemoteCount = 0
+      let isAppVisible = true
 
       // 聚合本地分頁計數與雲端房間人數
       const updateCount = (remoteCount = 0) => {
@@ -249,10 +250,18 @@ export function useAppView() {
         }
         activeClients.set(myClientId, now)
         const localCount = activeClients.size
-        if (remoteCount > 0) {
-          lastCloudCount = remoteCount
+
+        if (typeof remoteCount === 'number' && remoteCount > 0) {
+          // 對雲端回傳人數進行上限防護（上限為今日總瀏覽人數 + 10，避免歷史積累溢出）
+          const maxAllowed = Math.max(localCount, (visitorStats.value?.today || 1) + 10)
+          currentRemoteCount = Math.min(remoteCount, maxAllowed)
+        } else if (remoteCount === 0 && currentRemoteCount > 0) {
+          // 當雲端回傳 0 時同步歸零動態雲端人數
+          currentRemoteCount = 0
         }
-        onlineVisitors.value = Math.max(1, localCount, lastCloudCount)
+
+        // 即時反映當前本地活躍分頁數與動態雲端人數，使人數可隨分頁關閉/離開而即時下降
+        onlineVisitors.value = Math.max(1, localCount, currentRemoteCount)
       }
 
       // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
@@ -279,7 +288,6 @@ export function useAppView() {
       const sendLocalHeartbeat = () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
-        updateCount()
 
         // 領袖選舉：藉由 localStorage 協調分頁身分
         let tabs = {}
@@ -287,6 +295,8 @@ export function useAppView() {
           const saved = localStorage.getItem('han_active_tabs')
           if (saved) tabs = JSON.parse(saved)
         } catch (e) {}
+
+        tabs[myClientId] = now
 
         const activeTabIds = []
         for (const [id, lastTime] of Object.entries(tabs)) {
@@ -297,15 +307,14 @@ export function useAppView() {
           }
         }
 
-        tabs[myClientId] = now
-        activeTabIds.push(myClientId)
-
         try {
           localStorage.setItem('han_active_tabs', JSON.stringify(tabs))
         } catch (e) {}
 
         activeTabIds.sort()
         isLeader = activeTabIds[0] === myClientId
+
+        updateCount()
 
         if (bc) {
           try {
@@ -362,9 +371,34 @@ export function useAppView() {
         } catch (e) {}
       }
 
+      // 處理頁面切換至背景 (Hidden) 或回到前台 (Visible)
+      const handleVisibilityChange = () => {
+        if (typeof document === 'undefined') return
+
+        if (document.visibilityState === 'hidden') {
+          if (isAppVisible) {
+            isAppVisible = false
+            handlePageLeave()
+          }
+        } else if (document.visibilityState === 'visible') {
+          if (!isAppVisible) {
+            isAppVisible = true
+            try {
+              fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', { keepalive: true }).catch(() => {})
+            } catch (e) {}
+            sendLocalHeartbeat()
+            if (isLeader) syncCloudPresence()
+          }
+        }
+      }
+
       if (typeof window !== 'undefined') {
         window.addEventListener('pagehide', handlePageLeave)
         window.addEventListener('beforeunload', handlePageLeave)
+      }
+
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', handleVisibilityChange)
       }
 
       // 1. 首發 /up 上線確保雲端金鑰已建立，並異步等待以防並行請求 404 CORS
@@ -394,6 +428,9 @@ export function useAppView() {
           if (typeof window !== 'undefined') {
             window.removeEventListener('pagehide', handlePageLeave)
             window.removeEventListener('beforeunload', handlePageLeave)
+          }
+          if (typeof document !== 'undefined') {
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
           }
         } catch (e) {}
       }
