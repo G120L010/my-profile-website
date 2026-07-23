@@ -43,6 +43,11 @@
       <span>{{ currentLocale === 'zh-TW' ? 'EN' : (currentLocale === 'en' ? 'にほんご' : '繁中') }}</span>
     </button>
 
+    <!-- 懸浮固定於左上角語言按鈕右側之 PWA 一鍵安裝提示按鈕 (僅在瀏覽器符合 PWA 安裝條件時顯現) -->
+    <button v-if="canInstallPWA" @click="installPWA" class="btn custom-pwa-install-btn" :title="$t('control.pwaInstallTip')">
+      <span>📲</span>
+    </button>
+
     <!-- 懸浮固定於右下角的回到頂部按鈕 -->
     <Transition name="fade">
       <button v-show="showScrollTopBtn" @click="scrollToTop" class="btn custom-scroll-top-btn" :title="$t('control.scrollTopTip')">
@@ -210,6 +215,8 @@ const {
   onlineVisitors,
   currentLocale,
   toggleLanguage,
-  scrollProgress
+  scrollProgress,
+  canInstallPWA,
+  installPWA
 } = useAppView()
 </script>

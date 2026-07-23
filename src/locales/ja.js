@@ -36,6 +36,8 @@ export default {
     themeDarkTip: 'ダークモードに切り替え',
     themeTipText: '暗すぎますか？クリックして点灯！',
     scrollTopTip: 'ページトップへ',
+    pdfExportTip: '履歴書PDF出力',
+    pwaInstallTip: '履歴書Appをインストール',
     langToggleTip: '言語切り替え / Switch Language / 言語切替',
     currentLangName: '日本語'
   }

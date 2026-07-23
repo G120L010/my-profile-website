@@ -462,6 +462,43 @@
 }
 
 /* ========================================== */
+/* 5.3 左上角 PWA 一鍵安裝履歷 App 懸浮按鈕     */
+/* ========================================== */
+.custom-pwa-install-btn {
+  position: fixed;
+  top: 1.5rem;
+  left: 6.2rem;
+  width: 66px;
+  height: 66px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999;
+  background-color: var(--neon-btn-bg) !important;
+  color: var(--neon-btn-text) !important;
+  font-size: 1.25rem !important;
+  border: 2px solid var(--neon-glow-color) !important;
+  box-shadow: 0 0 8px var(--neon-glow-color), inset 0 0 4px var(--neon-glow-color) !important;
+  animation: neonPulse 1.8s infinite alternate ease-in-out !important;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  cursor: pointer;
+}
+
+.custom-pwa-install-btn:hover {
+  background-color: var(--neon-glow-color) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px var(--neon-glow-color), 0 0 30px var(--neon-glow-color) !important;
+  transform: scale(1.1);
+}
+
+.custom-pwa-install-btn span {
+  display: inline-block !important;
+  line-height: 1 !important;
+}
+
+/* ========================================== */
 /* 5.2 右下角懸浮回到頂部按鈕                  */
 /* ========================================== */
 .custom-scroll-top-btn {
@@ -526,6 +563,17 @@
     width: 55px !important;
     height: 55px !important;
     font-size: 1.1rem !important;
+  }
+
+  /* 手機版 PWA 安裝按鈕：固定於左上角語言按鈕右側，55px * 55px */
+  .custom-pwa-install-btn {
+    top: 1rem !important;
+    left: 5rem !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 1.15rem !important;
   }
 }
 

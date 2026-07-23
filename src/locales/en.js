@@ -35,6 +35,8 @@ export default {
     themeLightTip: 'Switch to Light Mode',
     themeDarkTip: 'Switch to Dark Mode',
     themeTipText: 'Too dark? Click to turn on light!',
+    pdfExportTip: 'Export Resume PDF',
+    pwaInstallTip: 'Install Resume App',
     scrollTopTip: 'Back to Top',
     langToggleTip: 'Switch Language / 切換語言',
     currentLangName: 'EN'

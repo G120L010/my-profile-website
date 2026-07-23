@@ -35,6 +35,8 @@ export default {
     themeLightTip: '切換為白天模式',
     themeDarkTip: '切換為黑夜模式',
     themeTipText: '太暗了嗎？點我開燈！',
+    pdfExportTip: '一鍵匯出履歷 PDF',
+    pwaInstallTip: '安裝履歷 App',
     scrollTopTip: '回到頂部',
     langToggleTip: '切換語言 / Switch Language',
     currentLangName: '繁中'

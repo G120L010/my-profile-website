@@ -421,14 +421,39 @@ export function useAppView() {
     }
   }
 
+  const deferredPrompt = ref(null)
+  const canInstallPWA = ref(false)
+
   /**
    * 【註冊 PWA Service Worker 實現離線瀏覽與桌面/手機安裝】
    */
   const initPWA = () => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      try {
-        navigator.serviceWorker.register('./sw.js').catch(() => { })
-      } catch (e) { }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        deferredPrompt.value = e
+        canInstallPWA.value = true
+      })
+
+      if ('serviceWorker' in navigator) {
+        try {
+          navigator.serviceWorker.register('./sw.js').catch(() => { })
+        } catch (e) { }
+      }
+    }
+  }
+
+  /**
+   * 【觸發原生 PWA 安裝提示對話方塊】
+   */
+  const installPWA = async () => {
+    if (deferredPrompt.value) {
+      deferredPrompt.value.prompt()
+      const choiceResult = await deferredPrompt.value.userChoice
+      if (choiceResult.outcome === 'accepted') {
+        canInstallPWA.value = false
+      }
+      deferredPrompt.value = null
     }
   }
 
@@ -481,6 +506,8 @@ export function useAppView() {
     onlineVisitors,
     currentLocale,
     toggleLanguage,
-    scrollProgress
+    scrollProgress,
+    canInstallPWA,
+    installPWA
   }
 }
