@@ -236,21 +236,27 @@ export function useAppView() {
    * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁 ID 註冊
    * 支援同一瀏覽器跨分頁/跨視窗同步；跨不同瀏覽器或跨裝置因 localStorage 各自獨立無法互通，為技術限制
    * 100% 零外連請求，徹底消除所有 CORS 與 net::ERR_FAILED 控制台報錯
+   * 核心原則：只有分頁真正關閉（pagehide / beforeunload）才離場，切換至背景分頁不影響在線計數
    */
   const initOnlinePresence = async () => {
     try {
+      // 為此分頁產生唯一識別碼，用來在跨分頁通訊中辨識自己
       const myClientId = 'cli_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36)
+
+      // 儲存目前已知的在線分頁 ID 與其最後心跳時間戳
       const activeClients = new Map()
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
       let bc = null
-      let isAppVisible = true
 
-      // 逾時閾值：超過此毫秒數未心跳的分頁視為離線（心跳 1.5s，逾時設 6s 提供足夠緩衝）
+      // 逾時閾值：分頁超過 6 秒未發送心跳，視為已離線（心跳頻率 1.5 秒，提供 4 倍緩衝）
       const TIMEOUT_MS = 6000
 
-      // 更新在線人數統計與清理逾時分頁
+      // localStorage 的鍵名（升級版本號以清除舊格式資料）
+      const TABS_KEY = 'han_active_tabs_v16'
+
+      // 更新在線人數：清理逾時分頁，確保自己永遠計入，再更新響應式數值
       const updateCount = () => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
@@ -258,63 +264,64 @@ export function useAppView() {
             activeClients.delete(id)
           }
         }
-        // 若當前分頁為可見狀態，確保自己在 Map 中有最新時間戳
-        if (isAppVisible) {
-          activeClients.set(myClientId, now)
-        } else {
-          activeClients.delete(myClientId)
-        }
+        // 不論分頁是否在前台，只要此 JS 仍在執行代表分頁開著，永遠把自己計入
+        activeClients.set(myClientId, now)
         onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
-      // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
+      // BroadcastChannel：同一瀏覽器的跨分頁即時訊息通道
       if (typeof BroadcastChannel !== 'undefined') {
         try {
-          bc = new BroadcastChannel('han_online_presence_clean_v14')
+          bc = new BroadcastChannel('han_presence_v16')
           bc.onmessage = (event) => {
             if (event && event.data) {
               if (event.data.type === 'leave') {
+                // 其他分頁宣告關閉，將其從在線列表移除
                 activeClients.delete(event.data.id)
-                updateCount()
+                onlineVisitors.value = Math.max(1, activeClients.size)
               } else if (event.data.type === 'ping') {
+                // 其他分頁發出心跳，更新其時間戳並重新計算人數
                 activeClients.set(event.data.id, Date.now())
-                updateCount()
+                onlineVisitors.value = Math.max(1, activeClients.size)
               }
             }
           }
         } catch (bcErr) {}
       }
 
-      // 本地心跳發送與分頁註冊更新
+      // 心跳函式：不論分頁是否在前台，每 1.5 秒持續執行一次
+      // 切換到背景分頁（hidden）不會停止心跳，因為背景分頁仍算在線
       const sendLocalHeartbeat = () => {
-        if (!isAppVisible) return
-
         const now = Date.now()
         activeClients.set(myClientId, now)
 
+        // 從 localStorage 讀取所有分頁的心跳紀錄
         let tabs = {}
         try {
-          const saved = localStorage.getItem('han_active_tabs')
+          const saved = localStorage.getItem(TABS_KEY)
           if (saved) tabs = JSON.parse(saved)
         } catch (e) {}
 
+        // 更新自己的時間戳
         tabs[myClientId] = now
 
+        // 清理逾時分頁並同步至 activeClients
         for (const [id, lastTime] of Object.entries(tabs)) {
           if (now - lastTime > TIMEOUT_MS) {
-            // 超過逾時閾值的分頁記錄從 localStorage 清除
             delete tabs[id]
           } else {
             activeClients.set(id, lastTime)
           }
         }
 
+        // 將最新的分頁清單寫回 localStorage（觸發其他分頁的 storage 事件）
         try {
-          localStorage.setItem('han_active_tabs', JSON.stringify(tabs))
+          localStorage.setItem(TABS_KEY, JSON.stringify(tabs))
         } catch (e) {}
 
         updateCount()
 
+        // 透過 BroadcastChannel 廣播心跳（同一瀏覽器其他分頁即時接收）
         if (bc) {
           try {
             bc.postMessage({ type: 'ping', id: myClientId, time: now })
@@ -322,62 +329,43 @@ export function useAppView() {
         }
       }
 
-      // 離線廣播離場並自 Storage 移除
+      // 離場函式：僅在分頁真正關閉時呼叫（pagehide / beforeunload）
+      // 切換至背景分頁不會呼叫此函式，以確保背景分頁仍計入在線人數
       const handlePageLeave = () => {
         try {
           activeClients.delete(myClientId)
           try {
-            const saved = localStorage.getItem('han_active_tabs')
+            const saved = localStorage.getItem(TABS_KEY)
             if (saved) {
               const tabs = JSON.parse(saved)
               delete tabs[myClientId]
-              localStorage.setItem('han_active_tabs', JSON.stringify(tabs))
+              localStorage.setItem(TABS_KEY, JSON.stringify(tabs))
             }
           } catch (e) {}
 
+          // 廣播離場訊息，讓同瀏覽器的其他分頁即時扣減人數
           if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
           }
-          updateCount()
         } catch (e) {}
       }
 
-      // 處理頁面切換至背景 (Hidden) 或回到前台 (Visible)
-      const handleVisibilityChange = () => {
-        if (typeof document === 'undefined') return
-
-        if (document.visibilityState === 'hidden') {
-          if (isAppVisible) {
-            isAppVisible = false
-            handlePageLeave()
-          }
-        } else if (document.visibilityState === 'visible') {
-          if (!isAppVisible) {
-            isAppVisible = true
-            sendLocalHeartbeat()
-          }
-        }
-      }
-
-      // 監聽 Storage 事件：當同一瀏覽器的其他分頁更新 localStorage 時觸發，實現跨分頁即時同步
-      // 注意：storage 事件不會在寫入的當前分頁觸發，只在其他分頁觸發，這是瀏覽器的標準行為
+      // Storage 事件：當同一瀏覽器的其他分頁更新 localStorage 時觸發
+      // storage 事件只會在「其他分頁」觸發，不會在寫入的當前分頁觸發，這是瀏覽器標準行為
       const handleStorageChange = (e) => {
-        if (e.key === 'han_active_tabs') {
+        if (e.key === TABS_KEY) {
           try {
             if (e.newValue) {
               const tabs = JSON.parse(e.newValue)
               const now = Date.now()
-              // 清空並從 localStorage 完整重建在線分頁列表
               activeClients.clear()
               for (const [id, lastTime] of Object.entries(tabs)) {
                 if (now - lastTime < TIMEOUT_MS) {
                   activeClients.set(id, lastTime)
                 }
               }
-              // 重建後補回自己的 myClientId（自己的心跳只存在 Map 中，不一定即時在 localStorage 的最新值裡）
-              if (isAppVisible) {
-                activeClients.set(myClientId, now)
-              }
+              // storage 事件觸發時，自己的最新時間戳可能尚未反映在 localStorage，補回以確保不漏算
+              activeClients.set(myClientId, now)
               onlineVisitors.value = Math.max(1, activeClients.size)
             }
           } catch (err) {}
@@ -390,11 +378,7 @@ export function useAppView() {
         window.addEventListener('storage', handleStorageChange)
       }
 
-      if (typeof document !== 'undefined') {
-        document.addEventListener('visibilitychange', handleVisibilityChange)
-      }
-
-      // 啟動定時本地心跳任務（每 1.5 秒更新一次，確保在 6 秒逾時前至少發送 3 次心跳）
+      // 啟動心跳定時器（每 1.5 秒），並立即執行一次以完成初始化
       heartbeatTimer = setInterval(sendLocalHeartbeat, 1500)
       sendLocalHeartbeat()
 
@@ -407,9 +391,6 @@ export function useAppView() {
             window.removeEventListener('pagehide', handlePageLeave)
             window.removeEventListener('beforeunload', handlePageLeave)
             window.removeEventListener('storage', handleStorageChange)
-          }
-          if (typeof document !== 'undefined') {
-            document.removeEventListener('visibilitychange', handleVisibilityChange)
           }
         } catch (e) {}
       }
