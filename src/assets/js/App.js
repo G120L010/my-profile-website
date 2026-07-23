@@ -1,44 +1,98 @@
 // 全站共用左側名片的打字機與深淺色主題切換業務邏輯控制檔案
 // 採用組合式 API (Composition API) 撰寫，方便功能模組化抽離
 
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { switchLanguage } from '@/i18n/index.js'
 
 /**
  * 建立並導出全站外殼專用的核心邏輯控制函式
- * 供 App.vue 解備份與引用
+ * 供 App.vue 解構與引用
  */
 export function useAppView() {
 
-  // 打字機設定：定義要在個人名片上像打字機一樣輸出字串
-  const fullText = '個性樂觀、熱衷學習、刻苦勤勞、積極進取'
+  // 取得 Vue I18n 實例
+  const { locale } = useI18n()
 
-  // 【打字機變數】建立一個初始值為空字串的響應式變數 (ref)，用來即時儲存目前已經印出來的文字
+  // 當前使用的語系標籤（zh-TW 或 en）
+  const currentLocale = computed(() => locale.value)
+
+  // 根據語系動態切換打字機要印出的文字內容
+  const getFullText = () => {
+    if (locale.value === 'en') {
+      return 'Optimistic, Motivated, Diligent, Proactive'
+    } else if (locale.value === 'ja') {
+      return '明るい・前向き・向上心・行動力'
+    }
+    return '個性樂觀、熱衷學習、刻苦勤勞、積極進取'
+  }
+
+  // 【打字機變數】建立一個初始值為空字串的響應式變數，儲存目前已印出的文字
   const displayText = ref('')
 
-  // 【打字機索引】宣告一個普通的整數變數，用來記錄打字機目前跑到了第幾個字元的索引位置
+  // 【打字機索引】記錄打字機跑到的字元位置
   let currentIndex = 0
 
-  // 【打字機計時器】儲存打字機定時器的實例，用以在組件銷毀時安全清除，防堵記憶體洩漏
+  // 【打字機計時器】儲存定時器實例
   let typeTimer = null
 
-  // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 false 代表淺色白天模式
-  // const isDarkMode = ref(false)
+  /**
+   * 【打字機核心函式】執行逐字打字效果
+   */
+  const typeEffect = () => {
+    const fullText = getFullText()
+    if (currentIndex < fullText.length) {
+      displayText.value += fullText.charAt(currentIndex)
+      currentIndex++
+      typeTimer = setTimeout(typeEffect, 100)
+    }
+  }
 
-  // 【主題變數】建立一個控制全站主題模式的響應式變數，預設值設定為 true 代表深色黑夜模式
+  /**
+   * 【重置打字機函式】切換語言時重置打字進度並重新啟動打字效果
+   */
+  const resetTypewriter = () => {
+    if (typeTimer) clearTimeout(typeTimer)
+    displayText.value = ''
+    currentIndex = 0
+    typeEffect()
+  }
+
+  // 監聽語系切換：當語言改變時，重新啟動打字機效果
+  watch(locale, () => {
+    resetTypewriter()
+  })
+
+  /**
+   * 【語言切換函式】在繁體中文 (zh-TW)、英文 (en) 與日文 (ja) 之間循環切換
+   */
+  const toggleLanguage = () => {
+    let targetLocale = 'en'
+    if (locale.value === 'zh-TW') {
+      targetLocale = 'en'
+    } else if (locale.value === 'en') {
+      targetLocale = 'ja'
+    } else {
+      targetLocale = 'zh-TW'
+    }
+    switchLanguage(targetLocale)
+  }
+
+  // 【主題變數】預設值設定為 true 代表深色黑夜模式
   const isDarkMode = ref(true)
 
-  // 【主題提示變數】控制右下角開燈/關燈趣味提示氣泡的隱現，預設一進入畫面時為 true 顯示
+  // 【主題提示變數】控制右下角開燈/關燈趣味提示氣泡的隱現
   const showThemeTip = ref(true)
   let themeTipTimer = null
 
-  // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態，大於 300px 時為真
+  // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態
   const showScrollTopBtn = ref(false)
 
   // 【路由監聽】取得當前路由物件以追蹤頁面切換
   const route = useRoute()
 
-  // 監聽路由路徑變化：當切換不同分頁時，協助回到最頂部
+  // 監聽路由路徑變化：切換不同分頁時自動回到最頂部
   watch(
     () => route.path,
     () => {
@@ -47,7 +101,7 @@ export function useAppView() {
     }
   )
 
-  // 【滾動監聽函式】監聽垂直滾動高度是否超過可滾動範圍的一半（滑到頁面中間）以決定顯示或隱藏按鈕
+  // 【滾動監聽函式】監聽垂直滾動高度決定顯示或隱藏置頂按鈕
   const handleScroll = () => {
     const scrollHeight = document.documentElement.scrollHeight
     const clientHeight = document.documentElement.clientHeight
@@ -59,7 +113,7 @@ export function useAppView() {
     }
   }
 
-  // 【平滑置頂函式】點擊置頂按鈕時，執行視窗平滑滾動回頁首
+  // 【平滑置頂函式】執行視窗平滑滾動回頁首
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -68,18 +122,7 @@ export function useAppView() {
   }
 
   /**
-   * 【打字機核心函式】宣告並定義執行逐字打字效果的遞迴計時函式
-   */
-  const typeEffect = () => {
-    if (currentIndex < fullText.length) {
-      displayText.value += fullText.charAt(currentIndex)
-      currentIndex++
-      typeTimer = setTimeout(typeEffect, 120)
-    }
-  }
-
-  /**
-   * 【主題切換函式】宣告切換深淺色主題模式的控制函式
+   * 【主題切換函式】切換深淺色主題模式
    */
   const toggleTheme = () => {
     isDarkMode.value = !isDarkMode.value
@@ -91,7 +134,7 @@ export function useAppView() {
     }
   }
 
-  // 人流計數器變數：建立一個儲存今日、本月、本年與累計總人流的響應式物件
+  // 人流計數器變數
   const visitorStats = ref({
     today: 1,
     month: 1,
@@ -99,10 +142,10 @@ export function useAppView() {
     total: 1
   })
 
-  // 在線人數變數：建立一個記錄當前真實線上人數的響應式變數，預設值設定為 1
+  // 在線人數變數
   const onlineVisitors = ref(1)
 
-  // 儲存真實在線人數 Presence 監聽器的銷毀清理控制函式
+  // 儲存 Presence 監聽器的銷毀清理控制函式
   let cleanupOnlinePresence = null
 
   // 安全讀取與寫入 Storage 之防呆輔助函式
@@ -121,148 +164,116 @@ export function useAppView() {
       if (storage) {
         storage.setItem(key, val)
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   /**
    * 真實雲端動態人流計數器初始化與遞增函式
-   * today/month/year 的 API Key 均帶入當前日期後綴（純英數字拼接，如 t20260723），
-   * 使其在不同日期、月份或年份時自動使用新的獨立計數器，模擬「換日/月/年歸零」的效果。
-   * 注意：API Key 中嚴禁使用底線 _，底線會導致 CounterAPI 回傳 301 重導向而丟失 CORS 標頭。
-   * 注意：只有「新 Session」才呼叫 API（/up 遞增），舊 Session（F5 重整）直接使用 localStorage 快取。
-   *       CounterAPI 的「讀取端點」（不帶 /up）也會回傳 301 CORS 報錯，因此一律不呼叫讀取端點。
-   * 僅 totalv15 使用固定 Key，確保累積總數持續增加。
-   * 搭配數學階層保障 (Total >= Year >= Month >= Today)，確保零報錯且數據對齊。
    */
   const initVisitorCounter = async () => {
     try {
       const now = new Date()
-      const yr = String(now.getFullYear())                                        // 年份字串，如 2026
-      const mo = String(now.getMonth() + 1).padStart(2, '0')                     // 月份字串，如 07
-      const dy = String(now.getDate()).padStart(2, '0')                           // 日期字串，如 23
+      const yr = String(now.getFullYear())
+      const mo = String(now.getMonth() + 1).padStart(2, '0')
+      const dy = String(now.getDate()).padStart(2, '0')
 
-      // 純英數字拼接的 API key（嚴禁底線，底線會觸發 CounterAPI 的 301 重導向 CORS 報錯）
-      const apiKeyToday = `t${yr}${mo}${dy}`                                     // 如 t20260723
-      const apiKeyMonth = `m${yr}${mo}`                                          // 如 m202607
-      const apiKeyYear  = `y${yr}`                                               // 如 y2026
-      const apiKeyTotal = 'totalv15'                                             // 固定累計 key
+      const apiKeyToday = `t${yr}${mo}${dy}`
+      const apiKeyMonth = `m${yr}${mo}`
+      const apiKeyYear = `y${yr}`
+      const apiKeyTotal = 'totalv15'
 
-      // 各計數器對應的 localStorage 快取 key（以 apiKey 為後綴，確保換日後不讀到舊的快取）
       const cacheKeyToday = `hanstat${apiKeyToday}`
       const cacheKeyMonth = `hanstat${apiKeyMonth}`
-      const cacheKeyYear  = `hanstat${apiKeyYear}`
+      const cacheKeyYear = `hanstat${apiKeyYear}`
       const cacheKeyTotal = `hanstat${apiKeyTotal}`
 
-      // 分別讀取各週期的快取值，若沒有就預設為 0（新的週期從 0 起算）
       const cachedToday = parseInt(safeGetItem('local', cacheKeyToday) || '0', 10) || 0
       const cachedMonth = parseInt(safeGetItem('local', cacheKeyMonth) || '0', 10) || 0
-      const cachedYear  = parseInt(safeGetItem('local', cacheKeyYear)  || '0', 10) || 0
+      const cachedYear = parseInt(safeGetItem('local', cacheKeyYear) || '0', 10) || 0
       const cachedTotal = parseInt(safeGetItem('local', cacheKeyTotal) || '0', 10) || 0
 
-      // 判斷是否為本次瀏覽器 Session 的第一次造訪（F5 重整為舊 Session，換日後為新 Session）
-      const sessionKey = `hanses${apiKeyToday}`                                   // 如 hansest20260723（純英數字）
+      const sessionKey = `hanses${apiKeyToday}`
       const isNewSession = !safeGetItem('session', sessionKey)
 
-      // 舊 Session（F5 重整、切換分頁等）：直接使用 localStorage 快取值顯示，完全不呼叫 API
-      // 原因：CounterAPI 的讀取端點（不帶 /up）同樣會回傳 301 重導向並丟失 CORS 標頭
       if (!isNewSession) {
         visitorStats.value = {
           today: Math.max(1, cachedToday),
           month: Math.max(Math.max(1, cachedToday), cachedMonth),
-          year:  Math.max(Math.max(1, cachedToday), Math.max(cachedMonth, cachedYear)),
+          year: Math.max(Math.max(1, cachedToday), Math.max(cachedMonth, cachedYear)),
           total: Math.max(Math.max(1, cachedYear), cachedTotal)
         }
         return
       }
 
-      // 新 Session 才執行以下 API 呼叫：僅使用 /up 端點遞增，絕不呼叫讀取端點
       const fetchUpKey = async (apiKey, cachedVal) => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
 
         try {
-          // 只呼叫 /up 端點（遞增），避免呼叫讀取端點引發 301 CORS 報錯
           const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}/up`
           const res = await fetch(url, { signal: controller.signal })
 
           clearTimeout(timeoutId)
           if (res.ok) {
             const data = await res.json()
-            // 相容 counterapi.dev 兩種可能的回應欄位名稱
             const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
             if (val !== null && val > 0) {
               return val
             }
           }
-        } catch (e) {}
+        } catch (e) { }
 
-        // API 失敗時本地快取 +1 作為 fallback（代表本次新造訪已計入）
         return cachedVal + 1
       }
 
-      // 並行呼叫四個計數器的 /up 端點
       const results = await Promise.allSettled([
         fetchUpKey(apiKeyToday, cachedToday),
         fetchUpKey(apiKeyMonth, cachedMonth),
-        fetchUpKey(apiKeyYear,  cachedYear),
+        fetchUpKey(apiKeyYear, cachedYear),
         fetchUpKey(apiKeyTotal, cachedTotal)
       ])
 
       const rawToday = results[0].status === 'fulfilled' ? results[0].value : cachedToday + 1
       const rawMonth = results[1].status === 'fulfilled' ? results[1].value : cachedMonth + 1
-      const rawYear  = results[2].status === 'fulfilled' ? results[2].value : cachedYear  + 1
+      const rawYear = results[2].status === 'fulfilled' ? results[2].value : cachedYear + 1
       const rawTotal = results[3].status === 'fulfilled' ? results[3].value : cachedTotal + 1
 
-      // 確保階層邏輯：今日 <= 本月 <= 本年 <= 累計，且各值至少為 1
       const todayCount = Math.max(1, rawToday)
       const monthCount = Math.max(todayCount, rawMonth)
-      const yearCount  = Math.max(monthCount, rawYear)
+      const yearCount = Math.max(monthCount, rawYear)
       const totalCount = Math.max(yearCount, rawTotal)
 
       const updatedStats = {
         today: todayCount,
         month: monthCount,
-        year:  yearCount,
+        year: yearCount,
         total: totalCount
       }
 
-      // 記錄 Session 標記，並將新值寫回各自的 localStorage key 供後續快取使用
       safeSetItem('session', sessionKey, '1')
       safeSetItem('local', cacheKeyToday, String(todayCount))
       safeSetItem('local', cacheKeyMonth, String(monthCount))
-      safeSetItem('local', cacheKeyYear,  String(yearCount))
+      safeSetItem('local', cacheKeyYear, String(yearCount))
       safeSetItem('local', cacheKeyTotal, String(totalCount))
 
       visitorStats.value = updatedStats
-    } catch (globalErr) {}
+    } catch (globalErr) { }
   }
 
   /**
    * 在線人數 Presence 統計控制函式
-   * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁 ID 註冊
-   * 支援同一瀏覽器跨分頁/跨視窗同步；跨不同瀏覽器或跨裝置因 localStorage 各自獨立無法互通，為技術限制
-   * 100% 零外連請求，徹底消除所有 CORS 與 net::ERR_FAILED 控制台報錯
-   * 核心原則：只有分頁真正關閉（pagehide / beforeunload）才離場，切換至背景分頁不影響在線計數
    */
   const initOnlinePresence = async () => {
     try {
-      // 為此分頁產生唯一識別碼，用來在跨分頁通訊中辨識自己
       const myClientId = 'cli_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36)
-
-      // 儲存目前已知的在線分頁 ID 與其最後心跳時間戳
       const activeClients = new Map()
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
       let bc = null
-
-      // 逾時閾值：分頁超過 6 秒未發送心跳，視為已離線（心跳頻率 1.5 秒，提供 4 倍緩衝）
       const TIMEOUT_MS = 6000
-
-      // localStorage 的鍵名（升級版本號以清除舊格式資料）
       const TABS_KEY = 'han_active_tabs_v16'
 
-      // 更新在線人數：清理逾時分頁，確保自己永遠計入，再更新響應式數值
       const updateCount = () => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
@@ -270,48 +281,39 @@ export function useAppView() {
             activeClients.delete(id)
           }
         }
-        // 不論分頁是否在前台，只要此 JS 仍在執行代表分頁開著，永遠把自己計入
         activeClients.set(myClientId, now)
         onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
-      // BroadcastChannel：同一瀏覽器的跨分頁即時訊息通道
       if (typeof BroadcastChannel !== 'undefined') {
         try {
           bc = new BroadcastChannel('han_presence_v16')
           bc.onmessage = (event) => {
             if (event && event.data) {
               if (event.data.type === 'leave') {
-                // 其他分頁宣告關閉，將其從在線列表移除
                 activeClients.delete(event.data.id)
                 onlineVisitors.value = Math.max(1, activeClients.size)
               } else if (event.data.type === 'ping') {
-                // 其他分頁發出心跳，更新其時間戳並重新計算人數
                 activeClients.set(event.data.id, Date.now())
                 onlineVisitors.value = Math.max(1, activeClients.size)
               }
             }
           }
-        } catch (bcErr) {}
+        } catch (bcErr) { }
       }
 
-      // 心跳函式：不論分頁是否在前台，每 1.5 秒持續執行一次
-      // 切換到背景分頁（hidden）不會停止心跳，因為背景分頁仍算在線
       const sendLocalHeartbeat = () => {
         const now = Date.now()
         activeClients.set(myClientId, now)
 
-        // 從 localStorage 讀取所有分頁的心跳紀錄
         let tabs = {}
         try {
           const saved = localStorage.getItem(TABS_KEY)
           if (saved) tabs = JSON.parse(saved)
-        } catch (e) {}
+        } catch (e) { }
 
-        // 更新自己的時間戳
         tabs[myClientId] = now
 
-        // 清理逾時分頁並同步至 activeClients
         for (const [id, lastTime] of Object.entries(tabs)) {
           if (now - lastTime > TIMEOUT_MS) {
             delete tabs[id]
@@ -320,23 +322,19 @@ export function useAppView() {
           }
         }
 
-        // 將最新的分頁清單寫回 localStorage（觸發其他分頁的 storage 事件）
         try {
           localStorage.setItem(TABS_KEY, JSON.stringify(tabs))
-        } catch (e) {}
+        } catch (e) { }
 
         updateCount()
 
-        // 透過 BroadcastChannel 廣播心跳（同一瀏覽器其他分頁即時接收）
         if (bc) {
           try {
             bc.postMessage({ type: 'ping', id: myClientId, time: now })
-          } catch (e) {}
+          } catch (e) { }
         }
       }
 
-      // 離場函式：僅在分頁真正關閉時呼叫（pagehide / beforeunload）
-      // 切換至背景分頁不會呼叫此函式，以確保背景分頁仍計入在線人數
       const handlePageLeave = () => {
         try {
           activeClients.delete(myClientId)
@@ -347,13 +345,13 @@ export function useAppView() {
               delete tabs[myClientId]
               localStorage.setItem(TABS_KEY, JSON.stringify(tabs))
             }
-          } catch (e) {}
+          } catch (e) { }
 
           // 廣播離場訊息，讓同瀏覽器的其他分頁即時扣減人數
           if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
           }
-        } catch (e) {}
+        } catch (e) { }
       }
 
       // Storage 事件：當同一瀏覽器的其他分頁更新 localStorage 時觸發
@@ -374,7 +372,7 @@ export function useAppView() {
               activeClients.set(myClientId, now)
               onlineVisitors.value = Math.max(1, activeClients.size)
             }
-          } catch (err) {}
+          } catch (err) { }
         }
       }
 
@@ -398,7 +396,7 @@ export function useAppView() {
             window.removeEventListener('beforeunload', handlePageLeave)
             window.removeEventListener('storage', handleStorageChange)
           }
-        } catch (e) {}
+        } catch (e) { }
       }
     } catch (err) {
       onlineVisitors.value = 1
@@ -412,8 +410,8 @@ export function useAppView() {
   onMounted(() => {
     try {
       typeEffect()
-      initVisitorCounter().catch(() => {})
-      initOnlinePresence().catch(() => {})
+      initVisitorCounter().catch(() => { })
+      initOnlinePresence().catch(() => { })
       if (typeof document !== 'undefined' && document.documentElement) {
         document.documentElement.setAttribute('data-theme', 'dark')
       }
@@ -423,7 +421,7 @@ export function useAppView() {
       themeTipTimer = setTimeout(() => {
         showThemeTip.value = false
       }, 8000)
-    } catch (e) {}
+    } catch (e) { }
   })
 
   /**
@@ -445,6 +443,8 @@ export function useAppView() {
     scrollToTop,
     showThemeTip,
     visitorStats,
-    onlineVisitors
+    onlineVisitors,
+    currentLocale,
+    toggleLanguage
   }
 }

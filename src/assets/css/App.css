@@ -363,11 +363,44 @@
 }
 
 /* ========================================== */
-/* 5.1 右下角懸浮回到頂部按鈕                  */
+/* 5.1 左上角懸浮語言切換按鈕                  */
+/* ========================================== */
+.custom-lang-toggle-btn {
+  position: fixed;
+  top: 1.5rem;
+  left: 1.5rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999;
+  background-color: var(--neon-btn-bg) !important;
+  color: var(--neon-btn-text) !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px;
+  border: 2px solid var(--neon-glow-color) !important;
+  box-shadow: 0 0 8px var(--neon-glow-color), inset 0 0 4px var(--neon-glow-color) !important;
+  animation: neonPulse 1.8s infinite alternate ease-in-out !important;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  cursor: pointer;
+}
+
+.custom-lang-toggle-btn:hover {
+  background-color: var(--neon-glow-color) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px var(--neon-glow-color), 0 0 30px var(--neon-glow-color) !important;
+  transform: scale(1.1);
+}
+
+/* ========================================== */
+/* 5.2 右下角懸浮回到頂部按鈕                  */
 /* ========================================== */
 .custom-scroll-top-btn {
   position: fixed;
-  /* 固定在視窗右下角，放在主題按鈕上方 */
   bottom: 6rem;
   right: 2rem;
   width: 50px;
@@ -394,6 +427,40 @@
   color: #ffffff !important;
   box-shadow: 0 0 16px var(--neon-glow-color), 0 0 30px var(--neon-glow-color) !important;
   transform: scale(1.1);
+}
+
+/* ========================================== */
+/* 行動端 (螢幕寬度 <= 576px) 懸浮按鈕響應式排版 */
+/* ========================================== */
+@media (max-width: 576px) {
+  /* 手機版主題切換按鈕：固定右下角 */
+  .custom-theme-toggle-btn {
+    bottom: 1rem !important;
+    right: 1rem !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* 手機版語言切換按鈕：固定左上角 */
+  .custom-lang-toggle-btn {
+    top: 1rem !important;
+    left: 1rem !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* 手機版回到頂部按鈕：固定於主題按鈕上方 */
+  .custom-scroll-top-btn {
+    bottom: 4.5rem !important;
+    right: 1rem !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1rem !important;
+  }
 }
 
 /* 置頂按鈕淡入淡出動畫 */

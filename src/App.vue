@@ -13,26 +13,27 @@
     </div>
 
     <!-- 懸浮固定於右下角的深淺色切換圓形按鈕 -->
-    <!-- @click="toggleTheme" 點擊時觸發 App.js 中的切換黑夜/白天模式函式 -->
-    <!-- :title 在滑鼠懸停按鈕時顯示說明的提示文字 -->
-    <button @click="toggleTheme" class="btn custom-theme-toggle-btn" :class="{ 'has-tip': showThemeTip }" :title="isDarkMode ? '切換為白天模式' : '切換為黑夜模式'">
+    <button @click="toggleTheme" class="btn custom-theme-toggle-btn" :class="{ 'has-tip': showThemeTip }" :title="isDarkMode ? $t('control.themeLightTip') : $t('control.themeDarkTip')">
       <!-- 根據 isDarkMode 的真假值動態顯示 太陽 或 月亮 符號 -->
       <span>{{ isDarkMode ? '☀️' : '🌙' }}</span>
 
       <!-- 趣味開關燈提示氣泡，一進頁面時主動引導使用者 -->
-      <!-- @click.stop 阻止事件冒泡，防止關閉氣泡時點擊到主題切換按鈕 -->
       <transition name="theme-tip-fade">
         <div v-if="showThemeTip" class="theme-toggle-tip" @click.stop>
-          <span>太暗了嗎？點我開燈！</span>
+          <span>{{ $t('control.themeTipText') }}</span>
           <button class="theme-tip-close-btn" @click.stop="showThemeTip = false">&times;</button>
         </div>
       </transition>
     </button>
 
+    <!-- 懸浮固定於左上角的語言切換按鈕：顯示點擊後切換的下一個目標語系 (中文頁顯示 EN、英文頁顯示 JP、日文頁顯示 中) -->
+    <button @click="toggleLanguage" class="btn custom-lang-toggle-btn" :title="$t('control.langToggleTip')">
+      <span>{{ currentLocale === 'zh-TW' ? 'EN' : (currentLocale === 'en' ? 'にほんご' : '繁中') }}</span>
+    </button>
+
     <!-- 懸浮固定於右下角的回到頂部按鈕 -->
-    <!-- 利用 Vue transition 元件定義淡入淡出動畫，並利用 v-show 與 showScrollTopBtn 連動 -->
     <Transition name="fade">
-      <button v-show="showScrollTopBtn" @click="scrollToTop" class="btn custom-scroll-top-btn" title="回到頂部">
+      <button v-show="showScrollTopBtn" @click="scrollToTop" class="btn custom-scroll-top-btn" :title="$t('control.scrollTopTip')">
         <span>▲</span>
       </button>
     </Transition>
@@ -52,8 +53,8 @@
               <img :src="'images/Homeimg/me.jpg'" alt="大頭照" class="avatar-img-style" />
             </div>
 
-            <!-- 使用者中文與英文名字 -->
-            <h1 class="user-name-text fw-bold mb-2">吳翰彰 (HanJohn)</h1>
+            <!-- 使用者名字 -->
+            <h1 class="user-name-text fw-bold mb-2">{{ $t('profile.name') }}</h1>
             
             <!-- 專業職位文字：打字機效果呈現區 -->
             <p class="user-title-text fw-medium mb-3">
@@ -65,62 +66,59 @@
 
             <!-- 個人簡介內文描述 -->
             <p class="user-bio-text text-start mb-3">
-              畢業於崑山科技大學企業管理研究所，並取得管理學碩士學位，兼具 Java 後端開發與專案管理實務。擅長運用 AI 工具輔助開發與流程優化，並將「企業管理思維」與「資訊科技」深度融合，致力於為團隊創造高效、多元的數位商務價值。
+              {{ $t('profile.bio') }}
             </p>
 
             <!-- 按鈕組：查看履歷與聯繫我 -->
             <div class="d-flex gap-3 justify-content-center mb-3">
               <!-- 查看履歷：另開新分頁連至雲端硬碟 -->
               <a href="https://drive.google.com/drive/folders/1g4pQU8MrT9m4nbCG0Y30mnXP0iJceiE7?usp=sharing" target="_blank" class="btn fw-medium px-4 py-2 d-flex align-items-center gap-2 rounded-3 btn-profile-solid">
-                <span>查看履歷</span>
+                <span>{{ $t('profile.viewResume') }}</span>
                 <span class="small">↗</span>
               </a>
               <!-- 聯繫我：點擊直接開啟郵件軟體寄給 HanJohn -->
               <a href="mailto:s112001044@g.ksu.edu.tw" class="btn fw-medium px-4 py-2 rounded-3 d-flex align-items-center gap-2 btn-profile-solid">
-                <span>聯繫我</span>
+                <span>{{ $t('profile.contactMe') }}</span>
                 <span class="small">Email</span>
               </a>  
             </div>
 
             <!-- 導覽選單連結區：利用 RouterLink 切換右側的內容 -->
-            <!-- gap-2 縮小選單項目間距，防止多個項目時向下溢出 -->
             <div class="d-flex flex-column gap-2 text-start">
               <!-- 路由切換 - 關於我分頁 -->
               <RouterLink to="/about" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">關於我</span>
-                <span class="nav-text-sub">About</span>
+                <span class="nav-text-main">{{ $t('nav.about') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.aboutSub') }}</span>
               </RouterLink>
 
               <!-- 路由切換 - 經歷分頁 (預設首頁) -->
-              <!-- active-class="item-is-active" 代表當前網址為此分頁時自動高亮的樣式類別 -->
-              <!-- py-2 px-3 縮減上下內距，以在有限的高度中容納更多選單 -->
               <RouterLink to="/" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">工作經歷</span>
-                <span class="nav-text-sub">Job Experience</span>
+                <span class="nav-text-main">{{ $t('nav.experience') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.experienceSub') }}</span>
               </RouterLink>
               
               <!-- 路由切換 - 作品集分頁 -->
               <RouterLink to="/portfolio" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">作品集</span>
-                <span class="nav-text-sub">Portfolio</span>
+                <span class="nav-text-main">{{ $t('nav.portfolio') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.portfolioSub') }}</span>
               </RouterLink>
               
               <!-- 路由切換 - 技能分頁 -->
               <RouterLink to="/skill" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">技能</span>
-                <span class="nav-text-sub">Skills</span>
+                <span class="nav-text-main">{{ $t('nav.skills') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.skillsSub') }}</span>
               </RouterLink>
 
               <!-- 路由切換 - 證照分頁 -->
               <RouterLink to="/certification" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">證照</span>
-                <span class="nav-text-sub">Certifications</span>
+                <span class="nav-text-main">{{ $t('nav.certifications') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.certificationsSub') }}</span>
               </RouterLink>
 
               <!-- 路由切換 - 榮譽事蹟分頁 -->
               <RouterLink to="/honor" class="custom-nav-item py-2 px-3 d-flex justify-content-between align-items-center" active-class="item-is-active">
-                <span class="nav-text-main">榮譽事蹟</span>
-                <span class="nav-text-sub">Honors</span>
+                <span class="nav-text-main">{{ $t('nav.honors') }}</span>
+                <span class="nav-text-sub">{{ $t('nav.honorsSub') }}</span>
               </RouterLink>
             </div>
 
@@ -128,36 +126,36 @@
             <div class="visitor-counter-box mt-3 p-3 rounded-3">
               <div class="visitor-counter-header d-flex justify-content-between align-items-center mb-2">
                 <div class="d-flex align-items-center gap-2">
-                  <span class="visitor-title-text fw-bold">網站瀏覽人流</span>
+                  <span class="visitor-title-text fw-bold">{{ $t('counter.title') }}</span>
                   <div class="online-status-badge d-flex align-items-center px-2 py-1 rounded-pill">
                     <span class="online-pulse-dot me-1"></span>
-                    <span class="online-status-text">目前在線：<strong class="online-count-number">{{ onlineVisitors }}</strong> 人</span>
+                    <span class="online-status-text">{{ $t('counter.online') }}：<strong class="online-count-number">{{ onlineVisitors }}</strong> {{ $t('counter.peopleSuffix') }}</span>
                   </div>
                 </div>
-                <span class="visitor-sub-text">Visitors</span>
+                <span class="visitor-sub-text">{{ $t('counter.visitors') }}</span>
               </div>
               <div class="row g-2 text-center visitor-stats-grid">
                 <div class="col-6">
                   <div class="visitor-stat-card p-2 rounded-2">
-                    <div class="visitor-stat-label">今日瀏覽</div>
+                    <div class="visitor-stat-label">{{ $t('counter.today') }}</div>
                     <div class="visitor-stat-number">{{ visitorStats.today }}</div>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="visitor-stat-card p-2 rounded-2">
-                    <div class="visitor-stat-label">本月瀏覽</div>
+                    <div class="visitor-stat-label">{{ $t('counter.month') }}</div>
                     <div class="visitor-stat-number">{{ visitorStats.month }}</div>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="visitor-stat-card p-2 rounded-2">
-                    <div class="visitor-stat-label">本年瀏覽</div>
+                    <div class="visitor-stat-label">{{ $t('counter.year') }}</div>
                     <div class="visitor-stat-number">{{ visitorStats.year }}</div>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="visitor-stat-card p-2 rounded-2">
-                    <div class="visitor-stat-label">累計總數</div>
+                    <div class="visitor-stat-label">{{ $t('counter.total') }}</div>
                     <div class="visitor-stat-number">{{ visitorStats.total }}</div>
                   </div>
                 </div>
@@ -185,9 +183,20 @@
 // 引入全站的 CSS 樣式定義檔
 import '@/assets/css/App.css'
 
-// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換、在線人數與人流計數邏輯)
+// 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換、語言切換、在線人數與人流計數邏輯)
 import { useAppView } from '@/assets/js/App.js'
 
-// 解構取出打字機文字、主題模式變數、切換主題方法、置頂按鈕狀態、置頂方法、提示氣泡變數、在線人數及人流計數物件，以在 Template 模板中做變數綁定與顯示
-const { displayText, isDarkMode, toggleTheme, showScrollTopBtn, scrollToTop, showThemeTip, visitorStats, onlineVisitors } = useAppView()
+// 解構取出變數與方法，以在 Template 模板中做動態雙向綁定
+const {
+  displayText,
+  isDarkMode,
+  toggleTheme,
+  showScrollTopBtn,
+  scrollToTop,
+  showThemeTip,
+  visitorStats,
+  onlineVisitors,
+  currentLocale,
+  toggleLanguage
+} = useAppView()
 </script>
