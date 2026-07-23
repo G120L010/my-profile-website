@@ -364,14 +364,29 @@
 }
 
 /* ========================================== */
+/* 5.0 全站頁面頂端捲動進度條                  */
+/* ========================================== */
+.custom-scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #ff8400, #ffaa44);
+  box-shadow: 0 0 8px rgba(255, 132, 0, 0.8), 0 0 16px rgba(255, 132, 0, 0.4);
+  z-index: 10001;
+  transition: width 0.1s ease-out;
+  pointer-events: none;
+}
+
+/* ========================================== */
 /* 5.1 左上角懸浮語言切換按鈕                  */
 /* ========================================== */
 .custom-lang-toggle-btn {
   position: fixed;
   top: 1.5rem;
   left: 1.5rem;
-  width: 50px;
-  height: 50px;
+  width: 66px;
+  height: 66px;
   border-radius: 50% !important;
   padding: 0 !important;
   display: flex !important;

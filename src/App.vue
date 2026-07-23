@@ -1,4 +1,7 @@
 <template>
+  <!-- 全站視窗最頂端霓虹橘色捲動進度條 -->
+  <div class="custom-scroll-progress-bar" :style="{ width: scrollProgress + '%' }"></div>
+
   <!-- 最外層容器：設定全站底色、滿版高度、上下內縮間距 -->
   <div class="main-site-bg w-100 min-vh-100 py-4">
     
@@ -197,6 +200,7 @@ const {
   visitorStats,
   onlineVisitors,
   currentLocale,
-  toggleLanguage
+  toggleLanguage,
+  scrollProgress
 } = useAppView()
 </script>

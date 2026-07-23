@@ -89,20 +89,38 @@ export function useAppView() {
   // 【置頂按鈕顯示變數】控制回到頂部按鈕的顯示狀態
   const showScrollTopBtn = ref(false)
 
+  // 【全站頂部捲動進度條變數】記錄目前頁面滾動百分比 (0 至 100)
+  const scrollProgress = ref(0)
+
+  // 【計算頁面捲動百分比函式】
+  const updateScrollProgress = () => {
+    if (typeof window === 'undefined') return
+    const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
+    if (scrollHeight <= 0) {
+      scrollProgress.value = 0
+      return
+    }
+    const progress = (scrollTop / scrollHeight) * 100
+    scrollProgress.value = Math.min(100, Math.max(0, progress))
+  }
+
   // 【路由監聽】取得當前路由物件以追蹤頁面切換
   const route = useRoute()
 
-  // 監聽路由路徑變化：切換不同分頁時自動回到最頂部
+  // 監聽路由路徑變化：切換不同分頁時自動回到最頂部並重置進度條
   watch(
     () => route.path,
     () => {
       showScrollTopBtn.value = false
       window.scrollTo(0, 0)
+      scrollProgress.value = 0
     }
   )
 
-  // 【滾動監聽函式】監聽垂直滾動高度決定顯示或隱藏置頂按鈕
+  // 【滾動監聽函式】監聽垂直滾動高度決定顯示置頂按鈕與更新進度條
   const handleScroll = () => {
+    updateScrollProgress()
     const scrollHeight = document.documentElement.scrollHeight
     const clientHeight = document.documentElement.clientHeight
     const maxScrollHeight = scrollHeight - clientHeight
@@ -417,6 +435,8 @@ export function useAppView() {
       }
       if (typeof window !== 'undefined') {
         window.addEventListener('scroll', handleScroll)
+        window.addEventListener('resize', updateScrollProgress)
+        updateScrollProgress()
       }
       themeTipTimer = setTimeout(() => {
         showThemeTip.value = false
@@ -429,7 +449,10 @@ export function useAppView() {
    * 移除滾動監聽與定時任務
    */
   onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll)
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', updateScrollProgress)
+    }
     if (typeTimer) clearTimeout(typeTimer)
     if (themeTipTimer) clearTimeout(themeTipTimer)
     if (cleanupOnlinePresence) cleanupOnlinePresence()
@@ -445,6 +468,7 @@ export function useAppView() {
     visitorStats,
     onlineVisitors,
     currentLocale,
-    toggleLanguage
+    toggleLanguage,
+    scrollProgress
   }
 }
