@@ -422,12 +422,24 @@ export function useAppView() {
   }
 
   /**
+   * 【註冊 PWA Service Worker 實現離線瀏覽與桌面/手機安裝】
+   */
+  const initPWA = () => {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      try {
+        navigator.serviceWorker.register('./sw.js').catch(() => { })
+      } catch (e) { }
+    }
+  }
+
+  /**
    * 註冊 Vue 的生命週期鉤子
    * 當全站主外殼組件在網頁上正式渲染掛載完畢後自動觸發
    */
   onMounted(() => {
     try {
       typeEffect()
+      initPWA()
       initVisitorCounter().catch(() => { })
       initOnlinePresence().catch(() => { })
       if (typeof document !== 'undefined' && document.documentElement) {
