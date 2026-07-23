@@ -380,14 +380,20 @@
   z-index: 9999;
   background-color: var(--neon-btn-bg) !important;
   color: var(--neon-btn-text) !important;
-  font-size: 0.95rem !important;
+  font-size: 0.82rem !important;
   font-weight: 700 !important;
-  letter-spacing: 0.5px;
+  letter-spacing: -0.3px;
   border: 2px solid var(--neon-glow-color) !important;
   box-shadow: 0 0 8px var(--neon-glow-color), inset 0 0 4px var(--neon-glow-color) !important;
   animation: neonPulse 1.8s infinite alternate ease-in-out !important;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
   cursor: pointer;
+}
+
+.custom-lang-toggle-btn span {
+  white-space: nowrap !important;
+  display: inline-block !important;
+  line-height: 1 !important;
 }
 
 .custom-lang-toggle-btn:hover {
@@ -435,35 +441,36 @@
 /* ========================================== */
 @media (max-width: 576px) {
 
-  /* 手機版主題切換按鈕：固定右下角，放大為 50px 方便觸控 */
+  /* 手機版主題切換按鈕：固定右下角，55px * 55px */
   .custom-theme-toggle-btn {
     bottom: 1rem !important;
     right: 1rem !important;
-    width: 58px !important;
-    height: 58px !important;
+    width: 55px !important;
+    height: 55px !important;
     font-size: 1.25rem !important;
   }
 
-  /* 手機版語言切換按鈕：固定左上角，放大為 50px */
+  /* 手機版語言切換按鈕：固定左上角，55px * 55px，字體 0.78rem 確保 4 個假名單行不溢出 */
   .custom-lang-toggle-btn {
     top: 1rem !important;
     left: 1rem !important;
     bottom: auto !important;
     right: auto !important;
-    width: 58px !important;
-    height: 58px !important;
-    font-size: 1.25rem !important;
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 0.78rem !important;
   }
 
-  /* 手機版回到頂部按鈕：固定於主題按鈕上方，放大為 50px */
+  /* 手機版回到頂部按鈕：固定於主題按鈕上方，55px * 55px */
   .custom-scroll-top-btn {
     bottom: 4.8rem !important;
     right: 1rem !important;
-    width: 58px !important;
-    height: 58px !important;
+    width: 55px !important;
+    height: 55px !important;
     font-size: 1.1rem !important;
   }
 }
+
 
 /* 置頂按鈕淡入淡出動畫 */
 .fade-enter-active,
