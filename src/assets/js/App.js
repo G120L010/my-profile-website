@@ -126,23 +126,30 @@ export function useAppView() {
 
   /**
    * 真實雲端動態人流計數器初始化與遞增函式
-   * today/month/year 的 API Key 均帶入當前日期後綴（如 today_2026_07_23），
+   * today/month/year 的 API Key 均帶入當前日期後綴（純英數字拼接，如 t20260723），
    * 使其在不同日期、月份或年份時自動使用新的獨立計數器，模擬「換日/月/年歸零」的效果。
-   * only total 使用固定 key，確保累積總數持續增加。
+   * 注意：API Key 中嚴禁使用底線 _，底線會導致 CounterAPI 回傳 301 重導向而丟失 CORS 標頭。
+   * 僅 totalv15 使用固定 Key，確保累積總數持續增加。
    * 搭配數學階層保障 (Total >= Year >= Month >= Today)，確保零報錯且數據對齊。
    */
   const initVisitorCounter = async () => {
     try {
       const now = new Date()
-      const currentYear = String(now.getFullYear())
-      const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
-      const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
+      const yr = String(now.getFullYear())                                        // 年份字串，如 2026
+      const mo = String(now.getMonth() + 1).padStart(2, '0')                     // 月份字串，如 07
+      const dy = String(now.getDate()).padStart(2, '0')                           // 日期字串，如 23
 
-      // 各計數器帶日期後綴的 localStorage 快取 key，確保換日後不讀到舊的快取人數
-      const cacheKeyToday = `han_stat_today_${currentDate}`
-      const cacheKeyMonth = `han_stat_month_${currentMonth}`
-      const cacheKeyYear = `han_stat_year_${currentYear}`
-      const cacheKeyTotal = 'han_stat_total_v15'
+      // 純英數字拼接的 API key（嚴禁底線，底線會觸發 CounterAPI 的 301 重導向 CORS 報錯）
+      const apiKeyToday = `t${yr}${mo}${dy}`                                     // 如 t20260723
+      const apiKeyMonth = `m${yr}${mo}`                                          // 如 m202607
+      const apiKeyYear  = `y${yr}`                                               // 如 y2026
+      const apiKeyTotal = 'totalv15'                                             // 固定累計 key
+
+      // 各計數器對應的 localStorage 快取 key（以 apiKey 為後綴，確保換日後不讀到舊的快取）
+      const cacheKeyToday = `hanstat${apiKeyToday}`
+      const cacheKeyMonth = `hanstat${apiKeyMonth}`
+      const cacheKeyYear  = `hanstat${apiKeyYear}`
+      const cacheKeyTotal = `hanstat${apiKeyTotal}`
 
       // 分別讀取各週期的快取值，若沒有就預設為 0（新的週期從 0 起算）
       const cachedToday = parseInt(safeGetItem('local', cacheKeyToday) || '0', 10) || 0
@@ -151,14 +158,8 @@ export function useAppView() {
       const cachedTotal = parseInt(safeGetItem('local', cacheKeyTotal) || '0', 10) || 0
 
       // 判斷是否為本次瀏覽器會話的第一次造訪（換日後 sessionKey 不同，視為新會話）
-      const sessionKey = `han_session_visit_date_v15_${currentDate}`
+      const sessionKey = `hanses${apiKeyToday}`                                   // 如 hansest20260723（純英數字）
       const isNewSession = !safeGetItem('session', sessionKey)
-
-      // 帶日期後綴的 API key，實現伺服器端也按日期/月份/年份獨立計數
-      const apiKeyToday = `today_${currentDate}`
-      const apiKeyMonth = `month_${currentMonth}`
-      const apiKeyYear = `year_${currentYear}`
-      const apiKeyTotal = 'total_v15'
 
       // 通用的 API 呼叫函式：新會話時呼叫 /up 遞增計數，舊會話時只讀取當前值
       const fetchAndIncrementKey = async (apiKey, cachedVal) => {
