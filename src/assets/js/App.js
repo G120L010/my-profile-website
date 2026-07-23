@@ -224,8 +224,8 @@ export function useAppView() {
 
   /**
    * 真實在線人數 Presence 統計控制函式
-   * 分頁領袖選舉 (Leader Election) + 降頻雙軌制 (20s) 避免觸發 CounterAPI 的每分鐘 30 次限流 (HTTP 429)
-   * 實現跨瀏覽器與手機裝置實時同步，且 100% 徹底免除所有 CORS 與 net::ERR_FAILED 報錯
+   * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁註冊
+   * 實現跨分頁與跨視窗即時在線人數同步，且 100% 徹底消除所有 CORS 與 net::ERR_FAILED 報錯
    */
   const initOnlinePresence = async () => {
     try {
@@ -234,34 +234,23 @@ export function useAppView() {
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
-      let pollTimer = null
       let bc = null
-      let isLeader = false
-      let currentRemoteCount = 0
       let isAppVisible = true
 
-      // 聚合本地分頁計數與雲端房間人數
-      const updateCount = (remoteCount = 0) => {
+      // 更新在線人數統計與清理逾時分頁
+      const updateCount = () => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
-          if (now - lastTime > 8000) {
+          if (now - lastTime > 7000) {
             activeClients.delete(id)
           }
         }
-        activeClients.set(myClientId, now)
-        const localCount = activeClients.size
-
-        if (typeof remoteCount === 'number' && remoteCount > 0) {
-          // 對雲端回傳人數進行上限防護（上限為今日總瀏覽人數 + 10，避免歷史積累溢出）
-          const maxAllowed = Math.max(localCount, (visitorStats.value?.today || 1) + 10)
-          currentRemoteCount = Math.min(remoteCount, maxAllowed)
-        } else if (remoteCount === 0 && currentRemoteCount > 0) {
-          // 當雲端回傳 0 時同步歸零動態雲端人數
-          currentRemoteCount = 0
+        if (isAppVisible) {
+          activeClients.set(myClientId, now)
+        } else {
+          activeClients.delete(myClientId)
         }
-
-        // 即時反映當前本地活躍分頁數與動態雲端人數，使人數可隨分頁關閉/離開而即時下降
-        onlineVisitors.value = Math.max(1, localCount, currentRemoteCount)
+        onlineVisitors.value = Math.max(1, activeClients.size)
       }
 
       // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
@@ -270,12 +259,10 @@ export function useAppView() {
           bc = new BroadcastChannel('han_online_presence_clean_v14')
           bc.onmessage = (event) => {
             if (event && event.data) {
-              if (event.data.type === 'cloud_sync') {
-                updateCount(event.data.value)
-              } else if (event.data.type === 'leave') {
+              if (event.data.type === 'leave') {
                 activeClients.delete(event.data.id)
                 updateCount()
-              } else {
+              } else if (event.data.type === 'ping') {
                 activeClients.set(event.data.id, Date.now())
                 updateCount()
               }
@@ -284,12 +271,14 @@ export function useAppView() {
         } catch (bcErr) {}
       }
 
-      // 本地心跳發送與領袖狀態更新
+      // 本地心跳發送與分頁註冊更新
       const sendLocalHeartbeat = () => {
+        if (!isAppVisible) return
+
         const now = Date.now()
         activeClients.set(myClientId, now)
 
-        // 領袖選舉：藉由 localStorage 協調分頁身分
+        // 藉由 localStorage 協調同源視窗狀態
         let tabs = {}
         try {
           const saved = localStorage.getItem('han_active_tabs')
@@ -298,21 +287,17 @@ export function useAppView() {
 
         tabs[myClientId] = now
 
-        const activeTabIds = []
         for (const [id, lastTime] of Object.entries(tabs)) {
-          if (now - lastTime < 8000) {
-            activeTabIds.push(id)
-          } else {
+          if (now - lastTime >= 7000) {
             delete tabs[id]
+          } else {
+            activeClients.set(id, lastTime)
           }
         }
 
         try {
           localStorage.setItem('han_active_tabs', JSON.stringify(tabs))
         } catch (e) {}
-
-        activeTabIds.sort()
-        isLeader = activeTabIds[0] === myClientId
 
         updateCount()
 
@@ -323,34 +308,10 @@ export function useAppView() {
         }
       }
 
-      // 輪詢雲端真實 Presence 人數 (限領袖分頁，降頻至 20 秒，完美避開 429 限流)
-      const syncCloudPresence = async () => {
-        if (!isLeader) return
-
-        try {
-          const controller = new AbortController()
-          const timeoutId = setTimeout(() => controller.abort(), 3500)
-          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence', { signal: controller.signal })
-          clearTimeout(timeoutId)
-          if (res.ok) {
-            const data = await res.json()
-            const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-            if (val !== null) {
-              updateCount(val)
-              if (bc) {
-                bc.postMessage({ type: 'cloud_sync', value: val })
-              }
-              return
-            }
-          }
-        } catch (e) {}
-        updateCount()
-      }
-
-      // 離線廣播離場與雲端退訂 (down)
+      // 離線廣播離場並自 Storage 移除
       const handlePageLeave = () => {
         try {
-          // 自本地 Tab 清單移除自己
+          activeClients.delete(myClientId)
           try {
             const saved = localStorage.getItem('han_active_tabs')
             if (saved) {
@@ -363,11 +324,7 @@ export function useAppView() {
           if (bc) {
             bc.postMessage({ type: 'leave', id: myClientId })
           }
-          if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-            navigator.sendBeacon('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down')
-          } else {
-            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down', { keepalive: true }).catch(() => {})
-          }
+          updateCount()
         } catch (e) {}
       }
 
@@ -383,51 +340,53 @@ export function useAppView() {
         } else if (document.visibilityState === 'visible') {
           if (!isAppVisible) {
             isAppVisible = true
-            try {
-              fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', { keepalive: true }).catch(() => {})
-            } catch (e) {}
             sendLocalHeartbeat()
-            if (isLeader) syncCloudPresence()
           }
+        }
+      }
+
+      // 監聽 Storage 事件，達到跨視窗即時同步
+      const handleStorageChange = (e) => {
+        if (e.key === 'han_active_tabs') {
+          try {
+            if (e.newValue) {
+              const tabs = JSON.parse(e.newValue)
+              const now = Date.now()
+              activeClients.clear()
+              for (const [id, lastTime] of Object.entries(tabs)) {
+                if (now - lastTime < 7000) {
+                  activeClients.set(id, lastTime)
+                }
+              }
+              updateCount()
+            }
+          } catch (err) {}
         }
       }
 
       if (typeof window !== 'undefined') {
         window.addEventListener('pagehide', handlePageLeave)
         window.addEventListener('beforeunload', handlePageLeave)
+        window.addEventListener('storage', handleStorageChange)
       }
 
       if (typeof document !== 'undefined') {
         document.addEventListener('visibilitychange', handleVisibilityChange)
       }
 
-      // 1. 首發 /up 上線確保雲端金鑰已建立，並異步等待以防並行請求 404 CORS
-      try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 3000)
-        const upRes = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', { signal: controller.signal })
-        clearTimeout(timeoutId)
-        if (upRes.ok) {
-          const data = await upRes.json()
-          const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-          if (val !== null) updateCount(val)
-        }
-      } catch (e) {}
-
-      // 2. 啟動定時任務：本地心跳 (2.5s)，雲端輪詢 (20s)
+      // 啟動定時本地心跳任務 (2.5s)
       heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
-      pollTimer = setInterval(syncCloudPresence, 20000)
       sendLocalHeartbeat()
 
       cleanupOnlinePresence = () => {
         try {
           handlePageLeave()
           if (heartbeatTimer) clearInterval(heartbeatTimer)
-          if (pollTimer) clearInterval(pollTimer)
           if (bc) bc.close()
           if (typeof window !== 'undefined') {
             window.removeEventListener('pagehide', handlePageLeave)
             window.removeEventListener('beforeunload', handlePageLeave)
+            window.removeEventListener('storage', handleStorageChange)
           }
           if (typeof document !== 'undefined') {
             document.removeEventListener('visibilitychange', handleVisibilityChange)
