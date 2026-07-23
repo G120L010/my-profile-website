@@ -364,18 +364,61 @@
 }
 
 /* ========================================== */
-/* 5.0 全站頁面頂端捲動進度條                  */
+/* 5.0 全站頁面頂端捲動進度條與旋轉星球        */
 /* ========================================== */
 .custom-scroll-progress-bar {
   position: fixed;
   top: 0;
   left: 0;
-  height: 3px;
+  height: 4px;
   background: linear-gradient(90deg, #ff8400, #ffaa44);
   box-shadow: 0 0 8px rgba(255, 132, 0, 0.8), 0 0 16px rgba(255, 132, 0, 0.4);
   z-index: 10001;
-  transition: width 0.1s ease-out;
+  transition: width 0.1s ease-out, opacity 0.3s ease;
   pointer-events: none;
+  opacity: 0;
+}
+
+.custom-scroll-progress-bar.is-active {
+  opacity: 1;
+}
+
+/* 隨進度條移動的前端旋轉星球圖案頭部 */
+.scroll-planet-head {
+  position: absolute;
+  right: -13px;
+  top: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #ff8400;
+  box-shadow: 0 0 10px #ff8400, 0 0 20px rgba(255, 132, 0, 0.6);
+  background-color: #0d1117;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 星球圖片旋轉動畫屬性 */
+.scroll-planet-img {
+  width: 85%;
+  height: 85%;
+  object-fit: cover;
+  border-radius: 50%;
+  animation: planetSpin 8s linear infinite;
+}
+
+/* 星球自轉 360 度動畫軌跡 */
+@keyframes planetSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========================================== */

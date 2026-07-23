@@ -1,6 +1,15 @@
 <template>
-  <!-- 全站視窗最頂端霓虹橘色捲動進度條 -->
-  <div class="custom-scroll-progress-bar" :style="{ width: scrollProgress + '%' }"></div>
+  <!-- 全站視窗最頂端旋轉星球捲動進度條 -->
+  <div 
+    class="custom-scroll-progress-bar" 
+    :style="{ width: scrollProgress + '%' }"
+    :class="{ 'is-active': scrollProgress > 0 }"
+  >
+    <!-- 進度條前端滾動的旋轉星球圖態 (經過處留下橘色進度條軌跡) -->
+    <div class="scroll-planet-head">
+      <img :src="'images/games/clawmachine23.jpg'" alt="Planet" class="scroll-planet-img" />
+    </div>
+  </div>
 
   <!-- 最外層容器：設定全站底色、滿版高度、上下內縮間距 -->
   <div class="main-site-bg w-100 min-vh-100 py-4">
