@@ -22,9 +22,9 @@ export default {
     honorsSub: '榮譽事蹟'
   },
   counter: {
-    title: 'Traffic Stats',
-    visitors: 'Visitors',
-    online: 'Online',
+    title: 'Visit Stats',
+    visitors: '訪客',
+    online: 'Live',
     peopleSuffix: 'active',
     today: 'Today',
     month: 'This Month',
