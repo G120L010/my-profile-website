@@ -143,6 +143,17 @@
 | **專業技能 / Skills**<br>[SkillView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/SkillView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
 | **專業認證 / Certifications**<br>[CertificationView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/CertificationView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
 | **榮譽事蹟 / Honors**<br>[HonorView.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/views/profile/HonorView.vue) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
+| **全站外殼功能 / Shell Features**<br>[App.vue](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/App.vue)<br>[App.js](file:///c:/Users/s1080/Desktop/JOHN/my-profile-website/src/assets/js/App.js) | 🟢 已解構 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | 🟢 已完成 | **100%** |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| ***以下為規劃中功能（依優先順序排列）*** | | | | | | |
+| **聯絡表單 / Contact**<br>新增路由 `/contact`，透過 Formspree 或 EmailJS 實作無後端表單寄信，取代純靜態 Email 連結，讓 HR 可直接在網頁填寫聯絡資訊並送出 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **中英文切換 / i18n**<br>使用 `vue-i18n` 套件於右下角加切換按鈕，支援繁體中文與英文雙語版本，語言偏好存入 `localStorage`，對投遞海外職缺最具效益 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **一鍵匯出 PDF / PDF Export**<br>使用 `html2pdf.js` 套件或 `@media print` CSS，讓訪客一鍵將履歷匯出為 PDF，對 HR 與 ATS 系統實用性極高 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **GitHub 貢獻熱力圖 / GitHub Activity**<br>呼叫 GitHub Public API（無需 Token）顯示最近 52 週的 commit 活動熱力圖，放置於「關於我」或「全站外殼」頁面 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **技能雷達圖 / Skill Radar Chart**<br>使用 `Chart.js` 於「專業技能」頁面繪製多維度雷達圖，以前端、後端、設計、管理、AI 等軸線可視化能力分佈 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **捲動進度條 / Scroll Progress Bar**<br>頁面頂端新增一條 2-3px 的橘色進度條，隨捲動百分比即時延伸，提升頁面視覺細節感與閱讀體驗 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **漸進式網頁應用 / PWA**<br>使用 `vite-plugin-pwa` 加入 Service Worker 與 `manifest.json`，支援離線瀏覽與「安裝到桌面」功能 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
+| **訪客留言板 / Guestbook**<br>使用 Giscus（基於 GitHub Discussions）或 utterances（基於 GitHub Issues）嵌入留言板，完全免費且無廣告，需 GitHub 帳號登入留言 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | 🔴 待開發 | **0%** |
 
 *圖例說明：🟢 已完成並驗證 \| 🟡 調整中/部分完成 \| 🔴 待開發*
 
