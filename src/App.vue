@@ -38,7 +38,7 @@
       </transition>
     </button>
 
-    <!-- 懸浮固定於左上角的語言切換按鈕：顯示點擊後切換的下一個目標語系 (中文頁顯示 EN、英文頁顯示 JP、日文頁顯示 中) -->
+    <!-- 懸浮固定於左上角的語言切換按鈕：顯示點擊後切換的下一個目標語系 (中文頁顯示 EN、英文頁顯示にほんご、日文頁顯示 中) -->
     <button @click="toggleLanguage" class="btn custom-lang-toggle-btn" :title="$t('control.langToggleTip')">
       <span>{{ currentLocale === 'zh-TW' ? 'EN' : (currentLocale === 'en' ? 'にほんご' : '繁中') }}</span>
     </button>
