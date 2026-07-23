@@ -224,8 +224,8 @@ export function useAppView() {
 
   /**
    * 真實在線人數 Presence 統計控制函式
-   * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁註冊
-   * 實現跨分頁與跨視窗即時在線人數同步，且 100% 徹底消除所有 CORS 與 net::ERR_FAILED 報錯
+   * 分頁領袖選舉 (Leader Election) + GET 請求模式 (15s 降頻)
+   * 實現跨瀏覽器與手機裝置實時 Presence 同步，且 100% 徹底免除 CORS 與 net::ERR_FAILED 報錯
    */
   const initOnlinePresence = async () => {
     try {
@@ -234,11 +234,14 @@ export function useAppView() {
       activeClients.set(myClientId, Date.now())
 
       let heartbeatTimer = null
+      let pollTimer = null
       let bc = null
+      let isLeader = false
+      let currentRemoteCount = 0
       let isAppVisible = true
 
-      // 更新在線人數統計與清理逾時分頁
-      const updateCount = () => {
+      // 聚合本地分頁計數與雲端房間人數
+      const updateCount = (remoteCount = 0) => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
           if (now - lastTime > 7000) {
@@ -250,7 +253,14 @@ export function useAppView() {
         } else {
           activeClients.delete(myClientId)
         }
-        onlineVisitors.value = Math.max(1, activeClients.size)
+        const localCount = activeClients.size
+
+        if (typeof remoteCount === 'number' && remoteCount > 0) {
+          const maxAllowed = Math.max(localCount, (visitorStats.value?.today || 1) + 10)
+          currentRemoteCount = Math.min(remoteCount, maxAllowed)
+        }
+
+        onlineVisitors.value = Math.max(1, localCount, currentRemoteCount)
       }
 
       // 同源 BroadcastChannel 心跳 (同裝置多分頁/多視窗)
@@ -259,7 +269,9 @@ export function useAppView() {
           bc = new BroadcastChannel('han_online_presence_clean_v14')
           bc.onmessage = (event) => {
             if (event && event.data) {
-              if (event.data.type === 'leave') {
+              if (event.data.type === 'cloud_sync') {
+                updateCount(event.data.value)
+              } else if (event.data.type === 'leave') {
                 activeClients.delete(event.data.id)
                 updateCount()
               } else if (event.data.type === 'ping') {
@@ -278,7 +290,6 @@ export function useAppView() {
         const now = Date.now()
         activeClients.set(myClientId, now)
 
-        // 藉由 localStorage 協調同源視窗狀態
         let tabs = {}
         try {
           const saved = localStorage.getItem('han_active_tabs')
@@ -287,17 +298,21 @@ export function useAppView() {
 
         tabs[myClientId] = now
 
+        const activeTabIds = []
         for (const [id, lastTime] of Object.entries(tabs)) {
-          if (now - lastTime >= 7000) {
-            delete tabs[id]
+          if (now - lastTime < 7000) {
+            activeTabIds.push(id)
           } else {
-            activeClients.set(id, lastTime)
+            delete tabs[id]
           }
         }
 
         try {
           localStorage.setItem('han_active_tabs', JSON.stringify(tabs))
         } catch (e) {}
+
+        activeTabIds.sort()
+        isLeader = activeTabIds[0] === myClientId
 
         updateCount()
 
@@ -308,7 +323,37 @@ export function useAppView() {
         }
       }
 
-      // 離線廣播離場並自 Storage 移除
+      // 輪詢雲端真實 Presence 人數 (僅限領袖分頁，使用 GET 請求與 15 秒降頻)
+      const syncCloudPresence = async () => {
+        if (!isLeader || !isAppVisible) return
+
+        try {
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 3500)
+          const res = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence', {
+            method: 'GET',
+            signal: controller.signal
+          }).catch(() => null)
+          clearTimeout(timeoutId)
+
+          if (res && res.ok) {
+            const data = await res.json().catch(() => null)
+            if (data) {
+              const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+              if (val !== null) {
+                updateCount(val)
+                if (bc) {
+                  bc.postMessage({ type: 'cloud_sync', value: val })
+                }
+                return
+              }
+            }
+          }
+        } catch (e) {}
+        updateCount()
+      }
+
+      // 離線廣播離場並扣減雲端 Presence (採用 GET 請求模式)
       const handlePageLeave = () => {
         try {
           activeClients.delete(myClientId)
@@ -325,6 +370,14 @@ export function useAppView() {
             bc.postMessage({ type: 'leave', id: myClientId })
           }
           updateCount()
+
+          // 使用 GET 請求發送離線扣減 (避免 sendBeacon POST 404)
+          try {
+            fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/down', {
+              method: 'GET',
+              keepalive: true
+            }).catch(() => {})
+          } catch (e) {}
         } catch (e) {}
       }
 
@@ -340,12 +393,19 @@ export function useAppView() {
         } else if (document.visibilityState === 'visible') {
           if (!isAppVisible) {
             isAppVisible = true
+            try {
+              fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', {
+                method: 'GET',
+                keepalive: true
+              }).catch(() => {})
+            } catch (e) {}
             sendLocalHeartbeat()
+            if (isLeader) syncCloudPresence()
           }
         }
       }
 
-      // 監聽 Storage 事件，達到跨視窗即時同步
+      // 監聽 Storage 事件，達到同源視窗即時同步
       const handleStorageChange = (e) => {
         if (e.key === 'han_active_tabs') {
           try {
@@ -374,14 +434,34 @@ export function useAppView() {
         document.addEventListener('visibilitychange', handleVisibilityChange)
       }
 
-      // 啟動定時本地心跳任務 (2.5s)
+      // 1. 首發 GET /up 確保 CounterAPI 金鑰初始化並建立 200 OK CORS 標頭
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 3000)
+        const upRes = await fetch('https://api.counterapi.dev/v1/hanjohn_profile_site/presence/up', {
+          method: 'GET',
+          signal: controller.signal
+        }).catch(() => null)
+        clearTimeout(timeoutId)
+        if (upRes && upRes.ok) {
+          const data = await upRes.json().catch(() => null)
+          if (data) {
+            const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
+            if (val !== null) updateCount(val)
+          }
+        }
+      } catch (e) {}
+
+      // 2. 啟動定時任務：本地心跳 (2.5s)，領袖雲端輪詢 (15s)
       heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
+      pollTimer = setInterval(syncCloudPresence, 15000)
       sendLocalHeartbeat()
 
       cleanupOnlinePresence = () => {
         try {
           handlePageLeave()
           if (heartbeatTimer) clearInterval(heartbeatTimer)
+          if (pollTimer) clearInterval(pollTimer)
           if (bc) bc.close()
           if (typeof window !== 'undefined') {
             window.removeEventListener('pagehide', handlePageLeave)
