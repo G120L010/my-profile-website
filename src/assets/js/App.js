@@ -126,8 +126,10 @@ export function useAppView() {
 
   /**
    * 真實雲端動態人流計數器初始化與遞增函式
-   * 採用 CounterAPI 標準合規 Key (today/month/year/total) 進行連線動態 +1 累加
-   * 搭配數學階層保障 (Total >= Year >= Month >= Today)，確保零報錯且數據對齊
+   * today/month/year 的 API Key 均帶入當前日期後綴（如 today_2026_07_23），
+   * 使其在不同日期、月份或年份時自動使用新的獨立計數器，模擬「換日/月/年歸零」的效果。
+   * only total 使用固定 key，確保累積總數持續增加。
+   * 搭配數學階層保障 (Total >= Year >= Month >= Today)，確保零報錯且數據對齊。
    */
   const initVisitorCounter = async () => {
     try {
@@ -136,75 +138,77 @@ export function useAppView() {
       const currentMonth = `${currentYear}_${String(now.getMonth() + 1).padStart(2, '0')}`
       const currentDate = `${currentMonth}_${String(now.getDate()).padStart(2, '0')}`
 
-      let cached = { today: 1, month: 1, year: 1, total: 1 }
-      const localSaved = safeGetItem('local', 'han_real_dynamic_stats_v14')
-      if (localSaved) {
-        try {
-          const parsed = JSON.parse(localSaved)
-          if (parsed && typeof parsed === 'object') {
-            cached = {
-              today: parsed.today || 1,
-              month: parsed.month || 1,
-              year: parsed.year || 1,
-              total: parsed.total || 1
-            }
-          }
-        } catch (e) {}
-      }
+      // 各計數器帶日期後綴的 localStorage 快取 key，確保換日後不讀到舊的快取人數
+      const cacheKeyToday = `han_stat_today_${currentDate}`
+      const cacheKeyMonth = `han_stat_month_${currentMonth}`
+      const cacheKeyYear = `han_stat_year_${currentYear}`
+      const cacheKeyTotal = 'han_stat_total_v15'
 
-      const sessionDate = safeGetItem('session', 'han_session_visit_date_v14')
-      const isNewSession = sessionDate !== currentDate
+      // 分別讀取各週期的快取值，若沒有就預設為 0（新的週期從 0 起算）
+      const cachedToday = parseInt(safeGetItem('local', cacheKeyToday) || '0', 10) || 0
+      const cachedMonth = parseInt(safeGetItem('local', cacheKeyMonth) || '0', 10) || 0
+      const cachedYear = parseInt(safeGetItem('local', cacheKeyYear) || '0', 10) || 0
+      const cachedTotal = parseInt(safeGetItem('local', cacheKeyTotal) || '0', 10) || 0
 
-      const keys = {
-        today: 'today',
-        month: 'month',
-        year: 'year',
-        total: 'total'
-      }
+      // 判斷是否為本次瀏覽器會話的第一次造訪（換日後 sessionKey 不同，視為新會話）
+      const sessionKey = `han_session_visit_date_v15_${currentDate}`
+      const isNewSession = !safeGetItem('session', sessionKey)
 
-      const fetchAndIncrementKey = async (keyStr, defaultCachedVal) => {
+      // 帶日期後綴的 API key，實現伺服器端也按日期/月份/年份獨立計數
+      const apiKeyToday = `today_${currentDate}`
+      const apiKeyMonth = `month_${currentMonth}`
+      const apiKeyYear = `year_${currentYear}`
+      const apiKeyTotal = 'total_v15'
+
+      // 通用的 API 呼叫函式：新會話時呼叫 /up 遞增計數，舊會話時只讀取當前值
+      const fetchAndIncrementKey = async (apiKey, cachedVal) => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
 
         try {
           const action = isNewSession ? '/up' : ''
-          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}${action}`
+          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}${action}`
           let res = await fetch(url, { signal: controller.signal })
 
+          // 若讀取時 API 回傳非 ok（可能計數器還不存在），改以 /up 方式建立並遞增
           if (!res.ok && !isNewSession) {
-            const createUrl = `https://api.counterapi.dev/v1/hanjohn_profile_site/${keyStr}/up`
+            const createUrl = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}/up`
             res = await fetch(createUrl, { signal: controller.signal })
           }
 
           clearTimeout(timeoutId)
           if (res.ok) {
             const data = await res.json()
+            // 相容 counterapi.dev 兩種可能的回應欄位名稱
             const val = typeof data.count === 'number' ? data.count : (typeof data.value === 'number' ? data.value : null)
-            if (val !== null) {
-              return Math.max(val, defaultCachedVal + (isNewSession ? 1 : 0))
+            if (val !== null && val > 0) {
+              return val
             }
           }
         } catch (e) {}
 
-        return defaultCachedVal + (isNewSession ? 1 : 0)
+        // API 失敗時以快取值為基準：新會話則 +1，舊會話維持原值
+        return cachedVal + (isNewSession ? 1 : 0)
       }
 
+      // 並行呼叫四個計數器 API
       const results = await Promise.allSettled([
-        fetchAndIncrementKey(keys.today, cached.today),
-        fetchAndIncrementKey(keys.month, cached.month),
-        fetchAndIncrementKey(keys.year, cached.year),
-        fetchAndIncrementKey(keys.total, cached.total)
+        fetchAndIncrementKey(apiKeyToday, cachedToday),
+        fetchAndIncrementKey(apiKeyMonth, cachedMonth),
+        fetchAndIncrementKey(apiKeyYear, cachedYear),
+        fetchAndIncrementKey(apiKeyTotal, cachedTotal)
       ])
 
-      const rawToday = results[0].status === 'fulfilled' ? results[0].value : cached.today + (isNewSession ? 1 : 0)
-      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : cached.month + (isNewSession ? 1 : 0)
-      const rawYear = results[2].status === 'fulfilled' ? results[2].value : cached.year + (isNewSession ? 1 : 0)
-      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : cached.total + (isNewSession ? 1 : 0)
+      const rawToday = results[0].status === 'fulfilled' ? results[0].value : cachedToday + (isNewSession ? 1 : 0)
+      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : cachedMonth + (isNewSession ? 1 : 0)
+      const rawYear = results[2].status === 'fulfilled' ? results[2].value : cachedYear + (isNewSession ? 1 : 0)
+      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : cachedTotal + (isNewSession ? 1 : 0)
 
+      // 確保階層邏輯：今日 <= 本月 <= 本年 <= 累計，且各值至少為 1
       const todayCount = Math.max(1, rawToday)
       const monthCount = Math.max(todayCount, rawMonth)
       const yearCount = Math.max(monthCount, rawYear)
-      const totalCount = Math.max(yearCount + 10, rawTotal)
+      const totalCount = Math.max(yearCount, rawTotal)
 
       const updatedStats = {
         today: todayCount,
@@ -213,11 +217,15 @@ export function useAppView() {
         total: totalCount
       }
 
+      // 將新值寫回各自帶日期的 localStorage key，下次進入時可作為 fallback 快取使用
       if (isNewSession) {
-        safeSetItem('session', 'han_session_visit_date_v14', currentDate)
+        safeSetItem('session', sessionKey, '1')
       }
+      safeSetItem('local', cacheKeyToday, String(todayCount))
+      safeSetItem('local', cacheKeyMonth, String(monthCount))
+      safeSetItem('local', cacheKeyYear, String(yearCount))
+      safeSetItem('local', cacheKeyTotal, String(totalCount))
 
-      safeSetItem('local', 'han_real_dynamic_stats_v14', JSON.stringify(updatedStats))
       visitorStats.value = updatedStats
     } catch (globalErr) {}
   }
