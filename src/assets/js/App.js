@@ -129,6 +129,8 @@ export function useAppView() {
    * today/month/year 的 API Key 均帶入當前日期後綴（純英數字拼接，如 t20260723），
    * 使其在不同日期、月份或年份時自動使用新的獨立計數器，模擬「換日/月/年歸零」的效果。
    * 注意：API Key 中嚴禁使用底線 _，底線會導致 CounterAPI 回傳 301 重導向而丟失 CORS 標頭。
+   * 注意：只有「新 Session」才呼叫 API（/up 遞增），舊 Session（F5 重整）直接使用 localStorage 快取。
+   *       CounterAPI 的「讀取端點」（不帶 /up）也會回傳 301 CORS 報錯，因此一律不呼叫讀取端點。
    * 僅 totalv15 使用固定 Key，確保累積總數持續增加。
    * 搭配數學階層保障 (Total >= Year >= Month >= Today)，確保零報錯且數據對齊。
    */
@@ -154,28 +156,34 @@ export function useAppView() {
       // 分別讀取各週期的快取值，若沒有就預設為 0（新的週期從 0 起算）
       const cachedToday = parseInt(safeGetItem('local', cacheKeyToday) || '0', 10) || 0
       const cachedMonth = parseInt(safeGetItem('local', cacheKeyMonth) || '0', 10) || 0
-      const cachedYear = parseInt(safeGetItem('local', cacheKeyYear) || '0', 10) || 0
+      const cachedYear  = parseInt(safeGetItem('local', cacheKeyYear)  || '0', 10) || 0
       const cachedTotal = parseInt(safeGetItem('local', cacheKeyTotal) || '0', 10) || 0
 
-      // 判斷是否為本次瀏覽器會話的第一次造訪（換日後 sessionKey 不同，視為新會話）
+      // 判斷是否為本次瀏覽器 Session 的第一次造訪（F5 重整為舊 Session，換日後為新 Session）
       const sessionKey = `hanses${apiKeyToday}`                                   // 如 hansest20260723（純英數字）
       const isNewSession = !safeGetItem('session', sessionKey)
 
-      // 通用的 API 呼叫函式：新會話時呼叫 /up 遞增計數，舊會話時只讀取當前值
-      const fetchAndIncrementKey = async (apiKey, cachedVal) => {
+      // 舊 Session（F5 重整、切換分頁等）：直接使用 localStorage 快取值顯示，完全不呼叫 API
+      // 原因：CounterAPI 的讀取端點（不帶 /up）同樣會回傳 301 重導向並丟失 CORS 標頭
+      if (!isNewSession) {
+        visitorStats.value = {
+          today: Math.max(1, cachedToday),
+          month: Math.max(Math.max(1, cachedToday), cachedMonth),
+          year:  Math.max(Math.max(1, cachedToday), Math.max(cachedMonth, cachedYear)),
+          total: Math.max(Math.max(1, cachedYear), cachedTotal)
+        }
+        return
+      }
+
+      // 新 Session 才執行以下 API 呼叫：僅使用 /up 端點遞增，絕不呼叫讀取端點
+      const fetchUpKey = async (apiKey, cachedVal) => {
         const controller = new AbortController()
         const timeoutId = setTimeout(() => controller.abort(), 3500)
 
         try {
-          const action = isNewSession ? '/up' : ''
-          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}${action}`
-          let res = await fetch(url, { signal: controller.signal })
-
-          // 若讀取時 API 回傳非 ok（可能計數器還不存在），改以 /up 方式建立並遞增
-          if (!res.ok && !isNewSession) {
-            const createUrl = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}/up`
-            res = await fetch(createUrl, { signal: controller.signal })
-          }
+          // 只呼叫 /up 端點（遞增），避免呼叫讀取端點引發 301 CORS 報錯
+          const url = `https://api.counterapi.dev/v1/hanjohn_profile_site/${apiKey}/up`
+          const res = await fetch(url, { signal: controller.signal })
 
           clearTimeout(timeoutId)
           if (res.ok) {
@@ -188,43 +196,41 @@ export function useAppView() {
           }
         } catch (e) {}
 
-        // API 失敗時以快取值為基準：新會話則 +1，舊會話維持原值
-        return cachedVal + (isNewSession ? 1 : 0)
+        // API 失敗時本地快取 +1 作為 fallback（代表本次新造訪已計入）
+        return cachedVal + 1
       }
 
-      // 並行呼叫四個計數器 API
+      // 並行呼叫四個計數器的 /up 端點
       const results = await Promise.allSettled([
-        fetchAndIncrementKey(apiKeyToday, cachedToday),
-        fetchAndIncrementKey(apiKeyMonth, cachedMonth),
-        fetchAndIncrementKey(apiKeyYear, cachedYear),
-        fetchAndIncrementKey(apiKeyTotal, cachedTotal)
+        fetchUpKey(apiKeyToday, cachedToday),
+        fetchUpKey(apiKeyMonth, cachedMonth),
+        fetchUpKey(apiKeyYear,  cachedYear),
+        fetchUpKey(apiKeyTotal, cachedTotal)
       ])
 
-      const rawToday = results[0].status === 'fulfilled' ? results[0].value : cachedToday + (isNewSession ? 1 : 0)
-      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : cachedMonth + (isNewSession ? 1 : 0)
-      const rawYear = results[2].status === 'fulfilled' ? results[2].value : cachedYear + (isNewSession ? 1 : 0)
-      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : cachedTotal + (isNewSession ? 1 : 0)
+      const rawToday = results[0].status === 'fulfilled' ? results[0].value : cachedToday + 1
+      const rawMonth = results[1].status === 'fulfilled' ? results[1].value : cachedMonth + 1
+      const rawYear  = results[2].status === 'fulfilled' ? results[2].value : cachedYear  + 1
+      const rawTotal = results[3].status === 'fulfilled' ? results[3].value : cachedTotal + 1
 
       // 確保階層邏輯：今日 <= 本月 <= 本年 <= 累計，且各值至少為 1
       const todayCount = Math.max(1, rawToday)
       const monthCount = Math.max(todayCount, rawMonth)
-      const yearCount = Math.max(monthCount, rawYear)
+      const yearCount  = Math.max(monthCount, rawYear)
       const totalCount = Math.max(yearCount, rawTotal)
 
       const updatedStats = {
         today: todayCount,
         month: monthCount,
-        year: yearCount,
+        year:  yearCount,
         total: totalCount
       }
 
-      // 將新值寫回各自帶日期的 localStorage key，下次進入時可作為 fallback 快取使用
-      if (isNewSession) {
-        safeSetItem('session', sessionKey, '1')
-      }
+      // 記錄 Session 標記，並將新值寫回各自的 localStorage key 供後續快取使用
+      safeSetItem('session', sessionKey, '1')
       safeSetItem('local', cacheKeyToday, String(todayCount))
       safeSetItem('local', cacheKeyMonth, String(monthCount))
-      safeSetItem('local', cacheKeyYear, String(yearCount))
+      safeSetItem('local', cacheKeyYear,  String(yearCount))
       safeSetItem('local', cacheKeyTotal, String(totalCount))
 
       visitorStats.value = updatedStats
