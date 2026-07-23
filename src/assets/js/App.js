@@ -231,9 +231,10 @@ export function useAppView() {
   }
 
   /**
-   * 真實在線人數 Presence 統計控制函式
-   * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁註冊
-   * 實現跨分頁與跨視窗即時在線人數同步，且 100% 徹底消除所有 CORS 與 net::ERR_FAILED 報錯
+   * 在線人數 Presence 統計控制函式
+   * 採用同源 BroadcastChannel 心跳、Storage 視窗事件與 localStorage 分頁 ID 註冊
+   * 支援同一瀏覽器跨分頁/跨視窗同步；跨不同瀏覽器或跨裝置因 localStorage 各自獨立無法互通，為技術限制
+   * 100% 零外連請求，徹底消除所有 CORS 與 net::ERR_FAILED 控制台報錯
    */
   const initOnlinePresence = async () => {
     try {
@@ -245,14 +246,18 @@ export function useAppView() {
       let bc = null
       let isAppVisible = true
 
+      // 逾時閾值：超過此毫秒數未心跳的分頁視為離線（心跳 1.5s，逾時設 6s 提供足夠緩衝）
+      const TIMEOUT_MS = 6000
+
       // 更新在線人數統計與清理逾時分頁
       const updateCount = () => {
         const now = Date.now()
         for (const [id, lastTime] of activeClients.entries()) {
-          if (now - lastTime > 7000) {
+          if (now - lastTime > TIMEOUT_MS) {
             activeClients.delete(id)
           }
         }
+        // 若當前分頁為可見狀態，確保自己在 Map 中有最新時間戳
         if (isAppVisible) {
           activeClients.set(myClientId, now)
         } else {
@@ -295,7 +300,8 @@ export function useAppView() {
         tabs[myClientId] = now
 
         for (const [id, lastTime] of Object.entries(tabs)) {
-          if (now - lastTime >= 7000) {
+          if (now - lastTime > TIMEOUT_MS) {
+            // 超過逾時閾值的分頁記錄從 localStorage 清除
             delete tabs[id]
           } else {
             activeClients.set(id, lastTime)
@@ -352,20 +358,26 @@ export function useAppView() {
         }
       }
 
-      // 監聽 Storage 事件，達到同源視窗即時同步
+      // 監聽 Storage 事件：當同一瀏覽器的其他分頁更新 localStorage 時觸發，實現跨分頁即時同步
+      // 注意：storage 事件不會在寫入的當前分頁觸發，只在其他分頁觸發，這是瀏覽器的標準行為
       const handleStorageChange = (e) => {
         if (e.key === 'han_active_tabs') {
           try {
             if (e.newValue) {
               const tabs = JSON.parse(e.newValue)
               const now = Date.now()
+              // 清空並從 localStorage 完整重建在線分頁列表
               activeClients.clear()
               for (const [id, lastTime] of Object.entries(tabs)) {
-                if (now - lastTime < 7000) {
+                if (now - lastTime < TIMEOUT_MS) {
                   activeClients.set(id, lastTime)
                 }
               }
-              updateCount()
+              // 重建後補回自己的 myClientId（自己的心跳只存在 Map 中，不一定即時在 localStorage 的最新值裡）
+              if (isAppVisible) {
+                activeClients.set(myClientId, now)
+              }
+              onlineVisitors.value = Math.max(1, activeClients.size)
             }
           } catch (err) {}
         }
@@ -381,8 +393,8 @@ export function useAppView() {
         document.addEventListener('visibilitychange', handleVisibilityChange)
       }
 
-      // 啟動定時本地心跳任務 (2.5s)
-      heartbeatTimer = setInterval(sendLocalHeartbeat, 2500)
+      // 啟動定時本地心跳任務（每 1.5 秒更新一次，確保在 6 秒逾時前至少發送 3 次心跳）
+      heartbeatTimer = setInterval(sendLocalHeartbeat, 1500)
       sendLocalHeartbeat()
 
       cleanupOnlinePresence = () => {
