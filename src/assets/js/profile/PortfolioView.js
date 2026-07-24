@@ -50,7 +50,7 @@ export function usePortfolioView() {
       tags: ['作詞創作', '影音企劃', '自媒體創作', '影片剪輯', '動態字幕', '影音後製'],
       image: 'images/Portfolioimg/YouTube1.jpg',
       buttons: [
-        { text: '點我觀看收聽創作歌曲', url: 'https://youtu.be/zw2HlqRhML0' }
+        { text: '點我觀看收聽創作歌曲', url: 'https://www.youtube.com/embed/wb3JZ6l4Yt8?vq=hd1080&hd=1&si=KvotjwDoLcZWQNSi' }
       ]
     },
     {
@@ -60,7 +60,7 @@ export function usePortfolioView() {
       tags: ['短影音企劃', '作詞創作', '影片剪輯', '自媒體創作', '動態字幕'],
       image: 'images/Portfolioimg/YouTube2.jpg',
       buttons: [
-        { text: '點我觀看短影音創作', url: 'https://youtube.com/shorts/6jYhcZNiiMY?feature=share' }
+        { text: '點我觀看短影音創作', url: 'https://www.youtube.com/embed/6jYhcZNiiMY?vq=hd1080&hd=1&si=SupWVFe18lsfr3Bi' }
       ]
     },
     {
@@ -138,9 +138,30 @@ export function usePortfolioView() {
   // 建立控制影片播放燈箱彈出的響應式變數，儲存目前播放的影片網址，null 代表關閉狀態
   const activeVideoUrl = ref(null)
 
-  // 開啟影片播放燈箱彈窗，記錄點擊的影音網址
+  /**
+   * 自動將各種類型 YouTube 網址轉譯為 iframe 可安全播放的 embed 格式
+   */
+  const getEmbedUrl = (url) => {
+    if (!url) return ''
+    if (url.includes('/embed/')) return url
+    if (url.includes('youtu.be/')) {
+      const id = url.split('youtu.be/')[1].split('?')[0]
+      return `https://www.youtube.com/embed/${id}`
+    }
+    if (url.includes('watch?v=')) {
+      const id = url.split('watch?v=')[1].split('&')[0]
+      return `https://www.youtube.com/embed/${id}`
+    }
+    if (url.includes('/shorts/')) {
+      const id = url.split('/shorts/')[1].split('?')[0]
+      return `https://www.youtube.com/embed/${id}`
+    }
+    return url
+  }
+
+  // 開啟影片播放燈箱彈窗，記錄點擊的影音網址並自動轉譯為 embed 格式
   const showVideo = (videoUrl) => {
-    activeVideoUrl.value = videoUrl
+    activeVideoUrl.value = getEmbedUrl(videoUrl)
   }
 
   // 關閉影片播放燈箱彈窗，將網址變數歸零
