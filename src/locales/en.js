@@ -39,5 +39,19 @@ export default {
     scrollTopTip: 'Back to Top',
     langToggleTip: 'Switch Language / 切換語言',
     currentLangName: 'EN'
+  },
+  contact: {
+    modalTitle: 'Contact Me',
+    closeBtn: 'Close',
+    nameLabel: 'Your Name',
+    namePlaceholder: 'Enter your full name',
+    emailLabel: 'Email Address',
+    emailPlaceholder: 'Enter your email address',
+    companyLabel: 'Company (Optional)',
+    companyPlaceholder: 'Your company or organization',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Leave me a message...',
+    submitBtn: 'Compose in Gmail',
+    submitHint: 'Mobile: opens native mail app. Desktop: opens Gmail in a new tab'
   }
 }

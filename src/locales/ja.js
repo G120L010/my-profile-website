@@ -39,5 +39,19 @@ export default {
     scrollTopTip: 'ページトップへ',
     langToggleTip: '言語切り替え / Switch Language / 言語切替',
     currentLangName: '日本語'
+  },
+  contact: {
+    modalTitle: 'お問い合わせ',
+    closeBtn: '閉じる',
+    nameLabel: 'お名前',
+    namePlaceholder: 'お名前を入力してください',
+    emailLabel: 'メールアドレス',
+    emailPlaceholder: 'メールアドレスを入力してください',
+    companyLabel: '会社名（任意）',
+    companyPlaceholder: '会社名または組織名',
+    messageLabel: 'メッセージ',
+    messagePlaceholder: 'メッセージをお入れください...',
+    submitBtn: 'Gmailで作成して送信',
+    submitHint: 'モバイル：メールApp起動。パソコン：新タブでGmailを開きます'
   }
 }

@@ -5,6 +5,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { switchLanguage } from '@/i18n/index.js'
+import { useContactModal } from '@/assets/js/profile/ContactModal.js'
 
 /**
  * 建立並導出全站外殼專用的核心邏輯控制函式
@@ -14,6 +15,9 @@ export function useAppView() {
 
   // 取得 Vue I18n 實例
   const { locale } = useI18n()
+
+  // 掛載聯絡表單 Modal 的狀態管理（showContactModal、openContactModal、closeContactModal）
+  const { showContactModal, openContactModal, closeContactModal } = useContactModal()
 
   // 當前使用的語系標籤（zh-TW 或 en）
   const currentLocale = computed(() => locale.value)
@@ -508,6 +512,9 @@ export function useAppView() {
     toggleLanguage,
     scrollProgress,
     canInstallPWA,
-    installPWA
+    installPWA,
+    showContactModal,
+    openContactModal,
+    closeContactModal
   }
 }

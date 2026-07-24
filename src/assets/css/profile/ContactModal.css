@@ -1,0 +1,249 @@
+/* 聯絡表單 Modal 彈窗的專屬樣式定義檔 */
+/* 玻璃態背景遮罩、Modal 卡片動畫、輸入框焦點效果 */
+
+/* Modal 背景遮罩層：半透明黑色全版覆蓋，支援點擊關閉 */
+.contact-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: contact-overlay-fadein 0.25s ease forwards;
+}
+
+/* 遮罩淡入動畫 */
+@keyframes contact-overlay-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Modal 主體卡片：玻璃態毛玻璃效果 */
+.contact-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: var(--card-bg, rgba(20, 25, 36, 0.92));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 1.2rem;
+  padding: 2rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  animation: contact-card-scalein 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Modal 卡片縮放淡入動畫 */
+@keyframes contact-card-scalein {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Modal 頂部標題列：標題文字與關閉按鈕並排 */
+.contact-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+/* Modal 標題文字 */
+.contact-modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #f0f0f0);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* 橘色裝飾線：標題左側短橘線 */
+.contact-modal-title-accent {
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  background: #e8781e;
+  border-radius: 2px;
+  margin-right: 0.6rem;
+  vertical-align: middle;
+}
+
+/* Modal 關閉按鈕 */
+.contact-modal-close-btn {
+  background: transparent;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  color: var(--text-secondary, #aaa);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.contact-modal-close-btn:hover {
+  background: rgba(232, 120, 30, 0.15);
+  color: #e8781e;
+  border-color: #e8781e;
+}
+
+/* 表單欄位容器 */
+.contact-form-group {
+  margin-bottom: 1.1rem;
+}
+
+/* 表單欄位標籤 */
+.contact-form-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary, #bbb);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* 必填星號 */
+.contact-form-required {
+  color: #e8781e;
+  margin-left: 2px;
+}
+
+/* 輸入框與文字區域通用樣式 */
+.contact-form-input,
+.contact-form-textarea {
+  width: 100%;
+  background: var(--input-bg, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  border-radius: 0.6rem;
+  color: var(--text-primary, #f0f0f0);
+  font-size: 0.95rem;
+  padding: 0.65rem 0.9rem;
+  transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+  outline: none;
+  font-family: inherit;
+}
+
+.contact-form-input::placeholder,
+.contact-form-textarea::placeholder {
+  color: var(--text-muted, rgba(255, 255, 255, 0.3));
+  font-size: 0.88rem;
+}
+
+/* 輸入框焦點橘色光暈效果 */
+.contact-form-input:focus,
+.contact-form-textarea:focus {
+  border-color: #e8781e;
+  box-shadow: 0 0 0 3px rgba(232, 120, 30, 0.18);
+  background: var(--input-bg-focus, rgba(255, 255, 255, 0.09));
+}
+
+/* 留言文字區域：固定高度防使用者任意拉伸 */
+.contact-form-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* 送出按鈕容器：靠右對齊 */
+.contact-modal-footer {
+  margin-top: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+/* 送出提示文字 */
+.contact-submit-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted, rgba(255, 255, 255, 0.4));
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* 送出按鈕 */
+.contact-submit-btn {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  background: linear-gradient(135deg, #e8781e 0%, #d4620e 100%);
+  border: none;
+  border-radius: 0.7rem;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: transform 0.18s, box-shadow 0.18s, filter 0.18s;
+}
+
+.contact-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232, 120, 30, 0.45);
+  filter: brightness(1.08);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+/* 白天模式覆蓋變數 */
+[data-theme="light"] .contact-modal-card {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .contact-modal-title {
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .contact-form-label {
+  color: #555;
+}
+
+[data-theme="light"] .contact-form-input,
+[data-theme="light"] .contact-form-textarea {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #1a1a2e;
+}
+
+[data-theme="light"] .contact-form-input::placeholder,
+[data-theme="light"] .contact-form-textarea::placeholder {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .contact-form-input:focus,
+[data-theme="light"] .contact-form-textarea:focus {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .contact-submit-hint {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="light"] .contact-modal-close-btn {
+  color: #555;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* 行動端響應式縮減內距 */
+@media (max-width: 576px) {
+  .contact-modal-card {
+    padding: 1.4rem 1.1rem;
+    border-radius: 1rem;
+  }
+}

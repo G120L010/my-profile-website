@@ -39,5 +39,19 @@ export default {
     scrollTopTip: '回到頂部',
     langToggleTip: '切換語言 / Switch Language',
     currentLangName: '繁中'
+  },
+  contact: {
+    modalTitle: '聯繫我',
+    closeBtn: '關閉',
+    nameLabel: '您的姓名',
+    namePlaceholder: '請輸入您的姓名',
+    emailLabel: '聯絡信箱',
+    emailPlaceholder: '請輸入您的 Email 地址',
+    companyLabel: '服務單位（選填）',
+    companyPlaceholder: '您的公司或單位名稱',
+    messageLabel: '留言內容',
+    messagePlaceholder: '請留下您想告訴我的話...',
+    submitBtn: '在 Gmail 劃寫並送出',
+    submitHint: '手機將開啟原生郵件 App，電腦將在新分頁開啟 Gmail 撰寫視窗'
   }
 }

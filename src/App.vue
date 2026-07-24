@@ -93,11 +93,11 @@
                 <span>{{ $t('profile.viewResume') }}</span>
                 <span class="small">↗</span>
               </a>
-              <!-- 聯繫我：點擊直接開啟郵件軟體寄給 HanJohn -->
-              <a href="mailto:s112001044@g.ksu.edu.tw" class="btn fw-medium px-4 py-2 rounded-3 d-flex align-items-center gap-2 btn-profile-solid">
+              <!-- 聯繫我：點擊後彈出聯絡表單 Modal 視窗 -->
+              <button @click="openContactModal" class="btn fw-medium px-4 py-2 rounded-3 d-flex align-items-center gap-2 btn-profile-solid">
                 <span>{{ $t('profile.contactMe') }}</span>
                 <span class="small">Email</span>
-              </a>  
+              </button>  
             </div>
 
             <!-- 導覽選單連結區：利用 RouterLink 切換右側的內容 -->
@@ -194,6 +194,13 @@
       </div>
     </div>
   </div>
+
+  <!-- 聯絡表單 Modal 彈窗：掛載於全站最底層，隨 showContactModal 旗標控制顯隱 -->
+  <ContactModal
+    :showContactModal="showContactModal"
+    @close="closeContactModal"
+  />
+
 </template>
 
 <script setup>
@@ -202,6 +209,9 @@ import '@/assets/css/App.css'
 
 // 引入 App.vue 大外殼專屬的 Composable 業務邏輯檔 (打字機、深淺色切換、語言切換、在線人數與人流計數邏輯)
 import { useAppView } from '@/assets/js/App.js'
+
+// 引入聯絡表單 Modal 元件
+import ContactModal from '@/views/profile/ContactModal.vue'
 
 // 解構取出變數與方法，以在 Template 模板中做動態雙向綁定
 const {
@@ -217,6 +227,9 @@ const {
   toggleLanguage,
   scrollProgress,
   canInstallPWA,
-  installPWA
+  installPWA,
+  showContactModal,
+  openContactModal,
+  closeContactModal
 } = useAppView()
 </script>
