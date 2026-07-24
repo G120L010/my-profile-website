@@ -47,11 +47,18 @@ export default {
     namePlaceholder: '請輸入您的姓名',
     emailLabel: '聯絡信箱',
     emailPlaceholder: '請輸入您的 Email 地址',
-    companyLabel: '服務單位（選填）',
+    companyLabel: '服務單位',
     companyPlaceholder: '您的公司或單位名稱',
     messageLabel: '留言內容',
     messagePlaceholder: '請留下您想告訴我的話...',
-    submitBtn: '在 Gmail 劃寫並送出',
-    submitHint: '手機將開啟原生郵件 App，電腦將在新分頁開啟 Gmail 撰寫視窗'
+    submitBtn: '點我前往登入Gmail寄信',
+    submitHint: '預填內容並開啟 Gmail 寄信視窗',
+    mailSubjectPrefix: '履歷網站聯絡',
+    mailFrom: '來自',
+    mailName: '姓名',
+    mailEmail: '聯絡信箱',
+    mailCompany: '服務單位',
+    mailMessage: '留言內容'
   }
 }
+

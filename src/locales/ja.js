@@ -47,11 +47,19 @@ export default {
     namePlaceholder: 'お名前を入力してください',
     emailLabel: 'メールアドレス',
     emailPlaceholder: 'メールアドレスを入力してください',
-    companyLabel: '会社名（任意）',
+    companyLabel: '会社名',
     companyPlaceholder: '会社名または組織名',
     messageLabel: 'メッセージ',
     messagePlaceholder: 'メッセージをお入れください...',
-    submitBtn: 'Gmailで作成して送信',
-    submitHint: 'モバイル：メールApp起動。パソコン：新タブでGmailを開きます'
+    submitBtn: 'Gmailにログインして作成',
+    submitHint: '内容を事前入力してGmail作成ウィンドウを開きます',
+    mailSubjectPrefix: 'ポートフォリオお問い合わせ',
+    mailFrom: '差出組織',
+    mailName: 'お名前',
+    mailEmail: 'メールアドレス',
+    mailCompany: '会社名・組織名',
+    mailMessage: 'メッセージ内容'
   }
 }
+
+

@@ -47,11 +47,19 @@ export default {
     namePlaceholder: 'Enter your full name',
     emailLabel: 'Email Address',
     emailPlaceholder: 'Enter your email address',
-    companyLabel: 'Company (Optional)',
+    companyLabel: 'Company',
     companyPlaceholder: 'Your company or organization',
     messageLabel: 'Message',
     messagePlaceholder: 'Leave me a message...',
-    submitBtn: 'Compose in Gmail',
-    submitHint: 'Mobile: opens native mail app. Desktop: opens Gmail in a new tab'
+    submitBtn: 'Sign in to Gmail & Compose',
+    submitHint: 'Pre-fills details and opens Gmail compose window',
+    mailSubjectPrefix: 'Portfolio Contact',
+    mailFrom: 'from',
+    mailName: 'Name',
+    mailEmail: 'Email',
+    mailCompany: 'Company',
+    mailMessage: 'Message'
   }
 }
+
+

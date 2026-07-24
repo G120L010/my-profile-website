@@ -99,10 +99,11 @@
 </template>
 
 <script setup>
-// 引入聯絡表單 Modal 專屬樣式
+// 【樣式匯入】引入聯絡表單 Modal 專屬 CSS 樣式表
 import '@/assets/css/profile/ContactModal.css'
 
-import { reactive } from 'vue'
+// 【業務邏輯匯入】引入聯絡表單 Modal 專屬 Composable 業務邏輯控制檔
+import { useContactModal } from '@/assets/js/profile/ContactModal.js'
 
 // 定義 Props：接收父元件傳入的 Modal 顯示狀態
 defineProps({
@@ -115,72 +116,7 @@ defineProps({
 // 定義 Emits：向父元件拋出關閉事件
 const emit = defineEmits(['close'])
 
-// 表單各欄位資料的響應式物件
-const form = reactive({
-  name: '',
-  email: '',
-  company: '',
-  message: ''
-})
-
-/**
- * 重置所有表單欄位為初始空白狀態
- */
-const resetForm = () => {
-  form.name = ''
-  form.email = ''
-  form.company = ''
-  form.message = ''
-}
-
-/**
- * 關閉 Modal：恢復頁面捲動、重置表單、向父元件發出 close 事件
- */
-const closeContactModal = () => {
-  document.body.style.overflow = ''
-  resetForm()
-  emit('close')
-}
-
-/**
- * 送出表單：自動依裝置類型選擇最佳開信方式
- * 手機平板：使用 mailto: 喚起手機原生郵件 App（Gmail App、Apple Mail 等）
- * 桌面電腦：使用 Gmail Compose URL 在新分頁開啟 Gmail 網頁版撰寫視窗
- */
-const submitForm = () => {
-  const recipient = 's112001044@g.ksu.edu.tw'
-
-  // 組合郵件主旨：含寄件人姓名與公司名稱
-  const companyPart = form.company ? ` 來自 ${form.company}` : ''
-  const subjectText = `[履歷網站聯絡] ${form.name}${companyPart}`
-
-  // 組合郵件內文：逐行列出表單欄位內容
-  const companyLine = form.company ? `服務單位：${form.company}\n` : ''
-  const bodyText =
-    `姓名：${form.name}\n` +
-    `聯絡信箱：${form.email}\n` +
-    companyLine +
-    `\n留言內容：\n${form.message}`
-
-  // 偵測是否為手機或平板裝置
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-
-  if (isMobile) {
-    // 手機平板：使用 mailto: 標準協議喚起原生郵件 App（自動完成預填主旨與內文）
-    const subject = encodeURIComponent(subjectText)
-    const body = encodeURIComponent(bodyText)
-    window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`
-  } else {
-    // 電腦桌面：使用 Gmail 官方 Compose URL 在新分頁開啟撰寫視窗並預填資訊
-    const subject = encodeURIComponent(subjectText)
-    const body = encodeURIComponent(bodyText)
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipient}&su=${subject}&body=${body}`
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer')
-  }
-
-  // 延遲關閉 Modal，讓訪客感知動作已觸發
-  setTimeout(() => {
-    closeContactModal()
-  }, 400)
-}
+// 【解構載入】從 Composable 中取出表單資料物件與操作函式
+const { form, closeContactModal, submitForm } = useContactModal(emit)
 </script>
+
