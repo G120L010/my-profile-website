@@ -2,9 +2,11 @@
   <!-- 全站視窗最頂端旋轉星球捲動進度條 -->
   <div 
     class="custom-scroll-progress-bar" 
-    :style="{ width: scrollProgress + '%' }"
-    :class="{ 'is-active': scrollProgress > 0 }"
+    :style="{ '--scroll-progress': scrollProgress + '%' }"
+    :class="{ 'is-active': scrollProgress > 0, 'is-completed': scrollProgress >= 100 }"
   >
+    <!-- 橘色進度條軌跡 -->
+    <div class="scroll-progress-fill" :style="{ width: scrollProgress + '%' }"></div>
     <!-- 進度條前端滾動的旋轉星球圖態 (經過處留下橘色進度條軌跡) -->
     <div class="scroll-planet-head">
       <img :src="'images/games/clawmachine23.jpg'" alt="Planet" class="scroll-planet-img" />

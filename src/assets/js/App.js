@@ -100,12 +100,19 @@ export function useAppView() {
   const updateScrollProgress = () => {
     if (typeof window === 'undefined') return
     const scrollTop = window.scrollY || document.documentElement.scrollTop || 0
-    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
-    if (scrollHeight <= 0) {
+    const clientHeight = document.documentElement.clientHeight || 0
+    const scrollHeight = document.documentElement.scrollHeight || 0
+    const maxScrollHeight = scrollHeight - clientHeight
+    if (maxScrollHeight <= 0) {
       scrollProgress.value = 0
       return
     }
-    const progress = (scrollTop / scrollHeight) * 100
+    // 防呆機制：當滑動距離距離底部小於等於 3px 時，直接歸為 100% 確保精準度
+    if (maxScrollHeight - scrollTop <= 3) {
+      scrollProgress.value = 100
+      return
+    }
+    const progress = (scrollTop / maxScrollHeight) * 100
     scrollProgress.value = Math.min(100, Math.max(0, progress))
   }
 
