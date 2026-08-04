@@ -12,14 +12,17 @@ export function useHonorView() {
   // 建立控制榮譽憑證大圖燈箱彈出的響應式變數，儲存目前要顯示的圖片或PDF路徑，null 代表關閉狀態
   const activeImageUrl = ref(null)
 
+  // 建立當前選擇的職涯階段篩選值，'all' 代表顯示全部職涯階段
+  const selectedCareerStage = ref('all')
+
   // 建立當前選擇的學歷階段篩選值，'all' 代表顯示全部階段
   const selectedStage = ref('all')
 
   // 建立當前選擇的榮譽類別篩選值，'all' 代表顯示全部類別
   const selectedType = ref('all')
 
-  // 建立結構化的榮譽事蹟數據響應式陣列，包含標題、頒發機構、時間、學歷階段、榮譽類別、簡介、驗證網址與展示圖片
-  // 依學歷階段與時間排序，碩士班佔 id: 1 至 7，大學佔 id: 8 至 29，高中職佔 id: 30 至 34
+  // 建立結構化的榮譽事蹟數據響應式陣列，包含標題、頒發機構、時間、職涯階段、學歷階段、榮譽類別、簡介、驗證網址與展示圖片
+  // 依學歷階段與職涯發展排序，碩士班佔 id: 1 至 7，大學佔 id: 8 至 29，高中職佔 id: 30 至 34，在職進修佔 id: 35 至 36
   const honors = ref([
     {
       id: 1,
@@ -496,21 +499,65 @@ export function useHonorView() {
       image: 'images/Honorimg/JK2.jpg',
       accentClass: 'accent-emerald',
       summary: '積極參與社會服務，協助台南市商業會籌辦第六十八屆商人節慶祝大會，表現優良。'
+    },
+    {
+      id: 35,
+      title: '跨域Java軟體工程師結業證書',
+      issuer: '財團法人資訊工業策進會',
+      date: '2026.07',
+      careerStage: 'training',
+      careerStageName: '在職進修',
+      stage: '',
+      stageName: '',
+      type: 'award',
+      typeName: '專業課程',
+      verifyUrl: 'https://www.iii.org.tw/zh-TW',
+      image: 'images/Certificationimg/EEIT44401.jpg',
+      accentClass: 'accent-backend',
+      summary: '完成資訊工業策進會跨域Java軟體工程師核心培訓，深入學習Java物件導向、Spring Boot微服務架構、系統分析設計及資料庫整合開發。'
+    },
+    {
+      id: 36,
+      title: '跨域Java軟體工程師就業養成班結業證書',
+      issuer: '資展國際股份有限公司',
+      date: '2026.07',
+      careerStage: 'training',
+      careerStageName: '在職進修',
+      stage: '',
+      stageName: '',
+      type: 'award',
+      typeName: '專業課程',
+      verifyUrl: 'https://www.ispan.com.tw/',
+      image: 'images/Certificationimg/EEIT44402.jpg',
+      accentClass: 'accent-purple',
+      summary: '通過資展國際就業養成班之密集專案實作，掌握前後端分離開發（Spring Boot與Vue 3）、API設計、Git版本控制及團隊協作開發。'
     }
   ])
 
-  // 依據學歷階段與榮譽類別雙重篩選值動態過濾榮譽事蹟清單的計算屬性
+  // 依據職涯階段、學歷階段與榮譽類別多重篩選值動態過濾榮譽事蹟清單的計算屬性
   const filteredHonors = computed(() => {
     return honors.value.filter(item => {
+      const matchesCareerStage = selectedCareerStage.value === 'all' || item.careerStage === selectedCareerStage.value
       const matchesStage = selectedStage.value === 'all' || item.stage === selectedStage.value
       const matchesType = selectedType.value === 'all' || item.type === selectedType.value
-      return matchesStage && matchesType
+      return matchesCareerStage && matchesStage && matchesType
     })
   })
 
-  // 設定當前的學歷階段篩選值
+  // 設定當前的職涯階段篩選值，當選擇特定職涯階段時，自動還原學歷階段為全部以避開篩選衝突
+  const setCareerStageFilter = (stage) => {
+    selectedCareerStage.value = stage
+    if (stage !== 'all') {
+      selectedStage.value = 'all'
+    }
+  }
+
+  // 設定當前的學歷階段篩選值，當選擇特定學歷階段時，自動還原職涯階段為全部以避開篩選衝突
   const setStageFilter = (stage) => {
     selectedStage.value = stage
+    if (stage !== 'all') {
+      selectedCareerStage.value = 'all'
+    }
   }
 
   // 設定當前的榮譽類別篩選值
@@ -530,10 +577,12 @@ export function useHonorView() {
 
   // 返回視圖層所需的變數與控制方法
   return {
+    selectedCareerStage,
     selectedStage,
     selectedType,
     filteredHonors,
     activeImageUrl,
+    setCareerStageFilter,
     setStageFilter,
     setTypeFilter,
     showHonor,

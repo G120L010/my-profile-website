@@ -8,6 +8,43 @@
       <h2 class="page-main-title m-0">榮譽事蹟 / Honors</h2>
     </div>
 
+    <!-- 職涯階段篩選列：提供全部、在職進修、職場表現、獲獎事蹟的動態篩選 -->
+    <div class="honor-filter-section mb-4">
+      <div class="filter-header d-flex justify-content-between align-items-center mb-2">
+        <div class="filter-label m-0">職涯階段：</div>
+        <button 
+          @click="setCareerStageFilter('all')" 
+          class="btn btn-honor-all-btn" 
+          :class="{ active: selectedCareerStage === 'all' }"
+        >
+          全部顯示
+        </button>
+      </div>
+      <div class="honor-segmented-control">
+        <button 
+          @click="setCareerStageFilter('training')" 
+          class="control-item" 
+          :class="{ active: selectedCareerStage === 'training' }"
+        >
+          在職進修
+        </button>
+        <button 
+          @click="setCareerStageFilter('performance')" 
+          class="control-item" 
+          :class="{ active: selectedCareerStage === 'performance' }"
+        >
+          職場表現
+        </button>
+        <button 
+          @click="setCareerStageFilter('award')" 
+          class="control-item" 
+          :class="{ active: selectedCareerStage === 'award' }"
+        >
+          職場事蹟
+        </button>
+      </div>
+    </div>
+
     <!-- 教育階段篩選列：提供全部、研究所、大學、高中職的動態篩選 -->
     <div class="honor-filter-section mb-4">
       <div class="filter-header d-flex justify-content-between align-items-center mb-2">
@@ -100,8 +137,9 @@
             <div class="honor-card-header mb-1">
               <span class="honor-issuer fw-bold">{{ honor.issuer }}</span>
               <div class="honor-badges-container">
-                <span class="honor-type-badge">{{ honor.stageName }}</span>
-                <span class="honor-type-badge">{{ honor.typeName }}</span>
+                <span v-if="honor.careerStageName" class="honor-type-badge">{{ honor.careerStageName }}</span>
+                <span v-if="honor.stageName" class="honor-type-badge">{{ honor.stageName }}</span>
+                <span v-if="honor.typeName" class="honor-type-badge">{{ honor.typeName }}</span>
               </div>
             </div>
             
@@ -176,10 +214,12 @@ import { useHonorView } from '@/assets/js/profile/HonorView.js'
 
 // 【解構載入】從 Composable 中解構變數與方法，供 Vue 模板綁定使用
 const { 
+  selectedCareerStage,
   selectedStage,
   selectedType, 
   filteredHonors, 
   activeImageUrl, 
+  setCareerStageFilter,
   setStageFilter,
   setTypeFilter,
   showHonor, 
