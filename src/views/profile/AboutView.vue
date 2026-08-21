@@ -58,6 +58,13 @@
               <p class="edu-degree-text">{{ edu.degree }}</p>
               <p class="edu-period-text">{{ edu.period }} ({{ edu.status }})</p>
               <p class="edu-desc-text">{{ edu.desc }}</p>
+              <!-- 證書查看按鈕 -->
+              <div v-if="edu.certUrl" class="mt-2">
+                <a href="#" @click.prevent="showCert(edu.certUrl)" class="feat-link-btn text-decoration-none">
+                  <span>點我查看</span>
+                  <span class="small">↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -75,7 +82,13 @@
               <!-- 遍歷語文能力資料 -->
               <div v-for="lang in languages" :key="lang.name" class="lang-row">
                 <div class="lang-info">
-                  <span class="lang-name">{{ lang.name }}</span>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="lang-name mb-0">{{ lang.name }}</span>
+                    <a v-if="lang.certUrl" href="#" @click.prevent="showCert(lang.certUrl)" class="feat-link-btn text-decoration-none">
+                      <span style="font-size: 0.8rem;">點我查看</span>
+                      <span class="small">↗</span>
+                    </a>
+                  </div>
                   <span class="lang-level">{{ lang.level }}</span>
                 </div>
                 <div class="lang-progress-bar-bg">
@@ -141,6 +154,25 @@
       </div>
     </div>
 
+    <!-- 憑證大圖燈箱彈窗 -->
+    <div v-if="activeImageUrl" class="about-modal-overlay" @click.self="closeCert">
+      <div class="about-modal-content">
+        <button class="about-modal-close-btn" @click="closeCert">&times;</button>
+        <iframe 
+          v-if="activeImageUrl.toLowerCase().endsWith('.pdf')" 
+          :src="activeImageUrl" 
+          class="about-modal-pdf" 
+          frameborder="0"
+        ></iframe>
+        <img 
+          v-else 
+          :src="activeImageUrl" 
+          alt="憑證大圖" 
+          class="about-modal-img" 
+        />
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -152,5 +184,5 @@ import '@/assets/css/profile/AboutView.css'
 import { useAboutView } from '@/assets/js/profile/AboutView.js'
 
 // 【解構載入】從 Composable 中取出相關響應式資料與切換狀態方法，提供給上面 HTML 渲染
-const { educations, languages, biography, featuredExperiences, activeBioId, toggleBio, licenses } = useAboutView()
+const { educations, languages, biography, featuredExperiences, activeBioId, toggleBio, licenses, activeImageUrl, showCert, closeCert } = useAboutView()
 </script>

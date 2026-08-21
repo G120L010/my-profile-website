@@ -12,6 +12,7 @@ export function useAboutView() {
       degree: '企業管理研究所 碩士',
       period: '2023.09 - 2025.06',
       status: '畢業',
+      certUrl: 'images/Homeimg/KSUEMBA.jpg',
       desc: '主修企業管理，期間於USR大學社會責任辦公室任職，深入探討農業循環經濟與地方創生，並將所學應用於USR相關計畫。在學表現優異，獲頒台南市議會議長獎及智育獎，且為校內首位同時通過經濟部iPAS雙鑑定之學生。'
     },
     {
@@ -20,6 +21,7 @@ export function useAboutView() {
       degree: '資訊工程學系 學士',
       period: '2019.09 - 2023.06',
       status: '畢業',
+      certUrl: 'images/Homeimg/KSUUniversity.jpg',
       desc: '奠定基本電腦操作與資訊能力，學習多媒體創作與網際網路基礎知識，期間因家庭因素導致經濟狀況困難，參與多項校內工讀事務，仍積極擔任環境生態教育服務社社長，期間表現傑出，獲頒全國大專優秀青年、鴻海獎學鯨，入圍總統教育獎推薦名單。'
     },
     {
@@ -36,7 +38,7 @@ export function useAboutView() {
   const languages = ref([
     { name: '中文', level: '精通', percent: 100 },
     { name: '日文', level: '略懂 (曾赴日實習)', percent: 45 },
-    { name: '英文', level: '略懂', percent: 30 }
+    { name: '英文', level: '略懂', percent: 30, certUrl: 'images/Honorimg/TOEIC.jpg' }
   ])
 
   // 個人詳細自傳數據（分段落與主題，便於折疊面板排版與閱讀）
@@ -178,6 +180,19 @@ export function useAboutView() {
     }
   }
 
+  // 建立控制憑證大圖燈箱彈出的響應式變數，儲存目前要顯示的圖片路徑，null 代表關閉狀態
+  const activeImageUrl = ref(null)
+
+  // 開啟憑證大圖燈箱彈窗，並記錄所點擊的圖片路徑
+  const showCert = (imageUrl) => {
+    activeImageUrl.value = imageUrl
+  }
+
+  // 關閉憑證大圖燈箱彈窗，將圖片路徑變數歸零
+  const closeCert = () => {
+    activeImageUrl.value = null
+  }
+
   return {
     educations,
     languages,
@@ -185,6 +200,9 @@ export function useAboutView() {
     featuredExperiences,
     activeBioId,
     toggleBio,
-    licenses
+    licenses,
+    activeImageUrl,
+    showCert,
+    closeCert
   }
 }
