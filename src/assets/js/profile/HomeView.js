@@ -12,20 +12,20 @@ export function useHomeView() {
   // 經歷響應式陣列：利用 ref 包裹經歷清單，使其具備 Vue 雙向綁定的資料追蹤能力 (依結束日期由新到舊降冪排序)
   const experiences = ref([
     {
-      id: 1,
-      company: '崑山科技大學 創新教學中心',
-      role: '專任行政助理',
-      period: '2019.09 - 2025.09',
-      tags: ['行政事務', '研討會籌辦', '文書資料處理', '人員接待'],
-      summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學助理研討會、專案講座與培訓課程等大型活動。',
-      accentClass: 'accent-design', // 套用設計隨彩紫粉色漸變彩線
+      id: 6,
+      company: '國泰世華商業銀行',
+      role: '銀行存匯櫃員',
+      period: '2026.09 - 至今',
+      tags: ['資訊培訓', '金融科技', '系統實務'],
+      summary: '錄取國泰世華商業銀行，參與銀行內部培訓與受訓課程，熟悉金融科技實務與相關資訊業務。',
+      accentClass: 'accent-emerald',
       links: [
-        { title: '活動成果：中央社新聞報導', url: 'https://www.cna.com.tw/postwrite/chi/306901' },
-        { title: '活動成果：校園焦點新聞', url: 'https://www.ksu.edu.tw/focusNews/detail/10139' }
+        { title: '錄取通知', url: 'images/Honorimg/Job1150901.jpg' },
+        { title: '受訓照片', url: 'images/Honorimg/Job1150907.jpg' }
       ]
     },
     {
-      id: 2,
+      id: 5,
       company: '教育部學海築夢計畫 - 日本大阪株式會社 TAT',
       role: '海外實習',
       period: '2025.07 - 2025.09',
@@ -39,17 +39,20 @@ export function useHomeView() {
       ]
     },
     {
-      id: 3,
-      company: '崑山科技大學',
-      role: '教學助理',
-      period: '2020.09 - 2025.08',
-      tags: ['課程助教', '教學評量', '教學活動', '專題演講'],
-      summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協同課程教授進行教學、專題演講與期末考卷批改。',
-      accentClass: 'accent-experience', // 套用經歷橘紅漸變彩線
-      links: []
+      id: 4,
+      company: '崑山科技大學 創新教學中心',
+      role: '專任行政助理',
+      period: '2019.09 - 2025.07',
+      tags: ['行政事務', '研討會籌辦', '文書資料處理', '人員接待'],
+      summary: '整理會議資料、處理日常行政公文業務，並協助籌辦教學助理研討會、專案講座與培訓課程等大型活動。',
+      accentClass: 'accent-design', // 套用設計隨彩紫粉色漸變彩線
+      links: [
+        { title: '活動成果：中央社新聞報導', url: 'https://www.cna.com.tw/postwrite/chi/306901' },
+        { title: '活動成果：校園焦點新聞', url: 'https://www.ksu.edu.tw/focusNews/detail/10139' }
+      ]
     },
     {
-      id: 4,
+      id: 3,
       company: '大學USR永續發展辦公室',
       role: '專任研究助理',
       period: '2023.08 - 2025.07',
@@ -62,13 +65,23 @@ export function useHomeView() {
       ]
     },
     {
-      id: 5,
+      id: 2,
       company: '學生輔導中心',
       role: '兼任行政助理',
       period: '2022.08 - 2025.07',
       tags: ['電腦維護', '資料統計', '素材設計', '檔案管理'],
       summary: '負責辦公室教職員電腦文書軟硬體疑難排解、Google Drive 雲端資料電子化與統計彙整，並協助設計活動平面視覺宣導海報及圖卡。',
       accentClass: 'accent-tools', // 套用工具青綠色漸變彩線
+      links: []
+    },
+    {
+      id: 1,
+      company: '崑山科技大學',
+      role: '教學助理',
+      period: '2020.09 - 2025.07',
+      tags: ['課程助教', '教學評量', '教學活動', '專題演講'],
+      summary: '擔任數位創新服務、志工領導服務及商務企劃實務等課程助教，協同課程教授進行教學、專題演講與期末考卷批改。',
+      accentClass: 'accent-experience', // 套用經歷橘紅漸變彩線
       links: []
     }
   ])

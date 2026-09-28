@@ -589,6 +589,38 @@ export function useHonorView() {
       image: 'images/Honorimg/Job115080617.pdf',
       accentClass: 'accent-emerald',
       summary: '衛生福利部臺南醫院-115年8月6日第17次甄選錄取。'
+    },
+    {
+      id: 41,
+      title: '國泰世華銀行錄取通知',
+      issuer: '國泰世華銀行',
+      date: '2026.09',
+      careerStage: 'award',
+      careerStageName: '職場事蹟',
+      stage: '',
+      stageName: '',
+      type: 'award',
+      typeName: '錄取通知',
+      verifyUrl: '',
+      image: 'images/Honorimg/Job1150901.jpg',
+      accentClass: 'accent-emerald',
+      summary: '獲得國泰世華銀行錄取通知，展開金融科技領域之職涯。'
+    },
+    {
+      id: 42,
+      title: '國泰世華銀行受訓紀錄',
+      issuer: '國泰世華銀行',
+      date: '2026.09',
+      careerStage: 'training',
+      careerStageName: '在職進修',
+      stage: '',
+      stageName: '',
+      type: 'award',
+      typeName: '專業課程',
+      verifyUrl: '',
+      image: 'images/Honorimg/Job1150907.jpg',
+      accentClass: 'accent-emerald',
+      summary: '參與國泰世華銀行內部受訓，積極充實金融專業與實務技能。'
     }
   ])
 
